@@ -7,9 +7,13 @@
     <title>Finova - Personal Finance Dashboard</title>
     <link rel="stylesheet" href="style.css">
 
+    <!-- Space Grotesk font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+    <!-- favicon -->
+    <link rel="icon" href="./pig.svg">
 </head>
 
 <body>
@@ -35,7 +39,7 @@
             <nav>
 
                 <!-- Dashboard -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('dashboard'); return false;">
                     <div class="asidebar-tab asidebar-active">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -55,7 +59,7 @@
                 </a>
 
                 <!-- Transactions -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('transactions'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -75,7 +79,7 @@
                 </a>
 
                 <!-- Budgets -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('budgets'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -94,7 +98,7 @@
                 </a>
 
                 <!-- Analytics -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('analytics'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -113,7 +117,7 @@
                 </a>
 
                 <!-- Goals -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('goals'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -131,7 +135,7 @@
                 </a>
 
                 <!-- Accounts -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('accounts'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -151,7 +155,7 @@
                 </a>
 
                 <!-- Settings -->
-                <a href="">
+                <a class="nav-item" href="#" onclick="loadPage('settings'); return false;">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -178,24 +182,129 @@
 
         <div class="main-content">
             <header>
-                <div class="search-bar">
-
-                </div>
-                <div class="screen-mode-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon size-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
-                </div>
-                <div class="bell-icon-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell size-4" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg>
-                </div>
-                <button class="new-transaction">
-                    <div class="btn-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                <div class="left-header">
+                    <div class="hamburger-menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-menu size-4" aria-hidden="true">
+                            <path d="M4 5h16"></path>
+                            <path d="M4 12h16"></path>
+                            <path d="M4 19h16"></path>
+                        </svg>
                     </div>
-                    <div>New transaction</div>
-                </button>
+                    <div class="search-bar">
+                        <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
+                                <path d="m21 21-4.34-4.34"></path>
+                                <circle cx="11" cy="11" r="8"></circle>
+                            </svg></span>
+                        <input type="text" placeholder="Search transactions, goals, categories..." />
+                    </div>
+                    <div class="search-bar-mobile">
+                        <!-- <span class="search-icon"> -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
+                            <path d="m21 21-4.34-4.34"></path>
+                            <circle cx="11" cy="11" r="8"></circle>
+                        </svg>
+                        <!-- </span> -->
+                    </div>
+                </div>
+                <div class="right-header">
+                    <div class="screen-mode-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-moon size-4" aria-hidden="true">
+                            <path
+                                d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="bell-icon-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-bell size-4" aria-hidden="true">
+                            <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+                            <path
+                                d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326">
+                            </path>
+                        </svg>
+                    </div>
+                    <button class="new-transaction">
+                        <div class="btn-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                        </div>
+                        <div>New transaction</div>
+                    </button>
+                    <button class="new-transaction-mobile">
+                        <div class="btn-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
             </header>
+
+            <div id="page-content">
+
+            </div>
         </div>
     </div>
+
+    <script>
+        window.onload = function () {
+            loadPage("dashboard", document.querySelector(".nav-item"));
+        };
+
+        function loadPage(page, element) {
+            const content = document.getElementById("page-content");
+
+            // remove active from all tabs
+            document.querySelectorAll(".asidebar-tab")
+                .forEach(tab => tab.classList.remove("asidebar-active"));
+
+            // add active to clicked one
+            if (element) {
+                element.querySelector(".asidebar-tab")
+                    .classList.add("asidebar-active");
+            }
+
+            // page content
+            if (page === "dashboard") {
+                content.innerHTML = `<h1>Dashboard</h1><p>Overview of your finance</p>`;
+            }
+            else if (page === "transactions") {
+                content.innerHTML = `<h1>Transactions</h1><p>All your payments</p>`;
+            }
+            else if (page === "budgets") {
+                content.innerHTML = `<h1>Budgets</h1><p>Budget tracking page</p>`;
+            }
+            else if (page === "analytics") {
+                content.innerHTML = `<h1>Analytics</h1><p>Charts will go here</p>`;
+            }
+            else if (page === "goals") {
+                content.innerHTML = `<h1>Goals</h1><p>Financial goals tracker</p>`;
+            }
+            else if (page === "accounts") {
+                content.innerHTML = `<h1>Accounts</h1><p>Your bank accounts</p>`;
+            }
+            else if (page === "settings") {
+                content.innerHTML = `<h1>Settings</h1><p>App configuration</p>`;
+            }
+        }
+    </script>
 </body>
 
 </html>
