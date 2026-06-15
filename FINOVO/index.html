@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finova - Personal Finance Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app">
+        <aside>
+            <div class="account">
+                <div class="account_img">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-piggy-bank size-5 text-primary-foreground" aria-hidden="true">
+                        <path
+                            d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z">
+                        </path>
+                        <path d="M16 10h.01"></path>
+                        <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
+                    </svg>
+                </div>
+                <div class="account-text">
+                    <h4>Finovo</h4>
+                    <p>Personal finance</p>
+                </div>
+            </div>
+            <nav>
+
+                <!-- Dashboard -->
+                <a href="">
+                    <div class="asidebar-tab asidebar-active">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-layout-dashboard size-4"
+                                aria-hidden="true">
+                                <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                                <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                                <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                                <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Dashboard</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Transactions -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-arrow-left-right size-4"
+                                aria-hidden="true">
+                                <path d="M8 3 4 7l4 4"></path>
+                                <path d="M4 7h16"></path>
+                                <path d="m16 21 4-4-4-4"></path>
+                                <path d="M20 17H4"></path>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Transactions</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Budgets -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-wallet size-4" aria-hidden="true">
+                                <path
+                                    d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1">
+                                </path>
+                                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Budgets</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Analytics -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chart-column size-4" aria-hidden="true">
+                                <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                                <path d="M18 17V9"></path>
+                                <path d="M13 17V5"></path>
+                                <path d="M8 17v-3"></path>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Analytics</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Goals -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-target size-4" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="6"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Goals</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Accounts -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-piggy-bank size-4" aria-hidden="true">
+                                <path
+                                    d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z">
+                                </path>
+                                <path d="M16 10h.01"></path>
+                                <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Accounts</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Settings -->
+                <a href="">
+                    <div class="asidebar-tab">
+                        <div class="tab-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-settings size-4" aria-hidden="true">
+                                <path
+                                    d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915">
+                                </path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="tab-name">
+                            <p>Settings</p>
+                        </div>
+                    </div>
+                </a>
+            </nav>
+            <div class="total__aside_balance">
+                <p>Total balance</p>
+                <h3>₹500.00</h3>
+                <p>Net this month <span>+₹0.00</span></p>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header>
+                <div class="search-bar">
+
+                </div>
+                <div class="screen-mode-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon size-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
+                </div>
+                <div class="bell-icon-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell size-4" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg>
+                </div>
+                <button class="new-transaction">
+                    <div class="btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                    </div>
+                    <div>New transaction</div>
+                </button>
+            </header>
+        </div>
+    </div>
+</body>
+
+</html>
