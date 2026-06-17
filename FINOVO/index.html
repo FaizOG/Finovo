@@ -2,25 +2,28 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finova - Personal Finance Dashboard</title>
-    <link rel="stylesheet" href="style.css">
 
-    <!-- Space Grotesk font -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./universal-pop.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
-    <!-- favicon -->
-    <link rel="icon" href="./pig.svg">
+    <link rel="icon" href="./pig.svg" />
 </head>
 
 <body>
+
     <div class="app">
+
+        <!-- ================= SIDEBAR ================= -->
         <aside>
             <div class="account">
-                <div class="account_img">
+                <div class="account_img" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-piggy-bank size-5 text-primary-foreground" aria-hidden="true">
@@ -31,15 +34,16 @@
                         <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
                     </svg>
                 </div>
+
                 <div class="account-text">
                     <h4>Finovo</h4>
                     <p>Personal finance</p>
                 </div>
             </div>
-            <nav>
 
-                <!-- Dashboard -->
-                <a class="nav-item" href="#" onclick="loadPage('dashboard'); return false;">
+            <nav id="sidebar-nav">
+
+                <a class="nav-item" href="#" data-page="dashboard">
                     <div class="asidebar-tab asidebar-active">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -58,8 +62,7 @@
                     </div>
                 </a>
 
-                <!-- Transactions -->
-                <a class="nav-item" href="#" onclick="loadPage('transactions'); return false;">
+                <a class="nav-item" href="#" data-page="transactions">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -78,8 +81,7 @@
                     </div>
                 </a>
 
-                <!-- Budgets -->
-                <a class="nav-item" href="#" onclick="loadPage('budgets'); return false;">
+                <a class="nav-item" href="#" data-page="budgets">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -97,8 +99,7 @@
                     </div>
                 </a>
 
-                <!-- Analytics -->
-                <a class="nav-item" href="#" onclick="loadPage('analytics'); return false;">
+                <a class="nav-item" href="#" data-page="analytics">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -116,8 +117,7 @@
                     </div>
                 </a>
 
-                <!-- Goals -->
-                <a class="nav-item" href="#" onclick="loadPage('goals'); return false;">
+                <a class="nav-item" href="#" data-page="goals">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -134,8 +134,7 @@
                     </div>
                 </a>
 
-                <!-- Accounts -->
-                <a class="nav-item" href="#" onclick="loadPage('accounts'); return false;">
+                <a class="nav-item" href="#" data-page="accounts">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -154,8 +153,7 @@
                     </div>
                 </a>
 
-                <!-- Settings -->
-                <a class="nav-item" href="#" onclick="loadPage('settings'); return false;">
+                <a class="nav-item" href="#" data-page="settings">
                     <div class="asidebar-tab">
                         <div class="tab-icon-container">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -172,7 +170,9 @@
                         </div>
                     </div>
                 </a>
+
             </nav>
+
             <div class="total__aside_balance">
                 <p>Total balance</p>
                 <h3>₹500.00</h3>
@@ -180,10 +180,13 @@
             </div>
         </aside>
 
+        <!-- ================= MAIN ================= -->
         <div class="main-content">
+
             <header>
+
                 <div class="left-header">
-                    <div class="hamburger-menu">
+                    <div class="hamburger-menu" aria-label="menu">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-menu size-4" aria-hidden="true">
@@ -192,119 +195,251 @@
                             <path d="M4 19h16"></path>
                         </svg>
                     </div>
+
                     <div class="search-bar">
-                        <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
+                        <span class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
                                 class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
                                 <path d="m21 21-4.34-4.34"></path>
                                 <circle cx="11" cy="11" r="8"></circle>
-                            </svg></span>
+                            </svg>
+                        </span>
                         <input type="text" placeholder="Search transactions, goals, categories..." />
                     </div>
-                    <div class="search-bar-mobile">
-                        <!-- <span class="search-icon"> -->
+
+                    <div class="search-bar-mobile" aria-label="search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
                             <path d="m21 21-4.34-4.34"></path>
                             <circle cx="11" cy="11" r="8"></circle>
                         </svg>
-                        <!-- </span> -->
                     </div>
                 </div>
+
                 <div class="right-header">
-                    <div class="screen-mode-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-moon size-4" aria-hidden="true">
+                    <div class="screen-mode-btn" aria-label="theme"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon size-4"
+                            aria-hidden="true">
                             <path
                                 d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401">
                             </path>
-                        </svg>
-                    </div>
-                    <div class="bell-icon-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        </svg></div>
+                    <div class="bell-icon-btn" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-bell size-4" aria-hidden="true">
                             <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
                             <path
                                 d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326">
                             </path>
-                        </svg>
-                    </div>
-                    <button class="new-transaction">
-                        <div class="btn-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        </svg></div>
+
+                    <button class="new-transaction" onclick="openModal()">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true">
                                 <path d="M5 12h14"></path>
                                 <path d="M12 5v14"></path>
-                            </svg>
-                        </div>
-                        <div>New transaction</div>
+                            </svg></span>
+                        <span>New transaction</span>
                     </button>
-                    <button class="new-transaction-mobile">
-                        <div class="btn-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true">
-                                <path d="M5 12h14"></path>
-                                <path d="M12 5v14"></path>
-                            </svg>
-                        </div>
-                    </button>
+
+                    <button class="new-transaction-mobile" onclick="openModal()">+</button>
                 </div>
+
             </header>
 
-            <div id="page-content">
+            <div id="page-content"></div>
 
-            </div>
         </div>
     </div>
 
-    <script>
-        window.onload = function () {
-            loadPage("dashboard", document.querySelector(".nav-item"));
-        };
+    <!-- ================= MODAL ================= -->
+    <form class="modal-overlay" id="modalOverlay">
 
-        function loadPage(page, element) {
-            const content = document.getElementById("page-content");
+        <div class="modal">
 
-            // remove active from all tabs
-            document.querySelectorAll(".asidebar-tab")
-                .forEach(tab => tab.classList.remove("asidebar-active"));
+            <div class="modal-header">
+                <h2>New transaction</h2>
+                <button type="button" class="close-btn" onclick="closeModal(event)"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-x h-4 w-4" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg></button>
+            </div>
 
-            // add active to clicked one
-            if (element) {
-                element.querySelector(".asidebar-tab")
-                    .classList.add("asidebar-active");
-            }
+            <!-- <div class="txn-type">
+                <button class="active">Expense</button>
+                <button>Income</button>
+                <button>Transfer</button>
+            </div> -->
 
-            // page content
-            if (page === "dashboard") {
-                content.innerHTML = `<h1>Dashboard</h1><p>Overview of your finance</p>`;
-            }
-            else if (page === "transactions") {
-                content.innerHTML = `<h1>Transactions</h1><p>All your payments</p>`;
-            }
-            else if (page === "budgets") {
-                content.innerHTML = `<h1>Budgets</h1><p>Budget tracking page</p>`;
-            }
-            else if (page === "analytics") {
-                content.innerHTML = `<h1>Analytics</h1><p>Charts will go here</p>`;
-            }
-            else if (page === "goals") {
-                content.innerHTML = `<h1>Goals</h1><p>Financial goals tracker</p>`;
-            }
-            else if (page === "accounts") {
-                content.innerHTML = `<h1>Accounts</h1><p>Your bank accounts</p>`;
-            }
-            else if (page === "settings") {
-                content.innerHTML = `<h1>Settings</h1><p>App configuration</p>`;
-            }
-        }
-    </script>
+            <!-- New Pop Code -->
+            <div class="txn-type">
+                <button type="button" class="txn-btn active" data-type="expense">
+                    Expense
+                </button>
+
+                <button type="button" class="txn-btn" data-type="income">
+                    Income
+                </button>
+
+                <button type="button" class="txn-btn" data-type="transfer">
+                    Transfer
+                </button>
+            </div>
+            <!-- Till Here -->
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Amount</label>
+                    <input type="number" placeholder="0.00" required>
+                </div>
+
+                <div class="field">
+                    <label>Date</label>
+                    <input type="date" id="dateInput" required>
+                </div>
+
+                <div class="field hidden" id="transferFromField">
+                    <label>From Account</label>
+
+                    <div class="custom-dropdown">
+
+                        <div class="dropdown-selected" onclick="toggleFromDropdown()">
+
+                            <span id="selectedFromAccount">Cash</span>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+
+                        </div>
+
+                        <div class="dropdown-menu" id="fromAccountMenu">
+                            <div class="dropdown-item active" onclick="selectFromAccount(this)">
+                                Cash
+                            </div>
+
+                            <div class="dropdown-item" onclick="selectFromAccount(this)">
+                                Bank
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="field hidden" id="transferToField">
+                    <label>To Account</label>
+
+                    <div class="custom-dropdown">
+
+                        <div class="dropdown-selected" onclick="toggleToDropdown()">
+
+                            <span id="selectedToAccount">Bank</span>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+
+                        </div>
+
+                        <div class="dropdown-menu" id="toAccountMenu">
+                            <div class="dropdown-item active" onclick="selectToAccount(this)">
+                                Bank
+                            </div>
+
+                            <div class="dropdown-item" onclick="selectToAccount(this)">
+                                Cash
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- <div class="field">
+                    <label>Category</label> -->
+                <div class="field" id="field1">
+                    <label id="field1Label">Category</label>
+
+
+                    <div class="custom-dropdown" id="categoryDropdown">
+
+                        <div class="dropdown-selected" onclick="toggleDropdown()">
+                            <span id="selectedCategory">Food</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                                aria-hidden="true">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                        </div>
+
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <!-- <div class="dropdown-item active" onclick="selectCategory(this)">Food</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Transport</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Shopping</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Bills</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Entertainment</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Health</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Education</div>
+                            <div class="dropdown-item" onclick="selectCategory(this)">Other</div> -->
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- <div class="field">
+                    <label>Account</label> -->
+                <div class="field" id="accountField">
+                    <label>Account</label>
+
+                    <div class="custom-dropdown" id="accountDropdown">
+
+                        <div class="dropdown-selected" onclick="toggleAccountDropdown()">
+                            <span id="selectedAccount">Cash</span>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                        </div>
+
+                        <div class="dropdown-menu" id="accountMenu">
+                            <div class="dropdown-item active" onclick="selectAccount(this)">Cash</div>
+                            <div class="dropdown-item" onclick="selectAccount(this)">Bank</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="field full">
+                    <label>Note (optional)</label>
+                    <input type="text" placeholder="Add a note..." />
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="cancel" onclick="closeModal(event)">Cancel</button>
+                <button type="submit" id="submit" class="submit">Add transaction</button>
+            </div>
+
+        </div>
+    </form>
+    <script type="module" src="./js/app.js"></script>
+    <script src="./js/modal.js"></script>
+    <!-- <script src="./js/dropdowns.js"></script> -->
+    <!-- <script src="./js/transactions.js"></script> -->
+    <script src="/js/navigation.js"></script>
 </body>
 
 </html>
