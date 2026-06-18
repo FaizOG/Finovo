@@ -9,11 +9,16 @@ function initModal() {
         if (e.target === modal) closeModal();
     });
 
-    // prevent page reload on submit + close modal
+    // prevent page reload on submit + close modal + toster
     modal.addEventListener("submit", (e) => {
-        e.preventDefault();
-        closeModal();
-    });
+    e.preventDefault();
+
+    const activeType = document.querySelector(".txn-btn.active").dataset.type;
+
+    notify("transaction", "create", { type: activeType });
+
+    closeModal();
+});
 }
 
 initModal();
@@ -223,6 +228,8 @@ function initTransactionType() {
         });
     });
 }
+
+
 
 // initialize default state
 initTransactionType();
