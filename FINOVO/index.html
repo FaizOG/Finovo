@@ -7,7 +7,8 @@
     <title>Finova - Personal Finance Dashboard</title>
 
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./universal-pop.css">
+    <link rel="stylesheet" href="./style/universal-pop.css">
+    <link rel="stylesheet" href="./style/settings.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,8 +178,8 @@
 
             <div class="total__aside_balance">
                 <p>Total balance</p>
-                <h3>₹500.00</h3>
-                <p>Net this month <span>+₹0.00</span></p>
+                <h3><span class="currency-symbol">₹</span>500.00</h3>
+                <p>Net this month <span>+<span class="currency-symbol">₹</span>0.00</span></p>
             </div>
         </aside>
 
@@ -255,179 +256,176 @@
             </header>
 
             <div id="page-content">
-
+                <!-- The whole content is coming from (pages folder using "navigation.js") -->
             </div>
 
-        </div>
-    </div>
+            <form class="modal-overlay" id="modalOverlay">
 
-    <form class="modal-overlay" id="modalOverlay">
+                <div class="modal">
 
-        <div class="modal">
-
-            <div class="modal-header">
-                <h2>New transaction</h2>
-                <button type="button" class="close-btn" onclick="closeModal(event)"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-x h-4 w-4" aria-hidden="true">
-                        <path d="M18 6 6 18"></path>
-                        <path d="m6 6 12 12"></path>
-                    </svg></button>
-            </div>
-
-            <div class="txn-type">
-                <button type="button" class="txn-btn active" data-type="expense">
-                    Expense
-                </button>
-
-                <button type="button" class="txn-btn" data-type="income">
-                    Income
-                </button>
-
-                <button type="button" class="txn-btn" data-type="transfer">
-                    Transfer
-                </button>
-            </div>
-
-            <div class="form-grid">
-
-                <div class="field">
-                    <label>Amount</label>
-                    <input type="number" placeholder="0.00" required>
-                </div>
-
-                <div class="field">
-                    <label>Date</label>
-                    <input type="date" id="dateInput" required>
-                </div>
-
-                <div class="field hidden" id="transferFromField">
-                    <label>From Account</label>
-
-                    <div class="custom-dropdown">
-
-                        <div class="dropdown-selected" onclick="toggleFromDropdown()">
-
-                            <span id="selectedFromAccount">Cash</span>
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                                <path d="m6 9 6 6 6-6"></path>
-                            </svg>
-
-                        </div>
-
-                        <div class="dropdown-menu" id="fromAccountMenu">
-                            <div class="dropdown-item active" onclick="selectFromAccount(this)">
-                                Cash
-                            </div>
-
-                            <div class="dropdown-item" onclick="selectFromAccount(this)">
-                                Bank
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="field hidden" id="transferToField">
-                    <label>To Account</label>
-
-                    <div class="custom-dropdown">
-
-                        <div class="dropdown-selected" onclick="toggleToDropdown()">
-
-                            <span id="selectedToAccount">Bank</span>
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                                <path d="m6 9 6 6 6-6"></path>
-                            </svg>
-
-                        </div>
-
-                        <div class="dropdown-menu" id="toAccountMenu">
-                            <div class="dropdown-item active" onclick="selectToAccount(this)">
-                                Bank
-                            </div>
-
-                            <div class="dropdown-item" onclick="selectToAccount(this)">
-                                Cash
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="field" id="field1">
-                    <label id="field1Label">Category</label>
-
-
-                    <div class="custom-dropdown" id="categoryDropdown">
-
-                        <div class="dropdown-selected" onclick="toggleDropdown()">
-                            <span id="selectedCategory">Food</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    <div class="modal-header">
+                        <h2>New transaction</h2>
+                        <button type="button" class="close-btn" onclick="closeModal(event)"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                aria-hidden="true">
-                                <path d="m6 9 6 6 6-6"></path>
-                            </svg>
+                                stroke-linejoin="round" class="lucide lucide-x h-4 w-4" aria-hidden="true">
+                                <path d="M18 6 6 18"></path>
+                                <path d="m6 6 12 12"></path>
+                            </svg></button>
+                    </div>
+
+                    <div class="txn-type">
+                        <button type="button" class="txn-btn active" data-type="expense">
+                            Expense
+                        </button>
+
+                        <button type="button" class="txn-btn" data-type="income">
+                            Income
+                        </button>
+
+                        <button type="button" class="txn-btn" data-type="transfer">
+                            Transfer
+                        </button>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label>Amount</label>
+                            <input type="number" placeholder="0.00" required>
                         </div>
 
-                        <div class="dropdown-menu" id="dropdownMenu">
-                            <!-- Category drop down options comes for modal.js "loadExpenseCategories()"  -->
+                        <div class="field">
+                            <label>Date</label>
+                            <input type="date" id="dateInput" required>
+                        </div>
+
+                        <div class="field hidden" id="transferFromField">
+                            <label>From Account</label>
+
+                            <div class="custom-dropdown">
+
+                                <div class="dropdown-selected" onclick="toggleFromDropdown()">
+
+                                    <span id="selectedFromAccount">Cash</span>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+
+                                </div>
+
+                                <div class="dropdown-menu" id="fromAccountMenu">
+                                    <div class="dropdown-item active" onclick="selectFromAccount(this)">
+                                        Cash
+                                    </div>
+
+                                    <div class="dropdown-item" onclick="selectFromAccount(this)">
+                                        Bank
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="field hidden" id="transferToField">
+                            <label>To Account</label>
+
+                            <div class="custom-dropdown">
+
+                                <div class="dropdown-selected" onclick="toggleToDropdown()">
+
+                                    <span id="selectedToAccount">Bank</span>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+
+                                </div>
+
+                                <div class="dropdown-menu" id="toAccountMenu">
+                                    <div class="dropdown-item active" onclick="selectToAccount(this)">
+                                        Bank
+                                    </div>
+
+                                    <div class="dropdown-item" onclick="selectToAccount(this)">
+                                        Cash
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="field" id="field1">
+                            <label id="field1Label">Category</label>
+
+
+                            <div class="custom-dropdown" id="categoryDropdown">
+
+                                <div class="dropdown-selected" onclick="toggleDropdown()">
+                                    <span id="selectedCategory">Food</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                                        aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </div>
+
+                                <div class="dropdown-menu" id="dropdownMenu">
+                                    <!-- Category drop down options comes for modal.js "loadExpenseCategories()"  -->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="field" id="accountField">
+                            <label>Account</label>
+
+                            <div class="custom-dropdown" id="accountDropdown">
+
+                                <div class="dropdown-selected" onclick="toggleAccountDropdown()">
+                                    <span id="selectedAccount">Cash</span>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </div>
+
+                                <div class="dropdown-menu" id="accountMenu">
+                                    <div class="dropdown-item active" onclick="selectAccount(this)">Cash</div>
+                                    <div class="dropdown-item" onclick="selectAccount(this)">Bank</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="field full">
+                            <label>Note (optional)</label>
+                            <input type="text" placeholder="Add a note..." />
                         </div>
 
                     </div>
-                </div>
 
-                <div class="field" id="accountField">
-                    <label>Account</label>
-
-                    <div class="custom-dropdown" id="accountDropdown">
-
-                        <div class="dropdown-selected" onclick="toggleAccountDropdown()">
-                            <span id="selectedAccount">Cash</span>
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="m6 9 6 6 6-6"></path>
-                            </svg>
-                        </div>
-
-                        <div class="dropdown-menu" id="accountMenu">
-                            <div class="dropdown-item active" onclick="selectAccount(this)">Cash</div>
-                            <div class="dropdown-item" onclick="selectAccount(this)">Bank</div>
-                        </div>
-
+                    <div class="modal-footer">
+                        <button type="button" class="cancel" onclick="closeModal(event)">Cancel</button>
+                        <button type="submit" id="submit" class="submit">Add transaction</button>
                     </div>
+
                 </div>
-
-                <div class="field full">
-                    <label>Note (optional)</label>
-                    <input type="text" placeholder="Add a note..." />
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="cancel" onclick="closeModal(event)">Cancel</button>
-                <button type="submit" id="submit" class="submit">Add transaction</button>
-            </div>
-
-        </div>
-    </form>
+            </form>
 
 
-    <!-- Toster Message -->
-    <div id="toast-container"></div>
+            <!-- Toster Message -->
+            <div id="toast-container"></div>
 
-    <!-- JS Scripts -->
-    <script type="module" src="./js/app.js"></script>
-    <script src="./js/modal.js"></script>
-    <script src="/js/navigation.js"></script>
-    <script src="./js/notifications.js"></script>
+            <!-- JS Scripts -->
+            <script type="module" src="./js/app.js"></script>
+            <script src="./js/modal.js"></script>
+            <script type="module" src="/js/navigation.js"></script>
+            <script src="./js/notifications.js"></script>
 </body>
 
 </html>
