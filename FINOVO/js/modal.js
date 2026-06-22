@@ -35,7 +35,7 @@ function openModal() {
         { opacity: 1, duration: 0.2 }
     );
 
-    gsap.fromTo(".modal-box",
+    gsap.fromTo(".modal",
         { y: 50, opacity: 0, scale: 0.95 },
         { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }
     );
@@ -44,7 +44,7 @@ function openModal() {
 // close modal
 function closeModal() {
 
-    gsap.to(".modal-box", {
+    gsap.to(".modal", {
         y: 30,
         opacity: 0,
         scale: 0.95,

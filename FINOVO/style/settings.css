@@ -1,7 +1,4 @@
-
-/* ============================= */
 /* Settings CSS Style Sheet (THEME RESPONSIVE) */
-/* ============================= */
 
 .setting-tab-title {
     font-size: 2.25rem;
@@ -16,9 +13,7 @@
     margin-top: 0.25rem;
 }
 
-/* ============================= */
 /* CARD */
-/* ============================= */
 
 .setting-tab-Preferences-card {
     background: var(--surface);
@@ -37,9 +32,7 @@
     font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ============================= */
 /* THEME + CURRENCY ROW */
-/* ============================= */
 
 .setting-tab-Preferences-card-theme-row {
     display: flex;
@@ -61,6 +54,10 @@
     font-size: 0.75rem;
     color: var(--text-muted);
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.dropdown-item.active {
+    color: #000;
 }
 
 /* SWITCHER */
@@ -95,21 +92,21 @@
 }
 
 /* currency dropdown */
-.custom-dropdown {
+.settings-page .custom-dropdown {
     display: inline-flex;
     align-items: center;
     border-radius: 12px;
     padding: 0.4rem 0.6rem;
 }
 
-.dropdown-selected {
+.settings-page .dropdown-selected {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: var(--text);
 }
 
-#selectedCurrency {
+.settings-page #selectedCurrency {
     padding-right: 0.5rem;
     color: var(--text);
 }
@@ -121,9 +118,7 @@
     color: var(--text);
 }
 
-/* ============================= */
 /* BACKUP BUTTONS */
-/* ============================= */
 
 .btn-container {
     display: flex;
@@ -185,9 +180,7 @@
     color: var(--text);
 }
 
-/* ============================= */
 /* RESPONSIVE */
-/* ============================= */
 
 /* Tablets */
 @media (max-width: 1023px) {
@@ -272,7 +265,7 @@
         flex-wrap: wrap;
     }
 
-    .custom-dropdown {
+    .settings-page .custom-dropdown {
         width: auto;
         max-width: 100%;
     }

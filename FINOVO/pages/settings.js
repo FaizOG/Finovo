@@ -48,7 +48,7 @@ function createPreferencesSection(){
                                 <p class="setting-tab-theme-description">(Used to format all amounts)</p>
                             </div>
 
-                            <div class="setting-tab-theme-switcher">
+                            <div class="setting-tab-theme-switcher settings-page">
                                 <div class="custom-dropdown" id="currencyDropdown">
                                     <div class="dropdown-selected" onclick="toggleCurrencyDropdown()">
                                         <span id="selectedCurrency">&#8377;</span>
@@ -59,7 +59,6 @@ function createPreferencesSection(){
                                             <path d="m6 9 6 6 6-6"></path>
                                         </svg>
                                     </div>
-
                                     <div class="dropdown-menu" id="currencyDropdownMenu">
                                         <div class="dropdown-item active">&#8377;</div>
                                         <div class="dropdown-item">&#36;</div>

@@ -1,7 +1,7 @@
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0, 0, 0, 0.55);
     display: none;
     justify-content: center;
     align-items: center;
@@ -18,7 +18,7 @@
     color: var(--text);
     border-radius: 24px;
     padding: 1.5rem;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
 }
 
 /* HEADER */
@@ -130,7 +130,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     padding: 0.4rem;
     display: none;
 }
@@ -165,6 +165,14 @@
     background: transparent;
     border: none;
     cursor: pointer;
+    color: var(--text);
+    opacity: 0.7;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.cancel:hover {
+    opacity: 1;
 }
 
 .submit {
@@ -179,14 +187,31 @@
 }
 
 /* New Code */
-.hidden{
-    display:none !important;
+.hidden {
+    display: none !important;
 }
 
-.modal-overlay{
-    display:none;
+.modal-overlay {
+    display: none;
 }
 
-.modal-overlay.active{
-    display:flex;
+.modal-overlay.active {
+    display: flex;
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal {
+        width: 92%;
+        padding: 1rem;
+        border-radius: 18px;
+    }
+
+    .dropdown-selected,
+    .field input {
+        font-size: 14px;
+    }
 }
