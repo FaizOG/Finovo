@@ -102,12 +102,12 @@ async function loadPage(page) {
       pageElement = module.render();
       content.appendChild(pageElement);
 
-    // ✅ CASE 2: default export function
+      // ✅ CASE 2: default export function
     } else if (typeof module.default === "function") {
       pageElement = module.default();
       content.appendChild(pageElement);
 
-    // ✅ CASE 3: default with mount(container)
+      // ✅ CASE 3: default with mount(container)
     } else if (module.default?.mount) {
       module.default.mount(content);
       pageElement = content;
@@ -134,6 +134,147 @@ async function loadPage(page) {
   }
 }
 
+function animateTabIcon(tab, page) {
+  const svg = tab.querySelector("svg");
+  if (!svg) return;
+
+  gsap.killTweensOf(svg);
+
+  const reset = {
+    clearProps: "transform",
+    transformOrigin: "50% 50%"
+  };
+
+  switch (page) {
+
+    // ================= DASHBOARD =================
+    case "dashboard":
+      // subtle shuffle shake
+      gsap.fromTo(svg,
+        { x: -2, y: -2, rotation: -2 },
+        {
+          x: 2,
+          y: 2,
+          rotation: 2,
+          duration: 0.08,
+          repeat: 8,
+          yoyo: true,
+          ease: "none",
+          ...reset
+        }
+      );
+      break;
+
+    // ================= TRANSACTIONS =================
+    case "transactions":
+      // arrows opposite direction (targets all paths)
+      gsap.fromTo(svg.querySelectorAll("path"),
+        { x: -6 },
+        {
+          x: 6,
+          duration: 0.15,
+          stagger: 0.05,
+          repeat: 4,
+          yoyo: true,
+          ease: "power1.inOut",
+          ...reset
+        }
+      );
+      break;
+
+    // ================= BUDGET =================
+    case "budgets":
+      // wallet + popping currency note effect
+      gsap.fromTo(svg,
+        { scale: 1 },
+        {
+          scale: 1.08,
+          duration: 0.2,
+          yoyo: true,
+          repeat: 1,
+          ease: "back.out(2)",
+          ...reset
+        }
+      );
+
+      // fake “note pop out” using a pulse
+      gsap.fromTo(svg,
+        { y: 0 },
+        {
+          y: -4,
+          duration: 0.2,
+          yoyo: true,
+          repeat: 1,
+          ease: "power2.out"
+        }
+      );
+      break;
+
+    // ================= ANALYTICS =================
+    case "analytics":
+      // graph pulse up/down (scaleY)
+      gsap.fromTo(svg,
+        { scaleY: 1 },
+        {
+          scaleY: 1.25,
+          transformOrigin: "bottom",
+          duration: 0.15,
+          repeat: 6,
+          yoyo: true,
+          ease: "power1.inOut",
+          ...reset
+        }
+      );
+      break;
+
+    // ================= GOALS =================
+    case "goals":
+      // dart hit → zoom in/out shake
+      gsap.fromTo(svg,
+        { scale: 1 },
+        {
+          scale: 1.25,
+          duration: 0.12,
+          repeat: 4,
+          yoyo: true,
+          ease: "power2.inOut",
+          ...reset
+        }
+      );
+      break;
+
+    // ================= ACCOUNTS =================
+    case "accounts":
+      // pig run = bounce zoom
+      gsap.fromTo(svg,
+        { scale: 1 },
+        {
+          scale: 1.18,
+          duration: 0.12,
+          repeat: 5,
+          yoyo: true,
+          ease: "sine.inOut",
+          ...reset
+        }
+      );
+      break;
+
+    // ================= SETTINGS =================
+    case "settings":
+      // smooth full rotation
+      gsap.fromTo(svg,
+        { rotate: 0 },
+        {
+          rotate: 360,
+          duration: 1,
+          ease: "power2.inOut",
+          ...reset
+        }
+      );
+      break;
+  }
+}
+
 // Initialize navigation
 function initNavigation() {
   const items = document.querySelectorAll(".nav-item");
@@ -143,13 +284,16 @@ function initNavigation() {
       e.preventDefault();
 
       const page = item.dataset.page;
-      if (page) {
-        loadPage(page);
-      }
+      if (!page) return;
+
+      const tab = item.querySelector(".asidebar-tab");
+
+      animateTabIcon(tab, page); // 🎯 animation
+
+      loadPage(page);
     });
   });
 
-  // default page
   loadPage("dashboard");
 }
 

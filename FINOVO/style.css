@@ -132,6 +132,11 @@ nav {
     transition: 0.2s;
 }
 
+.asidebar-tab svg {
+  transform-origin: center;
+  will-change: transform;
+}
+
 .asidebar-tab:hover {
     background: var(--hover);
 }
@@ -144,6 +149,11 @@ nav {
 .asidebar-active p,
 .asidebar-active svg {
     color: #000;
+}
+
+.asidebar-active svg {
+  filter: drop-shadow(0 0 6px rgba(215, 240, 0, 0.6));
+  transform: scale(1.1);
 }
 
 .asidebar-active:hover {
