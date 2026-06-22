@@ -29,11 +29,36 @@ function openModal() {
 
     document.querySelector("#dateInput").value =
         new Date().toISOString().split("T")[0];
+
+    gsap.fromTo(modal,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.2 }
+    );
+
+    gsap.fromTo(".modal-box",
+        { y: 50, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }
+    );
 }
 
 // close modal
 function closeModal() {
-    modal.classList.remove("active");
+
+    gsap.to(".modal-box", {
+        y: 30,
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.25,
+        ease: "power2.in"
+    });
+
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
+            modal.classList.remove("active");
+        }
+    });
 }
 
 
