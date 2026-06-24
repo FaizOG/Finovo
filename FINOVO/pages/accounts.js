@@ -1,3 +1,5 @@
+import { getData, updateData } from "../js/core/store.js";
+
 function createAccountPageHeader() {
     const section = document.createElement("section");
 
@@ -201,20 +203,36 @@ function initAccountFormSubmit() {
 
         const name = document.querySelector(".account-form-grid input[type='text']").value;
         const type = document.querySelector("[data-selected]").innerText;
-        const openingBalance = document.querySelector(".account-form-grid input[type='number']").value;
+        const openingBalance = Number(
+            document.querySelector(".account-form-grid input[type='number']").value
+        );
 
         if (!name.trim()) return;
 
-        const card = createAccountCard({
+        // 1. Create new account object
+        const newAccount = {
+            id: Date.now(),
             name,
             type,
-            openingBalance
-        });
+            openingBalance,
+            currentBalance: openingBalance
+        };
 
+        // 2. Load existing data
+        const data = getData();
+
+        // 3. Add new account
+        data.accounts.push(newAccount);
+
+        // 4. Save updated data
+        updateData({ accounts: data.accounts });
+
+        // 5. Update UI
+        const card = createAccountCard(newAccount);
         accountCardSection.appendChild(card);
 
+        // 6. Close modal + reset form
         closeAccountPopUp();
-
         document.querySelector(".account-form-grid").reset();
     });
 }

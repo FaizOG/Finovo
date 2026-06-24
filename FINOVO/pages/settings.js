@@ -1,3 +1,5 @@
+import { getData, updateData } from "../js/core/store.js";
+
 function createPreferencesSection(){
   const section = document.createElement("section");
   // section.className = "settings-card";
@@ -161,6 +163,11 @@ function selectCurrency(el) {
 
     document.getElementById("currencyDropdownMenu").classList.remove("active");
 
+    // SAVE TO STORAGE
+    updateData({
+        settings: { currency: symbol }
+    });
+
     updateCurrencyUI(symbol);
 }
 
@@ -206,41 +213,92 @@ function updateCurrencyUI(symbol) {
 
 
 // Light - Dark mode code
-function initTheme(container) {
+
+// function initTheme(container) {
+//   const darkBtn = container.querySelector("#darkBtn");
+//   const lightBtn = container.querySelector("#lightBtn");
+//   const body = document.body;
+
+//   if (!darkBtn || !lightBtn) return;
+
+//   // Get theme from store
+//   const data = getData();
+//   const savedTheme = data.settings.theme || "dark";
+
+//   // Apply theme on load
+//   applyTheme(savedTheme);
+
+//   // Click events
+//   darkBtn.addEventListener("click", () => {
+//     updateData({ settings: { theme: "dark" } });
+//     applyTheme("dark");
+//   });
+
+//   lightBtn.addEventListener("click", () => {
+//     updateData({ settings: { theme: "light" } });
+//     applyTheme("light");
+//   });
+
+//   // Apply theme + update UI
+//   function applyTheme(theme) {
+//     // 1. Update body class
+//     if (theme === "light") {
+//       body.classList.add("light");
+//     } else {
+//       body.classList.remove("light");
+//     }
+
+//     // 2. Update active buttons
+//     setActive(theme);
+//   }
+
+//   // ACTIVE BUTTON STATE (always synced with store)
+//   function setActive(theme) {
+//     darkBtn.classList.toggle("active", theme === "dark");
+//     lightBtn.classList.toggle("active", theme === "light");
+//   }
+// }
+
+export function initTheme(container) {
   const darkBtn = container.querySelector("#darkBtn");
   const lightBtn = container.querySelector("#lightBtn");
   const body = document.body;
 
   if (!darkBtn || !lightBtn) return;
 
-  if (localStorage.getItem("theme") === "light") {
-    body.classList.add("light");
-    setActive("light");
-  } else {
-    setActive("dark");
-  }
+  // APPLY CURRENT STORE STATE
+  syncThemeUI();
 
+  // CLICK EVENTS
   darkBtn.addEventListener("click", () => {
-    body.classList.remove("light");
-    localStorage.setItem("theme", "dark");
-    setActive("dark");
+    updateData({ settings: { theme: "dark" } });
+    syncThemeUI();
   });
 
   lightBtn.addEventListener("click", () => {
-    body.classList.add("light");
-    localStorage.setItem("theme", "light");
-    setActive("light");
+    updateData({ settings: { theme: "light" } });
+    syncThemeUI();
   });
 
-  function setActive(mode) {
-    if (mode === "light") {
-      lightBtn.classList.add("active");
-      darkBtn.classList.remove("active");
+  // 🔥 THIS IS THE KEY FUNCTION
+  function syncThemeUI() {
+    const data = getData();
+    const theme = data.settings.theme || "dark";
+
+    // apply body class
+    if (theme === "light") {
+      body.classList.add("light");
     } else {
-      darkBtn.classList.add("active");
-      lightBtn.classList.remove("active");
+      body.classList.remove("light");
     }
+
+    // update active buttons
+    darkBtn.classList.toggle("active", theme === "dark");
+    lightBtn.classList.toggle("active", theme === "light");
   }
+
+  // 🔥 GLOBAL SYNC LISTENER (IMPORTANT)
+  window.addEventListener("theme-change", syncThemeUI);
 }
 
 
@@ -249,7 +307,6 @@ export default {
     container.innerHTML = `<h2 class="setting-tab-title">Settings</h2>
                     <p class="setting-tab-subtitle">Preferences, recurring entries and backups</p>
     `;
-
     container.appendChild(createPreferencesSection());
     container.appendChild(createBackAndDataSection());
     initTheme(container);
