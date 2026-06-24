@@ -41,60 +41,67 @@ function createAccountPageHeader() {
 function createCardSection() {
     const section = document.createElement("section");
     section.className = "accounts-page-card-section";
-    section.innerHTML = `
-    <div class="account-details-card">
-                        <div class="account-card-info">
-                            <div class="account-icon-name-and-type">
-                                <div class="account-icon-bg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-landmark size-5"
-                                        aria-hidden="true">
-                                        <path d="M10 18v-7"></path>
-                                        <path
-                                            d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z">
-                                        </path>
-                                        <path d="M14 18v-7"></path>
-                                        <path d="M18 18v-7"></path>
-                                        <path d="M3 22h18"></path>
-                                        <path d="M6 18v-7"></path>
-                                    </svg>
-                                </div>
-                                <div class="account-name-and-type">
-                                    <p class="account-name">BOB</p>
-                                    <p class="account-type">Bank</p>
-                                </div>
-                            </div>
-                            <div class="card-delete-svg-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-trash2 lucide-trash-2 size-4"
-                                    aria-hidden="true">
-                                    <path d="M10 11v6"></path>
-                                    <path d="M14 11v6"></path>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                    <path d="M3 6h18"></path>
-                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-current-amount">
-                            <span class="amount">
-                                <span class="currency-symbol">₹</span>
-                                500.00
-                            </span>
-                        </div>
-                        <div class="card-opening-balance">
-                            <span class="opening-balance">
-                                Opening
-                                <span class="currency-symbol">₹</span>
-                                <span class="amount">500.00</span>
-                            </span>
-                        </div>
-                    </div>
-    `
     return section;
 }
+
+function createAccountCard({ name, type, openingBalance }) {
+    const card = document.createElement("div");
+    card.className = "account-details-card";
+
+    card.innerHTML = `
+        <div class="account-card-info">
+            <div class="account-icon-name-and-type">
+                <div class="account-icon-bg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-landmark size-5" aria-hidden="true">
+                        <path d="M10 18v-7"></path>
+                        <path
+                        d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z">
+                        </path>
+                        <path d="M14 18v-7"></path>
+                        <path d="M18 18v-7"></path>
+                        <path d="M3 22h18"></path>
+                        <path d="M6 18v-7"></path>
+                    </svg>
+                </div>
+
+                <div class="account-name-and-type">
+                    <p class="account-name">${name}</p>
+                    <p class="account-type">${type}</p>
+                </div>
+            </div>
+
+            <div class="card-delete-svg-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-trash2 lucide-trash-2 size-4" aria-hidden="true">
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="card-current-amount">
+            <span class="amount">₹${openingBalance}</span>
+        </div>
+
+        <div class="card-opening-balance">
+            Opening ₹${openingBalance}
+        </div>
+    `;
+    
+    notify("account", "create");
+    return card;
+    
+}
+
+
+
+let accountCardSection = null;
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenTransferPopUp() {
@@ -149,25 +156,18 @@ window.closeTransferPopUp = closeTransferPopUp;
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenAccountPopUp() {
-    document
-        .querySelector(".accounts-page-new-account-btn")
+    document.querySelector(".accounts-page-new-account-btn")
         .addEventListener("click", () => {
-
             const overlay = document.querySelector(".account-modal-overlay");
             const modal = document.querySelector(".account-modal");
 
             overlay.classList.add("show-pop-up");
 
-            gsap.fromTo(
-                overlay,
-                { opacity: 0 },
-                { opacity: 1, duration: 0.2 }
-            );
+            gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-            gsap.fromTo(
-                modal,
+            gsap.fromTo(modal,
                 { scale: 0.9, y: 20, opacity: 0 },
-                { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }
+                { scale: 1, y: 0, opacity: 1, duration: 0.3 }
             );
         });
 }
@@ -181,8 +181,7 @@ function closeAccountPopUp() {
         scale: 0.9,
         y: 20,
         opacity: 0,
-        duration: 0.2,
-        ease: "power2.in"
+        duration: 0.2
     });
 
     gsap.to(overlay, {
@@ -194,6 +193,34 @@ function closeAccountPopUp() {
     });
 }
 
+function initAccountFormSubmit() {
+    const submitBtn = document.querySelector(".account-modal .submit");
+
+    submitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const name = document.querySelector(".account-form-grid input[type='text']").value;
+        const type = document.querySelector("[data-selected]").innerText;
+        const openingBalance = document.querySelector(".account-form-grid input[type='number']").value;
+
+        if (!name.trim()) return;
+
+        const card = createAccountCard({
+            name,
+            type,
+            openingBalance
+        });
+
+        accountCardSection.appendChild(card);
+
+        closeAccountPopUp();
+
+        document.querySelector(".account-form-grid").reset();
+    });
+}
+
+window.closeAccountPopUp = closeAccountPopUp;
+
 // make it accessible from HTML onclick
 window.closeAccountPopUp = closeAccountPopUp;
 
@@ -202,12 +229,12 @@ export default {
     mount(container) {
 
         container.appendChild(createAccountPageHeader());
-        container.appendChild(createCardSection());
 
-        OpenTransferPopUp();
-        closeTransferPopUp();
+        accountCardSection = createCardSection();
+        container.appendChild(accountCardSection);
+
         OpenAccountPopUp();
         closeAccountPopUp();
-
+        initAccountFormSubmit();
     }
 };

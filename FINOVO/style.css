@@ -61,7 +61,7 @@ body.light {
     --border: #dddddd;
     --hover: #eeeeee;
 
-    --shadow: 0 15px 35px rgba(0, 0, 0, .12);
+    --shadow: 5px 15px 45px rgba(0, 0, 0, .12);
 }
 
 /* ================= APP LAYOUT ================= */
@@ -88,7 +88,7 @@ aside {
     height: calc(100vh - 2rem);
     gap: 1.5rem;
     /* box-shadow: 20px 8px 50px rgba(0, 0, 0, 0.3); */
-    box-shadow: none;
+    box-shadow: var(--shadow);
     flex-shrink: 0;
 }
 
@@ -437,41 +437,6 @@ input,
 
 
 /* Toster Message */
-/* #toast-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 320px;
-
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 10px;
-
-    z-index: 99999;
-}
-
-.toast {
-    position: relative;
-    width: 100%;
-    padding: 0.85rem 1rem;
-    border-radius: 14px;
-
-    background: #e9fff1;
-    border: 1px solid #b7f5c8;
-    color: #0a3d1f;
-
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-
-    transition: transform 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
-} */
-
-/* ERROR TYPE */
-/* .toast.error {
-    background: #ff4d4d;
-    color: #fff;
-} */
-
-
 #toast-container {
     position: absolute;
     top: 80px;
