@@ -35,3 +35,11 @@ export function updateData(partial) {
 
   saveData(updated);
 }
+
+
+export function changedSymbol(){
+  const data = localStorage.getItem(STORAGE_KEY);
+  // console.log(JSON.parse(data).settings.currency);
+  return JSON.parse(data).settings.currency; 
+  
+}

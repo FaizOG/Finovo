@@ -1,10 +1,10 @@
 import { getData, updateData } from "../js/core/store.js";
 
-function createPreferencesSection(){
-  const section = document.createElement("section");
-  // section.className = "settings-card";
+function createPreferencesSection() {
+    const section = document.createElement("section");
+    // section.className = "settings-card";
 
-  section.innerHTML = `
+    section.innerHTML = `
   <div class="setting-tab-Preferences-card">
                         <h4 class="setting-tab-Preferences-card-title">Preferences</h4>
 
@@ -74,15 +74,15 @@ function createPreferencesSection(){
                     </div>
   `;
 
-  return section;
+    return section;
 }
 
 
-function createBackAndDataSection(){
-  const section = document.createElement("section");
-  // section.className = "settings-card";
+function createBackAndDataSection() {
+    const section = document.createElement("section");
+    // section.className = "settings-card";
 
-  section.innerHTML = `
+    section.innerHTML = `
   <div class="setting-tab-Preferences-card">
                         <h4 class="setting-tab-Preferences-card-title">Backup & data</h4>
                         <div class="btn-container">
@@ -140,7 +140,7 @@ function createBackAndDataSection(){
                         </div>
                     </div>
   `
-  return section;
+    return section;
 }
 
 // OPEN / CLOSE
@@ -194,122 +194,113 @@ let currencySymbol = document.querySelector("#selectedCurrency");
 // currencySymbol.innerText
 
 
-function updateCurrencyUI(symbol) {
+// function updateCurrencyUI(symbol) {
 
-    // update currency display everywhere
+//     // update currency display everywhere
+//     document.querySelectorAll(".currency-symbol").forEach(el => {
+//         el.textContent = symbol;
+//     });
+
+//     // update sidebar total (if it exists)
+//     const totalEl = document.querySelector(".total__aside_balance h3 span");
+
+//     if (totalEl) {
+//         totalEl.textContent = symbol;
+//     }
+// }
+
+import { changedSymbol } from "../js/core/store.js"
+function updateCurrencyUI() {
+    const totalEl = document.querySelector(".total__aside_balance h3 span").innerHTML = changedSymbol();
+}
+
+function initCurrencyUI() {
+    const data = getData();
+    const symbol = data?.settings?.currency || "₹";
+
+    // set dropdown selected text
+    const selected = document.getElementById("selectedCurrency");
+    if (selected) {
+        selected.textContent = symbol;
+    }
+
+    // mark active item
+    document.querySelectorAll("#currencyDropdownMenu .dropdown-item")
+        .forEach(el => {
+            el.classList.toggle("active", el.textContent === symbol);
+        });
+
+    // update all UI places
     document.querySelectorAll(".currency-symbol").forEach(el => {
         el.textContent = symbol;
     });
-
-    // update sidebar total (if it exists)
-    const totalEl = document.querySelector(".total__aside_balance h3 span");
-
-    if (totalEl) {
-        totalEl.textContent = symbol;
-    }
 }
 
 
 
 
 // Light - Dark mode code
-
-// function initTheme(container) {
-//   const darkBtn = container.querySelector("#darkBtn");
-//   const lightBtn = container.querySelector("#lightBtn");
-//   const body = document.body;
-
-//   if (!darkBtn || !lightBtn) return;
-
-//   // Get theme from store
-//   const data = getData();
-//   const savedTheme = data.settings.theme || "dark";
-
-//   // Apply theme on load
-//   applyTheme(savedTheme);
-
-//   // Click events
-//   darkBtn.addEventListener("click", () => {
-//     updateData({ settings: { theme: "dark" } });
-//     applyTheme("dark");
-//   });
-
-//   lightBtn.addEventListener("click", () => {
-//     updateData({ settings: { theme: "light" } });
-//     applyTheme("light");
-//   });
-
-//   // Apply theme + update UI
-//   function applyTheme(theme) {
-//     // 1. Update body class
-//     if (theme === "light") {
-//       body.classList.add("light");
-//     } else {
-//       body.classList.remove("light");
-//     }
-
-//     // 2. Update active buttons
-//     setActive(theme);
-//   }
-
-//   // ACTIVE BUTTON STATE (always synced with store)
-//   function setActive(theme) {
-//     darkBtn.classList.toggle("active", theme === "dark");
-//     lightBtn.classList.toggle("active", theme === "light");
-//   }
-// }
-
 export function initTheme(container) {
-  const darkBtn = container.querySelector("#darkBtn");
-  const lightBtn = container.querySelector("#lightBtn");
-  const body = document.body;
+    const darkBtn = container.querySelector("#darkBtn");
+    const lightBtn = container.querySelector("#lightBtn");
+    const body = document.body;
 
-  if (!darkBtn || !lightBtn) return;
+    if (!darkBtn || !lightBtn) return;
 
-  // APPLY CURRENT STORE STATE
-  syncThemeUI();
-
-  // CLICK EVENTS
-  darkBtn.addEventListener("click", () => {
-    updateData({ settings: { theme: "dark" } });
+    // APPLY CURRENT STORE STATE
     syncThemeUI();
-  });
 
-  lightBtn.addEventListener("click", () => {
-    updateData({ settings: { theme: "light" } });
-    syncThemeUI();
-  });
+    // CLICK EVENTS
+    darkBtn.addEventListener("click", () => {
+        updateData({ settings: { theme: "dark" } });
+        syncThemeUI();
+    });
 
-  // 🔥 THIS IS THE KEY FUNCTION
-  function syncThemeUI() {
-    const data = getData();
-    const theme = data.settings.theme || "dark";
+    lightBtn.addEventListener("click", () => {
+        updateData({ settings: { theme: "light" } });
+        syncThemeUI();
+    });
 
-    // apply body class
-    if (theme === "light") {
-      body.classList.add("light");
-    } else {
-      body.classList.remove("light");
+    // 🔥 THIS IS THE KEY FUNCTION
+    function syncThemeUI() {
+        const data = getData();
+        const theme = data.settings.theme || "dark";
+
+        // apply body class
+        if (theme === "light") {
+            body.classList.add("light");
+        } else {
+            body.classList.remove("light");
+        }
+
+        // update active buttons
+        darkBtn.classList.toggle("active", theme === "dark");
+        lightBtn.classList.toggle("active", theme === "light");
     }
 
-    // update active buttons
-    darkBtn.classList.toggle("active", theme === "dark");
-    lightBtn.classList.toggle("active", theme === "light");
-  }
-
-  // 🔥 GLOBAL SYNC LISTENER (IMPORTANT)
-  window.addEventListener("theme-change", syncThemeUI);
+    // 🔥 GLOBAL SYNC LISTENER (IMPORTANT)
+    window.addEventListener("theme-change", syncThemeUI);
 }
 
 
+
 export default {
-  mount(container) {
-    container.innerHTML = `<h2 class="setting-tab-title">Settings</h2>
-                    <p class="setting-tab-subtitle">Preferences, recurring entries and backups</p>
+    mount(container) {
+    container.innerHTML = `
+        <h2 class="setting-tab-title">Settings</h2>
+        <p class="setting-tab-subtitle">Preferences, recurring entries and backups</p>
     `;
+
     container.appendChild(createPreferencesSection());
     container.appendChild(createBackAndDataSection());
+
     initTheme(container);
-    initCurrencyDropdown();
-  }
+    initCurrencyDropdown(); // ✅ now DOM exists
+
+    // window.addEventListener("DOMContentLoaded", () => {
+    //     console.log(changedSymbol());
+    // });
+    initCurrencyUI();
+    updateCurrencyUI();
+}
 };
