@@ -187,31 +187,14 @@ window.selectCurrency = selectCurrency;
 
 
 let currencySymbol = document.querySelector("#selectedCurrency");
-// console.log(currencySymbol.innerText);
 
-
-// let asideBarTotoal = document.querySelector(".total__aside_balance h3 span").innerHTML = currencySymbol.innerText;
-// currencySymbol.innerText
-
-
-// function updateCurrencyUI(symbol) {
-
-//     // update currency display everywhere
-//     document.querySelectorAll(".currency-symbol").forEach(el => {
-//         el.textContent = symbol;
-//     });
-
-//     // update sidebar total (if it exists)
-//     const totalEl = document.querySelector(".total__aside_balance h3 span");
-
-//     if (totalEl) {
-//         totalEl.textContent = symbol;
-//     }
-// }
 
 import { changedSymbol } from "../js/core/store.js"
 function updateCurrencyUI() {
-    const totalEl = document.querySelector(".total__aside_balance h3 span").innerHTML = changedSymbol();
+    const totalEl = document.querySelector(".total__aside_balance h3 span");
+    if (!totalEl) return;
+
+    totalEl.textContent = changedSymbol();
 }
 
 function initCurrencyUI() {

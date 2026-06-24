@@ -40,6 +40,23 @@ export function updateData(partial) {
 export function changedSymbol(){
   const data = localStorage.getItem(STORAGE_KEY);
   // console.log(JSON.parse(data).settings.currency);
-  return JSON.parse(data).settings.currency; 
+  return JSON.parse(data).settings.currency || "₹";
   
 }
+
+
+function updateCurrencyUI() {
+    const symbol = changedSymbol();
+
+    const totalEl = document.querySelector(".total__aside_balance h3 span");
+
+    if (totalEl) {
+        totalEl.textContent = symbol;
+    }
+
+    document.querySelectorAll(".currency-symbol").forEach(el => {
+        el.textContent = symbol;
+    });
+}
+
+updateCurrencyUI();

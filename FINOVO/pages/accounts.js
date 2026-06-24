@@ -46,9 +46,15 @@ function createCardSection() {
     return section;
 }
 
+function getCurrencySymbol() {
+    const data = getData();
+    return data?.settings?.currency || "₹";
+}
+
 function createAccountCard({ name, type, openingBalance }) {
     const card = document.createElement("div");
     card.className = "account-details-card";
+    const symbol = getCurrencySymbol();
 
     card.innerHTML = `
         <div class="account-card-info">
@@ -88,17 +94,17 @@ function createAccountCard({ name, type, openingBalance }) {
         </div>
 
         <div class="card-current-amount">
-            <span class="amount">₹${openingBalance}</span>
+            <span class="amount">${symbol} ${openingBalance}</span>
         </div>
 
         <div class="card-opening-balance">
-            Opening ₹${openingBalance}
+            Opening ${symbol} ${openingBalance}
         </div>
     `;
-    
+
     notify("account", "create");
     return card;
-    
+
 }
 
 
