@@ -1,6 +1,5 @@
 const STORAGE_KEY = "appData";
 
-// Default structure (VERY IMPORTANT)
 const defaultData = {
   accounts: [],
   settings: {
@@ -8,6 +7,10 @@ const defaultData = {
     currency: "₹"
   }
 };
+
+if (!localStorage.getItem(STORAGE_KEY)) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+}
 
 // 1. GET data
 export function getData() {
