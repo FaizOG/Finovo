@@ -15,7 +15,7 @@ function initMobileSidebar() {
 
   // ONLY small mobile
   function isSmallMobile() {
-    return window.matchMedia("(max-width: 639px)").matches;
+    return window.matchMedia("(max-width: 1023px)").matches;
   }
 
   let isOpen = false;
