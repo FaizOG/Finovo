@@ -51,9 +51,10 @@ function getCurrencySymbol() {
     return data?.settings?.currency || "₹";
 }
 
-function createAccountCard({ name, type, openingBalance }) {
+function createAccountCard({id, name, type, openingBalance }) {
     const card = document.createElement("div");
     card.className = "account-details-card";
+    card.dataset.id = id;
     const symbol = getCurrencySymbol();
 
     card.innerHTML = `
@@ -80,7 +81,7 @@ function createAccountCard({ name, type, openingBalance }) {
                 </div>
             </div>
 
-            <div class="card-delete-svg-container">
+            <div class="card-delete-svg-container delete-account">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-trash2 lucide-trash-2 size-4" aria-hidden="true">
@@ -102,7 +103,27 @@ function createAccountCard({ name, type, openingBalance }) {
         </div>
     `;
 
-    notify("account", "create");
+    const deleteBtn = card.querySelector(".delete-account");
+
+deleteBtn.addEventListener("click", () => {
+    const accountId = Number(card.dataset.id);
+
+    // 1. remove from DOM
+    card.remove();
+
+    // 2. remove from storage
+    const data = getData();
+    const accounts = data.accounts || [];
+
+    const updatedAccounts = accounts.filter(acc => acc.id !== accountId);
+
+    updateData({ accounts: updatedAccounts });
+
+    // optional toast
+    notify("account", "delete");
+});
+
+    // notify("account", "create");
     return card;
 
 }
@@ -215,7 +236,6 @@ function initAccountFormSubmit() {
 
         if (!name.trim()) return;
 
-        // 1. Create new account object
         const newAccount = {
             id: Date.now(),
             name,
@@ -224,22 +244,31 @@ function initAccountFormSubmit() {
             currentBalance: openingBalance
         };
 
-        // 2. Load existing data
         const data = getData();
+        const accounts = data.accounts || [];
 
-        // 3. Add new account
-        data.accounts.push(newAccount);
+        accounts.push(newAccount);
+        updateData({ accounts });
 
-        // 4. Save updated data
-        updateData({ accounts: data.accounts });
-
-        // 5. Update UI
+        // UI update
         const card = createAccountCard(newAccount);
         accountCardSection.appendChild(card);
 
-        // 6. Close modal + reset form
+        // ✅ RIGHT PLACE FOR TOAST
+        notify("account", "create");
+
         closeAccountPopUp();
         document.querySelector(".account-form-grid").reset();
+    });
+}
+
+function renderExistingAccounts() {
+    const data = getData();
+    const accounts = data?.accounts || [];
+
+    accounts.forEach(account => {
+        const card = createAccountCard(account);
+        accountCardSection.appendChild(card);
     });
 }
 
@@ -256,6 +285,8 @@ export default {
 
         accountCardSection = createCardSection();
         container.appendChild(accountCardSection);
+
+        renderExistingAccounts();
 
         OpenAccountPopUp();
         closeAccountPopUp();
