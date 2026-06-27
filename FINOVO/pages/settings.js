@@ -1,4 +1,4 @@
-import { getData, updateData } from "../js/core/store.js";
+import { getData, updateData, changedSymbol } from "../js/core/store.js";
 
 function createPreferencesSection() {
     const section = document.createElement("section");
@@ -189,7 +189,7 @@ window.selectCurrency = selectCurrency;
 let currencySymbol = document.querySelector("#selectedCurrency");
 
 
-import { changedSymbol } from "../js/core/store.js"
+
 function updateCurrencyUI() {
     const totalEl = document.querySelector(".total__aside_balance h3 span");
     if (!totalEl) return;
