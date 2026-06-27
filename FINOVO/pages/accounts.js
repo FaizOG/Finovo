@@ -187,12 +187,34 @@ function createAccountCard({ id, name, type, openingBalance }) {
 let accountCardSection = null;
 
 // Open Transfer Pop Up using transfer btn on accounts page
+
+// this create dynamic dropdown list
+function buildAccountDropdownItems() {
+  const data = getData();
+  const accounts = data?.accounts || [];
+
+  if (!accounts.length) {
+    return `<div class="dropdown-item">No accounts</div>`;
+  }
+
+  return accounts
+    .map(acc => `<div class="dropdown-item">${acc.name} (${acc.type})</div>`)
+    .join("");
+}
+
 function OpenTransferPopUp() {
   document
     .querySelector(".accounts-page-transfer-btn")
     .addEventListener("click", () => {
       const overlay = document.querySelector(".transfer-modal-overlay");
       const modal = document.querySelector(".transfer-modal");
+
+      // ✅ inject dynamic accounts into BOTH dropdowns
+      const dropdowns = overlay.querySelectorAll(".dropdown-menu");
+
+      dropdowns.forEach((menu) => {
+        menu.innerHTML = buildAccountDropdownItems();
+      });
 
       overlay.classList.add("show-pop-up");
 
@@ -201,8 +223,11 @@ function OpenTransferPopUp() {
       gsap.fromTo(
         modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" },
+        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }
       );
+
+      // IMPORTANT: re-init dropdowns after DOM injection
+      initAllDropdowns(overlay);
     });
 }
 
@@ -228,8 +253,18 @@ function closeTransferPopUp() {
   });
 }
 
-// make it accessible from HTML onclick
-window.closeTransferPopUp = closeTransferPopUp;
+function initTransferOverlayClose() {
+  const overlay = document.querySelector(".transfer-modal-overlay");
+
+  if (!overlay) return;
+
+  overlay.addEventListener("click", (e) => {
+    // only close if clicking outside modal
+    if (e.target === overlay) {
+      closeTransferPopUp();
+    }
+  });
+}
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenAccountPopUp() {
@@ -281,33 +316,27 @@ function initDropdown(dropdown) {
   const selected = dropdown.querySelector("[data-selected]");
   const items = dropdown.querySelectorAll(".dropdown-item");
 
-  // OPEN / CLOSE
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     menu.classList.toggle("active");
   });
 
-  // SELECT ITEM
   items.forEach((item) => {
     item.addEventListener("click", () => {
-      // remove active from all
       items.forEach((i) => i.classList.remove("active"));
-
-      // set new active
       item.classList.add("active");
 
-      // update UI
       selected.innerText = item.innerText;
-
-      // close menu
       menu.classList.remove("active");
 
-      //   update icon here
-      updateAccountIcon(item.innerText);
+      // ✅ only update icon if this dropdown belongs to ACCOUNT FORM
+      const isAccountForm = dropdown.closest(".account-modal");
+      if (isAccountForm) {
+        updateAccountIcon(item.innerText);
+      }
     });
   });
 
-  // close on outside click
   document.addEventListener("click", (e) => {
     if (!dropdown.contains(e.target)) {
       menu.classList.remove("active");
@@ -315,8 +344,8 @@ function initDropdown(dropdown) {
   });
 }
 
-function initAllDropdowns() {
-  document.querySelectorAll("[data-dropdown]").forEach(initDropdown);
+function initAllDropdowns(root = document) {
+  root.querySelectorAll("[data-dropdown]").forEach(initDropdown);
 }
 
 function initAccountFormSubmit() {
@@ -385,7 +414,7 @@ function renderExistingAccounts() {
 window.closeAccountPopUp = closeAccountPopUp;
 
 // make it accessible from HTML onclick
-window.closeAccountPopUp = closeAccountPopUp;
+window.closeTransferPopUp = closeTransferPopUp;
 
 export default {
   mount(container) {
@@ -395,6 +424,9 @@ export default {
     container.appendChild(accountCardSection);
 
     renderExistingAccounts();
+
+    OpenTransferPopUp();
+    initTransferOverlayClose();
 
     OpenAccountPopUp();
     closeAccountPopUp();
