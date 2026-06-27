@@ -27,11 +27,9 @@ initModal();
 function openModal() {
     modal.classList.add("active");
 
-    // set today's date
     document.querySelector("#dateInput").value =
         new Date().toISOString().split("T")[0];
 
-    // modal fade
     gsap.fromTo(modal,
         { opacity: 0 },
         { opacity: 1, duration: 0.2 }
@@ -41,42 +39,6 @@ function openModal() {
         { y: 50, opacity: 0, scale: 0.95 },
         { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }
     );
-
-    // 👉 IMPORTANT: reset tabs AFTER modal is visible
-    requestAnimationFrame(() => {
-
-        const container = document.querySelector(".txn-type");
-        if (!container) return;
-
-        const buttons = container.querySelectorAll(".txn-btn");
-        const pill = container.querySelector(".active-pill");
-
-        // reset active state
-        buttons.forEach(btn => btn.classList.remove("active"));
-
-        // default = Expense
-        const expenseBtn = container.querySelector('[data-type="expense"]');
-        expenseBtn.classList.add("active");
-
-        // move pill instantly (no animation on open)
-        gsap.set(pill, {
-            x: expenseBtn.offsetLeft,
-            width: expenseBtn.offsetWidth,
-            scaleX: 1
-        });
-
-        // reset form state (important for your UI)
-        document.getElementById("transferFromField").classList.add("hidden");
-        document.getElementById("transferToField").classList.add("hidden");
-        document.getElementById("accountField").classList.remove("hidden");
-
-        document.getElementById("field1Label").textContent = "Category";
-
-        // optional: reload categories if needed
-        if (typeof loadExpenseCategories === "function") {
-            loadExpenseCategories();
-        }
-    });
 }
 
 // close modal
