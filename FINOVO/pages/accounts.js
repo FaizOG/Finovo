@@ -1,9 +1,51 @@
 import { getData, updateData } from "../js/core/store.js";
 
-function createAccountPageHeader() {
-    const section = document.createElement("section");
+const accountIcons = {
+  bank: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" class="lucide lucide-landmark size-5">
+      <path d="M10 18v-7"></path>
+      <path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"></path>
+      <path d="M14 18v-7"></path>
+      <path d="M18 18v-7"></path>
+      <path d="M3 22h18"></path>
+      <path d="M6 18v-7"></path>
+    </svg>
+  `,
 
-    section.innerHTML = `
+  wallet: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" class="lucide lucide-smartphone size-5">
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+      <path d="M12 18h.01"></path>
+    </svg>
+  `,
+
+  cash: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" class="lucide lucide-wallet size-5">
+      <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
+      <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+    </svg>
+  `,
+
+  card: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" class="lucide lucide-credit-card size-5">
+      <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+      <line x1="2" x2="22" y1="10" y2="10"></line>
+    </svg>
+  `,
+};
+
+function createAccountPageHeader() {
+  const section = document.createElement("section");
+
+  section.innerHTML = `
   <div class="account-page-sub-header">
                         <div class="accounts-page-sub-header-left-content-area">
                             <h2 class="setting-tab-title">Accounts</h2>
@@ -36,28 +78,38 @@ function createAccountPageHeader() {
                             </div>
                         </div>
                     </div>
-  `
-    return section;
+  `;
+  return section;
 }
 
 function createCardSection() {
-    const section = document.createElement("section");
-    section.className = "accounts-page-card-section";
-    return section;
+  const section = document.createElement("section");
+  section.className = "accounts-page-card-section";
+  return section;
 }
 
 function getCurrencySymbol() {
-    const data = getData();
-    return data?.settings?.currency || "₹";
+  const data = getData();
+  return data?.settings?.currency || "₹";
 }
 
-function createAccountCard({id, name, type, openingBalance }) {
-    const card = document.createElement("div");
-    card.className = "account-details-card";
-    card.dataset.id = id;
-    const symbol = getCurrencySymbol();
+function updateAccountIcon(type) {
+  const iconContainer = document.querySelector(".account-icon-bg");
 
-    card.innerHTML = `
+  if (!iconContainer) return;
+
+  const key = type.toLowerCase().trim();
+
+  iconContainer.innerHTML = accountIcons[key] || accountIcons.bank;
+}
+
+function createAccountCard({ id, name, type, openingBalance }) {
+  const card = document.createElement("div");
+  card.className = "account-details-card";
+  card.dataset.id = id;
+  const symbol = getCurrencySymbol();
+
+  card.innerHTML = `
         <div class="account-card-info">
             <div class="account-icon-name-and-type">
                 <div class="account-icon-bg">
@@ -103,9 +155,9 @@ function createAccountCard({id, name, type, openingBalance }) {
         </div>
     `;
 
-    const deleteBtn = card.querySelector(".delete-account");
+  const deleteBtn = card.querySelector(".delete-account");
 
-deleteBtn.addEventListener("click", () => {
+  deleteBtn.addEventListener("click", () => {
     const accountId = Number(card.dataset.id);
 
     // 1. remove from DOM
@@ -115,161 +167,206 @@ deleteBtn.addEventListener("click", () => {
     const data = getData();
     const accounts = data.accounts || [];
 
-    const updatedAccounts = accounts.filter(acc => acc.id !== accountId);
+    const updatedAccounts = accounts.filter((acc) => acc.id !== accountId);
 
     updateData({ accounts: updatedAccounts });
 
     // optional toast
     notify("account", "delete");
-});
+  });
 
-    // notify("account", "create");
-    return card;
-
+  // notify("account", "create");
+  return card;
 }
-
-
 
 let accountCardSection = null;
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenTransferPopUp() {
-    document
-        .querySelector(".accounts-page-transfer-btn")
-        .addEventListener("click", () => {
+  document
+    .querySelector(".accounts-page-transfer-btn")
+    .addEventListener("click", () => {
+      const overlay = document.querySelector(".transfer-modal-overlay");
+      const modal = document.querySelector(".transfer-modal");
 
-            const overlay = document.querySelector(".transfer-modal-overlay");
-            const modal = document.querySelector(".transfer-modal");
+      overlay.classList.add("show-pop-up");
 
-            overlay.classList.add("show-pop-up");
+      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-            gsap.fromTo(
-                overlay,
-                { opacity: 0 },
-                { opacity: 1, duration: 0.2 }
-            );
-
-            gsap.fromTo(
-                modal,
-                { scale: 0.9, y: 20, opacity: 0 },
-                { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }
-            );
-        });
+      gsap.fromTo(
+        modal,
+        { scale: 0.9, y: 20, opacity: 0 },
+        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" },
+      );
+    });
 }
 
 // Closing Transfer Pop Up using "X btn" or "cancel btn" on transfer pop up
 function closeTransferPopUp() {
-    const overlay = document.querySelector(".transfer-modal-overlay");
-    const modal = document.querySelector(".transfer-modal");
+  const overlay = document.querySelector(".transfer-modal-overlay");
+  const modal = document.querySelector(".transfer-modal");
 
-    gsap.to(modal, {
-        scale: 0.9,
-        y: 20,
-        opacity: 0,
-        duration: 0.2,
-        ease: "power2.in"
-    });
+  gsap.to(modal, {
+    scale: 0.9,
+    y: 20,
+    opacity: 0,
+    duration: 0.2,
+    ease: "power2.in",
+  });
 
-    gsap.to(overlay, {
-        opacity: 0,
-        duration: 0.2,
-        onComplete: () => {
-            overlay.classList.remove("show-pop-up");
-        }
-    });
+  gsap.to(overlay, {
+    opacity: 0,
+    duration: 0.2,
+    onComplete: () => {
+      overlay.classList.remove("show-pop-up");
+    },
+  });
 }
-
 
 // make it accessible from HTML onclick
 window.closeTransferPopUp = closeTransferPopUp;
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenAccountPopUp() {
-    document.querySelector(".accounts-page-new-account-btn")
-        .addEventListener("click", () => {
-            const overlay = document.querySelector(".account-modal-overlay");
-            const modal = document.querySelector(".account-modal");
+  document
+    .querySelector(".accounts-page-new-account-btn")
+    .addEventListener("click", () => {
+      const overlay = document.querySelector(".account-modal-overlay");
+      const modal = document.querySelector(".account-modal");
 
-            overlay.classList.add("show-pop-up");
+      overlay.classList.add("show-pop-up");
 
-            gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-            gsap.fromTo(modal,
-                { scale: 0.9, y: 20, opacity: 0 },
-                { scale: 1, y: 0, opacity: 1, duration: 0.3 }
-            );
-        });
+      gsap.fromTo(
+        modal,
+        { scale: 0.9, y: 20, opacity: 0 },
+        { scale: 1, y: 0, opacity: 1, duration: 0.3 },
+      );
+      initAllDropdowns();
+    });
 }
 
 // Closing Transfer Pop Up using "X btn" or "cancel btn" on transfer pop up
 function closeAccountPopUp() {
-    const overlay = document.querySelector(".account-modal-overlay");
-    const modal = document.querySelector(".account-modal");
+  const overlay = document.querySelector(".account-modal-overlay");
+  const modal = document.querySelector(".account-modal");
 
-    gsap.to(modal, {
-        scale: 0.9,
-        y: 20,
-        opacity: 0,
-        duration: 0.2
-    });
+  gsap.to(modal, {
+    scale: 0.9,
+    y: 20,
+    opacity: 0,
+    duration: 0.2,
+  });
 
-    gsap.to(overlay, {
-        opacity: 0,
-        duration: 0.2,
-        onComplete: () => {
-            overlay.classList.remove("show-pop-up");
-        }
+  gsap.to(overlay, {
+    opacity: 0,
+    duration: 0.2,
+    onComplete: () => {
+      overlay.classList.remove("show-pop-up");
+    },
+  });
+}
+
+// Drop Down
+
+function initDropdown(dropdown) {
+  const toggle = dropdown.querySelector("[data-toggle]");
+  const menu = dropdown.querySelector(".dropdown-menu");
+  const selected = dropdown.querySelector("[data-selected]");
+  const items = dropdown.querySelectorAll(".dropdown-item");
+
+  // OPEN / CLOSE
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("active");
+  });
+
+  // SELECT ITEM
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      // remove active from all
+      items.forEach((i) => i.classList.remove("active"));
+
+      // set new active
+      item.classList.add("active");
+
+      // update UI
+      selected.innerText = item.innerText;
+
+      // close menu
+      menu.classList.remove("active");
+
+      //   update icon here
+      updateAccountIcon(item.innerText);
     });
+  });
+
+  // close on outside click
+  document.addEventListener("click", (e) => {
+    if (!dropdown.contains(e.target)) {
+      menu.classList.remove("active");
+    }
+  });
+}
+
+function initAllDropdowns() {
+  document.querySelectorAll("[data-dropdown]").forEach(initDropdown);
 }
 
 function initAccountFormSubmit() {
-    const submitBtn = document.querySelector(".account-modal .submit");
+  const submitBtn = document.querySelector(".account-modal .submit");
 
-    submitBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+  submitBtn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-        const name = document.querySelector(".account-form-grid input[type='text']").value;
-        const type = document.querySelector("[data-selected]").innerText;
-        const openingBalance = Number(
-            document.querySelector(".account-form-grid input[type='number']").value
-        );
+    const name = document.querySelector(
+      ".account-form-grid input[type='text']",
+    ).value;
 
-        if (!name.trim()) return;
+    const modal = document.querySelector(".account-modal");
+    const type = modal.querySelector("[data-selected]").innerText;
 
-        const newAccount = {
-            id: Date.now(),
-            name,
-            type,
-            openingBalance,
-            currentBalance: openingBalance
-        };
+    const openingBalance = Number(
+      document.querySelector(".account-form-grid input[type='number']").value,
+    );
 
-        const data = getData();
-        const accounts = data.accounts || [];
+    if (!name.trim()) return;
 
-        accounts.push(newAccount);
-        updateData({ accounts });
+    const newAccount = {
+      id: Date.now(),
+      name,
+      type,
+      openingBalance,
+      currentBalance: openingBalance,
+    };
 
-        // UI update
-        const card = createAccountCard(newAccount);
-        accountCardSection.appendChild(card);
+    const data = getData();
+    const accounts = data.accounts || [];
 
-        // ✅ RIGHT PLACE FOR TOAST
-        notify("account", "create");
+    accounts.push(newAccount);
+    updateData({ accounts });
 
-        closeAccountPopUp();
-        document.querySelector(".account-form-grid").reset();
-    });
+    // UI update
+    const card = createAccountCard(newAccount);
+    accountCardSection.appendChild(card);
+
+    // ✅ RIGHT PLACE FOR TOAST
+    notify("account", "create");
+
+    closeAccountPopUp();
+    document.querySelector(".account-form-grid").reset();
+  });
 }
 
 function renderExistingAccounts() {
-    const data = getData();
-    const accounts = data?.accounts || [];
+  const data = getData();
+  const accounts = data?.accounts || [];
 
-    accounts.forEach(account => {
-        const card = createAccountCard(account);
-        accountCardSection.appendChild(card);
-    });
+  accounts.forEach((account) => {
+    const card = createAccountCard(account);
+    accountCardSection.appendChild(card);
+  });
 }
 
 window.closeAccountPopUp = closeAccountPopUp;
@@ -277,19 +374,17 @@ window.closeAccountPopUp = closeAccountPopUp;
 // make it accessible from HTML onclick
 window.closeAccountPopUp = closeAccountPopUp;
 
-
 export default {
-    mount(container) {
+  mount(container) {
+    container.appendChild(createAccountPageHeader());
 
-        container.appendChild(createAccountPageHeader());
+    accountCardSection = createCardSection();
+    container.appendChild(accountCardSection);
 
-        accountCardSection = createCardSection();
-        container.appendChild(accountCardSection);
+    renderExistingAccounts();
 
-        renderExistingAccounts();
-
-        OpenAccountPopUp();
-        closeAccountPopUp();
-        initAccountFormSubmit();
-    }
+    OpenAccountPopUp();
+    closeAccountPopUp();
+    initAccountFormSubmit();
+  },
 };
