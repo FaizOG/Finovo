@@ -157,37 +157,78 @@ function createAccountCard({ id, name, type, openingBalance }) {
 
   const deleteBtn = card.querySelector(".delete-account");
 
-  deleteBtn.addEventListener("click", () => {
-    const accountId = Number(card.dataset.id);
+deleteBtn.addEventListener("click", () => {
+  const accountId = Number(card.dataset.id);
 
-    // animate OUT first
-    gsap.to(card, {
-      opacity: 0,
-      scale: 0.9,
-      x: 20,
-      duration: 0.25,
-      ease: "power2.in",
-      onComplete: () => card.remove(),
-    });
+  const data = getData();
+  const updatedAccounts = (data.accounts || []).filter(
+    (acc) => acc.id !== accountId
+  );
 
-    // remove from storage
-    const data = getData();
-    const accounts = data.accounts || [];
+  updateData({ accounts: updatedAccounts });
 
-    const updatedAccounts = accounts.filter((acc) => acc.id !== accountId);
-    updateData({ accounts: updatedAccounts });
+  notify("account", "delete");
 
-    notify("account", "delete");
+  gsap.to(card, {
+    opacity: 0,
+    scale: 0.9,
+    x: 20,
+    duration: 0.25,
+    ease: "power2.in",
+    onComplete: () => {
+      card.remove();
+
+      // IMPORTANT: always read from store AFTER mutation
+      requestAnimationFrame(() => {
+        updateTransferButtonState();
+      });
+    },
   });
+});
 
   // notify("account", "create");
   return card;
 }
 
+
+
 let accountCardSection = null;
 
 // Open Transfer Pop Up using transfer btn on accounts page
+function getAccountsCount() {
+  const data = getData();
+  return data?.accounts?.length || 0;
+}
 
+
+function getAccounts() {
+  return getData()?.accounts || [];
+}
+
+function updateTransferButtonState() {
+  const btn = document.querySelector(".accounts-page-transfer-btn");
+  if (!btn) return;
+
+  const accounts = getData()?.accounts || [];
+  const count = accounts.length;
+
+  const shouldDisable = count < 2;
+
+  btn.disabled = shouldDisable;
+  btn.classList.toggle("disabled", shouldDisable);
+  btn.title = shouldDisable
+    ? "You need at least 2 accounts to transfer"
+    : "";
+}
+
+function syncUI() {
+  updateTransferButtonState();
+}
+
+function syncAccountsUI() {
+  renderExistingAccounts(); // optional
+  updateTransferButtonState();
+}
 // this create dynamic dropdown list
 function buildAccountDropdownItems() {
   const data = getData();
@@ -206,10 +247,12 @@ function OpenTransferPopUp() {
   document
     .querySelector(".accounts-page-transfer-btn")
     .addEventListener("click", () => {
+
+      if (getAccountsCount() < 2) return; // ✅ HARD STOP
+
       const overlay = document.querySelector(".transfer-modal-overlay");
       const modal = document.querySelector(".transfer-modal");
 
-      // ✅ inject dynamic accounts into BOTH dropdowns
       const dropdowns = overlay.querySelectorAll(".dropdown-menu");
 
       dropdowns.forEach((menu) => {
@@ -220,13 +263,11 @@ function OpenTransferPopUp() {
 
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-      gsap.fromTo(
-        modal,
+      gsap.fromTo(modal,
         { scale: 0.9, y: 20, opacity: 0 },
         { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }
       );
 
-      // IMPORTANT: re-init dropdowns after DOM injection
       initAllDropdowns(overlay);
     });
 }
@@ -278,12 +319,15 @@ function OpenAccountPopUp() {
 
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-      gsap.fromTo(
-        modal,
+      gsap.fromTo(modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3 },
+        { scale: 1, y: 0, opacity: 1, duration: 0.3 }
       );
-      initAllDropdowns();
+
+      // ✅ FIX: wait for DOM paint
+      requestAnimationFrame(() => {
+        initAllDropdowns(modal);
+      });
     });
 }
 
@@ -355,14 +399,17 @@ function initAccountFormSubmit() {
     e.preventDefault();
 
     const name = document.querySelector(
-      ".account-form-grid input[type='text']",
+      ".account-form-grid input[type='text']"
     ).value;
 
-    const modal = document.querySelector(".account-modal");
-    const type = modal.querySelector("[data-selected]").innerText;
+    const type = document.querySelector(
+      ".account-modal [data-selected]"
+    ).innerText;
 
     const openingBalance = Number(
-      document.querySelector(".account-form-grid input[type='number']").value,
+      document.querySelector(
+        ".account-form-grid input[type='number']"
+      ).value
     );
 
     if (!name.trim()) return;
@@ -381,20 +428,10 @@ function initAccountFormSubmit() {
     accounts.push(newAccount);
     updateData({ accounts });
 
-    // UI update
     const card = createAccountCard(newAccount);
     accountCardSection.appendChild(card);
 
-    gsap.from(card, {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-      duration: 0.3,
-      ease: "power2.out",
-    });
-
-    // ✅ RIGHT PLACE FOR TOAST
-    notify("account", "create");
+    updateTransferButtonState();
 
     closeAccountPopUp();
     document.querySelector(".account-form-grid").reset();
@@ -431,5 +468,7 @@ export default {
     OpenAccountPopUp();
     closeAccountPopUp();
     initAccountFormSubmit();
+
+    updateTransferButtonState();
   },
 };

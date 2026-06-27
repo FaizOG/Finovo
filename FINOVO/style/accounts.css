@@ -398,3 +398,10 @@
     border-radius: 999px;
     cursor: pointer;
 }
+
+
+.accounts-page-transfer-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
