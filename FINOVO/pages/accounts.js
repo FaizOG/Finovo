@@ -93,14 +93,9 @@ function getCurrencySymbol() {
   return data?.settings?.currency || "₹";
 }
 
-function updateAccountIcon(type) {
-  const iconContainer = document.querySelector(".account-icon-bg");
-
-  if (!iconContainer) return;
-
+function updateAccountIcon(container, type) {
   const key = type.toLowerCase().trim();
-
-  iconContainer.innerHTML = accountIcons[key] || accountIcons.bank;
+  container.innerHTML = accountIcons[key] || accountIcons.bank;
 }
 
 function createAccountCard({ id, name, type, openingBalance }) {
@@ -108,23 +103,13 @@ function createAccountCard({ id, name, type, openingBalance }) {
   card.className = "account-details-card";
   card.dataset.id = id;
   const symbol = getCurrencySymbol();
+  const key = type.toLowerCase().trim();
 
   card.innerHTML = `
         <div class="account-card-info">
             <div class="account-icon-name-and-type">
                 <div class="account-icon-bg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-landmark size-5" aria-hidden="true">
-                        <path d="M10 18v-7"></path>
-                        <path
-                        d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z">
-                        </path>
-                        <path d="M14 18v-7"></path>
-                        <path d="M18 18v-7"></path>
-                        <path d="M3 22h18"></path>
-                        <path d="M6 18v-7"></path>
-                    </svg>
+                  ${accountIcons[key] || accountIcons.bank}
                 </div>
 
                 <div class="account-name-and-type">
@@ -157,40 +142,38 @@ function createAccountCard({ id, name, type, openingBalance }) {
 
   const deleteBtn = card.querySelector(".delete-account");
 
-deleteBtn.addEventListener("click", () => {
-  const accountId = Number(card.dataset.id);
+  deleteBtn.addEventListener("click", () => {
+    const accountId = Number(card.dataset.id);
 
-  const data = getData();
-  const updatedAccounts = (data.accounts || []).filter(
-    (acc) => acc.id !== accountId
-  );
+    const data = getData();
+    const updatedAccounts = (data.accounts || []).filter(
+      (acc) => acc.id !== accountId,
+    );
 
-  updateData({ accounts: updatedAccounts });
+    updateData({ accounts: updatedAccounts });
 
-  notify("account", "delete");
+    notify("account", "delete");
 
-  gsap.to(card, {
-    opacity: 0,
-    scale: 0.9,
-    x: 20,
-    duration: 0.25,
-    ease: "power2.in",
-    onComplete: () => {
-      card.remove();
+    gsap.to(card, {
+      opacity: 0,
+      scale: 0.9,
+      x: 20,
+      duration: 0.25,
+      ease: "power2.in",
+      onComplete: () => {
+        card.remove();
 
-      // IMPORTANT: always read from store AFTER mutation
-      requestAnimationFrame(() => {
-        updateTransferButtonState();
-      });
-    },
+        // IMPORTANT: always read from store AFTER mutation
+        requestAnimationFrame(() => {
+          updateTransferButtonState();
+        });
+      },
+    });
   });
-});
 
   // notify("account", "create");
   return card;
 }
-
-
 
 let accountCardSection = null;
 
@@ -199,7 +182,6 @@ function getAccountsCount() {
   const data = getData();
   return data?.accounts?.length || 0;
 }
-
 
 function getAccounts() {
   return getData()?.accounts || [];
@@ -216,9 +198,7 @@ function updateTransferButtonState() {
 
   btn.disabled = shouldDisable;
   btn.classList.toggle("disabled", shouldDisable);
-  btn.title = shouldDisable
-    ? "You need at least 2 accounts to transfer"
-    : "";
+  btn.title = shouldDisable ? "You need at least 2 accounts to transfer" : "";
 }
 
 function syncUI() {
@@ -239,7 +219,7 @@ function buildAccountDropdownItems() {
   }
 
   return accounts
-    .map(acc => `<div class="dropdown-item">${acc.name} (${acc.type})</div>`)
+    .map((acc) => `<div class="dropdown-item">${acc.name} (${acc.type})</div>`)
     .join("");
 }
 
@@ -247,7 +227,6 @@ function OpenTransferPopUp() {
   document
     .querySelector(".accounts-page-transfer-btn")
     .addEventListener("click", () => {
-
       if (getAccountsCount() < 2) return; // ✅ HARD STOP
 
       const overlay = document.querySelector(".transfer-modal-overlay");
@@ -263,9 +242,10 @@ function OpenTransferPopUp() {
 
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-      gsap.fromTo(modal,
+      gsap.fromTo(
+        modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }
+        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" },
       );
 
       initAllDropdowns(overlay);
@@ -319,9 +299,10 @@ function OpenAccountPopUp() {
 
       gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
-      gsap.fromTo(modal,
+      gsap.fromTo(
+        modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3 }
+        { scale: 1, y: 0, opacity: 1, duration: 0.3 },
       );
 
       // ✅ FIX: wait for DOM paint
@@ -376,7 +357,10 @@ function initDropdown(dropdown) {
       // ✅ only update icon if this dropdown belongs to ACCOUNT FORM
       const isAccountForm = dropdown.closest(".account-modal");
       if (isAccountForm) {
-        updateAccountIcon(item.innerText);
+        const iconContainer = document.querySelector(
+          ".account-modal .account-icon-bg",
+        );
+        updateAccountIcon(iconContainer, item.innerText);
       }
     });
   });
@@ -399,17 +383,15 @@ function initAccountFormSubmit() {
     e.preventDefault();
 
     const name = document.querySelector(
-      ".account-form-grid input[type='text']"
+      ".account-form-grid input[type='text']",
     ).value;
 
     const type = document.querySelector(
-      ".account-modal [data-selected]"
+      ".account-modal [data-selected]",
     ).innerText;
 
     const openingBalance = Number(
-      document.querySelector(
-        ".account-form-grid input[type='number']"
-      ).value
+      document.querySelector(".account-form-grid input[type='number']").value,
     );
 
     if (!name.trim()) return;
