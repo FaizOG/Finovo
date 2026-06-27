@@ -94,6 +94,8 @@ function getCurrencySymbol() {
 }
 
 function updateAccountIcon(container, type) {
+  if (!container) return;
+
   const key = type.toLowerCase().trim();
   container.innerHTML = accountIcons[key] || accountIcons.bank;
 }
@@ -355,13 +357,13 @@ function initDropdown(dropdown) {
       menu.classList.remove("active");
 
       // ✅ only update icon if this dropdown belongs to ACCOUNT FORM
-      const isAccountForm = dropdown.closest(".account-modal");
-      if (isAccountForm) {
-        const iconContainer = document.querySelector(
-          ".account-modal .account-icon-bg",
-        );
-        updateAccountIcon(iconContainer, item.innerText);
-      }
+      const accountModal = dropdown.closest(".account-modal");
+
+      if (!accountModal) return;
+
+      const iconContainer = accountModal.querySelector(".account-icon-bg");
+
+      updateAccountIcon(iconContainer, item.innerText);
     });
   });
 

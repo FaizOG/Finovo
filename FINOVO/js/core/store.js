@@ -5,7 +5,8 @@ const defaultData = {
   settings: {
     theme: "dark",
     currency: "₹"
-  }
+  },
+  transaction:[],
 };
 
 if (!localStorage.getItem(STORAGE_KEY)) {
