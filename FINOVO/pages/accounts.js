@@ -160,18 +160,23 @@ function createAccountCard({ id, name, type, openingBalance }) {
   deleteBtn.addEventListener("click", () => {
     const accountId = Number(card.dataset.id);
 
-    // 1. remove from DOM
-    card.remove();
+    // animate OUT first
+    gsap.to(card, {
+      opacity: 0,
+      scale: 0.9,
+      x: 20,
+      duration: 0.25,
+      ease: "power2.in",
+      onComplete: () => card.remove(),
+    });
 
-    // 2. remove from storage
+    // remove from storage
     const data = getData();
     const accounts = data.accounts || [];
 
     const updatedAccounts = accounts.filter((acc) => acc.id !== accountId);
-
     updateData({ accounts: updatedAccounts });
 
-    // optional toast
     notify("account", "delete");
   });
 
@@ -350,6 +355,14 @@ function initAccountFormSubmit() {
     // UI update
     const card = createAccountCard(newAccount);
     accountCardSection.appendChild(card);
+
+    gsap.from(card, {
+      opacity: 0,
+      y: 20,
+      scale: 0.95,
+      duration: 0.3,
+      ease: "power2.out",
+    });
 
     // ✅ RIGHT PLACE FOR TOAST
     notify("account", "create");
