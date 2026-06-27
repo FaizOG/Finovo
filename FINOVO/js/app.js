@@ -205,3 +205,78 @@ function updateThemeIcon() {
 }
 
 initHeaderThemeToggle();
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const container = document.querySelector(".txn-type");
+
+    if (!container) return;
+
+    const buttons = container.querySelectorAll(".txn-btn");
+    const pill = container.querySelector(".active-pill");
+    const active = container.querySelector(".txn-btn.active");
+
+    function movePill(target, animate = true) {
+
+        const x = target.offsetLeft;
+        const w = target.offsetWidth;
+
+        if (!animate) {
+
+            gsap.set(pill, {
+                x,
+                width: w
+            });
+
+            return;
+        }
+
+        gsap.timeline()
+
+        .to(pill, {
+            scaleX: 1.08,
+            transformOrigin:
+                x > gsap.getProperty(pill, "x")
+                    ? "left center"
+                    : "right center",
+            duration: .12
+        })
+
+        .to(pill, {
+            x,
+            width: w,
+            duration: .35,
+            ease: "power3.inOut"
+        }, "<")
+
+        .to(pill, {
+            scaleX: 1,
+            duration: .18,
+            ease: "back.out(2)"
+        });
+
+    }
+
+    movePill(active, false);
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            container.querySelector(".active")?.classList.remove("active");
+
+            button.classList.add("active");
+
+            movePill(button);
+
+        });
+
+    });
+
+    window.addEventListener("resize", () => {
+        movePill(container.querySelector(".active"), false);
+    });
+
+});
