@@ -153,7 +153,6 @@ function initMobileSidebar() {
   );
 }
 
-document.addEventListener("DOMContentLoaded", initMobileSidebar);
 
 /**
  * INIT
