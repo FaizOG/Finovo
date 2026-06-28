@@ -33,7 +33,7 @@ function initMobileSidebar() {
     gsap.to(sidebar, {
       x: "0%",
       duration: 0.6,
-      ease: "power3.out"
+      ease: "power3.out",
     });
 
     gsap.fromTo(
@@ -44,8 +44,8 @@ function initMobileSidebar() {
         opacity: 1,
         stagger: 0.05,
         duration: 0.4,
-        delay: 0.1
-      }
+        delay: 0.1,
+      },
     );
   }
 
@@ -57,7 +57,7 @@ function initMobileSidebar() {
     gsap.to(sidebar, {
       x: "-100%",
       duration: 0.5,
-      ease: "power3.in"
+      ease: "power3.in",
     });
   }
 
@@ -99,6 +99,58 @@ function initMobileSidebar() {
       gsap.set(sidebar, { x: "-100%" });
     }
   });
+
+  // ----------------------
+  // Swipe Gesture Support
+  // ----------------------
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!isSmallMobile()) return;
+
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      if (!isSmallMobile()) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = Math.abs(touchEndY - touchStartY);
+
+      // Ignore mostly vertical swipes
+      if (deltaY > 80) return;
+
+      // Open sidebar
+      if (
+        !isOpen &&
+        touchStartX < 30 && // Swipe must start near the left edge
+        deltaX > 70 // Minimum swipe distance
+      ) {
+        openSidebar();
+      }
+
+      // Close sidebar
+      if (
+        isOpen &&
+        deltaX < -70 // Swipe left
+      ) {
+        closeSidebar();
+      }
+    },
+    { passive: true },
+  );
 }
 
 document.addEventListener("DOMContentLoaded", initMobileSidebar);
@@ -108,8 +160,6 @@ document.addEventListener("DOMContentLoaded", initMobileSidebar);
  * Starts the sidebar behavior after DOM loads
  */
 document.addEventListener("DOMContentLoaded", initMobileSidebar);
-
-
 
 import { getData, updateData } from "../js/core/store.js";
 
@@ -136,13 +186,12 @@ function initHeaderThemeToggle() {
 function toggleTheme() {
   const data = getData();
 
-  const newTheme =
-    data.settings.theme === "light" ? "dark" : "light";
+  const newTheme = data.settings.theme === "light" ? "dark" : "light";
 
   updateData({
     settings: {
-      theme: newTheme
-    }
+      theme: newTheme,
+    },
   });
 
   applyTheme(newTheme);
