@@ -1,4 +1,5 @@
 import { getData, updateData } from "../js/core/store.js";
+import { initTransfer } from "../js/features/transfer.js";
 
 const accountIcons = {
   bank: `
@@ -225,69 +226,12 @@ function buildAccountDropdownItems() {
     .join("");
 }
 
-function OpenTransferPopUp() {
-  document
-    .querySelector(".accounts-page-transfer-btn")
-    .addEventListener("click", () => {
-      if (getAccountsCount() < 2) return; // ✅ HARD STOP
 
-      const overlay = document.querySelector(".transfer-modal-overlay");
-      const modal = document.querySelector(".transfer-modal");
-
-      const dropdowns = overlay.querySelectorAll(".dropdown-menu");
-
-      dropdowns.forEach((menu) => {
-        menu.innerHTML = buildAccountDropdownItems();
-      });
-
-      overlay.classList.add("show-pop-up");
-
-      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
-
-      gsap.fromTo(
-        modal,
-        { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3, ease: "power3.out" },
-      );
-
-      initAllDropdowns(overlay);
-    });
-}
 
 // Closing Transfer Pop Up using "X btn" or "cancel btn" on transfer pop up
-function closeTransferPopUp() {
-  const overlay = document.querySelector(".transfer-modal-overlay");
-  const modal = document.querySelector(".transfer-modal");
 
-  gsap.to(modal, {
-    scale: 0.9,
-    y: 20,
-    opacity: 0,
-    duration: 0.2,
-    ease: "power2.in",
-  });
 
-  gsap.to(overlay, {
-    opacity: 0,
-    duration: 0.2,
-    onComplete: () => {
-      overlay.classList.remove("show-pop-up");
-    },
-  });
-}
 
-function initTransferOverlayClose() {
-  const overlay = document.querySelector(".transfer-modal-overlay");
-
-  if (!overlay) return;
-
-  overlay.addEventListener("click", (e) => {
-    // only close if clicking outside modal
-    if (e.target === overlay) {
-      closeTransferPopUp();
-    }
-  });
-}
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenAccountPopUp() {
@@ -309,7 +253,7 @@ function OpenAccountPopUp() {
 
       // ✅ FIX: wait for DOM paint
       requestAnimationFrame(() => {
-        initAllDropdowns(modal);
+        // initAllDropdowns(modal);
       });
     });
 }
@@ -435,7 +379,7 @@ function renderExistingAccounts() {
 window.closeAccountPopUp = closeAccountPopUp;
 
 // make it accessible from HTML onclick
-window.closeTransferPopUp = closeTransferPopUp;
+// window.closeTransferPopUp = closeTransferPopUp;
 
 export default {
   mount(container) {
@@ -446,8 +390,9 @@ export default {
 
     renderExistingAccounts();
 
-    OpenTransferPopUp();
-    initTransferOverlayClose();
+    // OpenTransferPopUp();
+    // initTransferOverlayClose();
+    initTransfer();
 
     OpenAccountPopUp();
     closeAccountPopUp();
