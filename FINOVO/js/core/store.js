@@ -68,5 +68,5 @@ export function clearData() {
 
   updateCurrencyUI();
 
-  notify("app", "reset");
+  notify.info("All data has been reset successfully.");
 }

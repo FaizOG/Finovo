@@ -1,334 +1,301 @@
-/* =========================================================
-   ADVANCED FINOVO TOAST ENGINE (v2)
-   FEATURES:
-   - grouping (+3 more)
-   - swipe dismiss (mobile + desktop)
-   - sound system
-   - morph updates
-   - stacking depth blur
-========================================================= */
-
-const MAX_VISIBLE = 4;
-
-let container;
-let toasts = [];
-let groupBuffer = [];
-
-const sounds = {
-  success: new Audio("/assets/sounds/success.mp3"),
-  error: new Audio("/assets/sounds/error.mp3"),
-  info: new Audio("/assets/sounds/click.mp3"),
-};
-
-/* ===========================
-   INIT CONTAINER
-=========================== */
-
-function ensureContainer() {
-  if (container) return;
-
-  container = document.createElement("div");
+(() => {
+  const container = document.createElement("div");
   container.id = "toast-container";
   document.body.appendChild(container);
-}
 
-/* ===========================
-   SOUND
-=========================== */
+  const MAX_VISIBLE = 4;
+  const BASE_DURATION = 2000;
 
-function playSound(type) {
-  try {
-    const sound = sounds[type];
-    if (sound) {
-      sound.currentTime = 0;
-      sound.volume = 0.4;
-      sound.play();
-    }
-  } catch (e) {}
-}
+  const PRIORITY = {
+    error: 3,
+    warning: 2,
+    success: 1,
+    info: 0,
+  };
 
-/* ===========================
-   CREATE TOAST
-=========================== */
+  const state = {
+    active: [],
+    queue: [],
+    hovered: false,
+    audioCtx: null,
+  };
 
-function createToast({ title, message, type = "info", duration = 4000 }) {
-  ensureContainer();
+  /* ================= SOUND (YOUR VERSION - FIXED + INTEGRATED) ================= */
 
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
+  function playSound(type) {
+    try {
+      if (!state.audioCtx) {
+        state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
 
-  toast.innerHTML = `
-    <div class="toast-icon">${getIcon(type)}</div>
-    <div class="toast-text">
-        <div class="toast-title">${title}</div>
-        <div class="toast-message">${message}</div>
-    </div>
-    <button class="toast-close">×</button>
-    <div class="toast-progress"></div>
-  `;
+      const ctx = state.audioCtx;
 
-  toast.dataset.id = Date.now() + Math.random();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
 
-  container.appendChild(toast);
+      osc.type = "sine";
 
-  registerToast(toast, type, duration);
+      const freq =
+        type === "error"
+          ? 120
+          : type === "warning"
+          ? 220
+          : type === "success"
+          ? 180
+          : 160;
 
-  return toast;
-}
+      osc.frequency.value = freq;
 
-/* ===========================
-   ICONS
-=========================== */
+      gain.gain.value = 0.0001;
 
-function getIcon(type) {
-  return {
-    success: "✓",
-    error: "✕",
-    warning: "!",
-    info: "i",
-  }[type];
-}
+      osc.connect(gain);
+      gain.connect(ctx.destination);
 
-/* ===========================
-   REGISTER TOAST
-=========================== */
+      osc.start();
 
-function registerToast(toast, type, duration) {
-  toasts.unshift(toast);
+      gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
 
-  playSound(type);
-
-  attachEvents(toast);
-  animateIn(toast);
-  updateStack();
-
-  startTimer(toast, duration);
-
-  if (toasts.length > MAX_VISIBLE) {
-    const removed = toasts.splice(MAX_VISIBLE);
-    groupBuffer.push(...removed);
-
-    showGroupIndicator();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {}
   }
-}
 
-/* ===========================
-   GROUP INDICATOR (+3 more)
-=========================== */
+  /* ================= CREATE ================= */
 
-function showGroupIndicator() {
-  const existing = document.querySelector(".toast-group");
+  function create(message, type) {
+    const existing = state.active.find(
+      (t) => t.message === message && t.type === type
+    );
 
-  if (groupBuffer.length <= 0) return;
+    if (existing) {
+      merge(existing);
+      return;
+    }
 
-  if (!existing) {
-    const g = document.createElement("div");
-    g.className = "toast toast-group";
-    g.innerHTML = `
-      <div class="toast-icon">+</div>
-      <div class="toast-text">
-        <div class="toast-title">More notifications</div>
-        <div class="toast-message">${groupBuffer.length} hidden</div>
-      </div>
+    const el = document.createElement("div");
+    el.className = `toast ${type}`;
+
+    el.innerHTML = `
+      <div class="toast-icon">${icon(type)}</div>
+      <div class="toast-text">${message}</div>
+      <div class="toast-progress"></div>
+      <button class="toast-close">×</button>
     `;
 
-    container.appendChild(g);
-  } else {
-    existing.querySelector(".toast-message").textContent =
-      `${groupBuffer.length} hidden`;
+    const toast = {
+      el,
+      message,
+      type,
+      count: 1,
+      progress: 1,
+      start: Date.now(),
+      pausedAt: null,
+    };
+
+    el._toast = toast;
+
+    bind(toast);
+    enqueue(toast);
+    playSound(type);
+
+    return toast;
   }
-}
 
-/* ===========================
-   SWIPE SUPPORT (MOUSE + TOUCH)
-=========================== */
+  function icon(type) {
+    return { success: "✔", error: "✖", warning: "⚠", info: "ℹ" }[type];
+  }
 
-function attachEvents(toast) {
-  const close = toast.querySelector(".toast-close");
+  /* ================= MERGE ================= */
 
-  close.onclick = () => removeToast(toast);
+  function merge(existing) {
+    existing.count++;
 
-  let startX = 0;
-  let currentX = 0;
-  let dragging = false;
+    let badge = existing.el.querySelector(".badge");
 
-  toast.addEventListener("pointerdown", (e) => {
-    startX = e.clientX;
-    dragging = true;
-  });
-
-  window.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-
-    currentX = e.clientX - startX;
-
-    toast.style.transform = `translateX(${currentX}px)`;
-    toast.style.opacity = 1 - Math.abs(currentX) / 200;
-  });
-
-  window.addEventListener("pointerup", () => {
-    if (!dragging) return;
-    dragging = false;
-
-    if (Math.abs(currentX) > 120) {
-      removeToast(toast);
-    } else {
-      gsap.to(toast, { x: 0, opacity: 1, duration: 0.2 });
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "badge";
+      badge.style.marginLeft = "8px";
+      badge.style.fontSize = "11px";
+      badge.style.opacity = "0.8";
+      existing.el.appendChild(badge);
     }
 
-    currentX = 0;
-  });
-}
+    badge.textContent = `×${existing.count}`;
 
-/* ===========================
-   ANIMATION IN
-=========================== */
+    pulse(existing.el);
+  }
 
-function animateIn(el) {
-  if (!window.gsap) return;
+  function pulse(el) {
+    el.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.05)" },
+        { transform: "scale(1)" },
+      ],
+      { duration: 220, easing: "ease-out" }
+    );
+  }
 
-  gsap.fromTo(
-    el,
-    { x: 100, opacity: 0, scale: 0.95 },
-    { x: 0, opacity: 1, scale: 1, duration: 0.35 }
-  );
-}
+  /* ================= QUEUE ================= */
 
-/* ===========================
-   STACK DEPTH EFFECT
-=========================== */
+  function enqueue(toast) {
+    state.queue.push(toast);
 
-function updateStack() {
-  toasts.forEach((t, i) => {
-    const scale = 1 - i * 0.04;
-    const y = i * 10;
-    const blur = i * 1.5;
+    state.queue.sort((a, b) => PRIORITY[b.type] - PRIORITY[a.type]);
 
-    gsap.to(t, {
-      y,
-      scale,
-      duration: 0.35,
+    processQueue();
+  }
+
+  function processQueue() {
+    while (
+      state.active.length < MAX_VISIBLE &&
+      state.queue.length
+    ) {
+      const toast = state.queue.shift();
+
+      state.active.unshift(toast);
+      container.prepend(toast.el);
+
+      animateIn(toast);
+      startTimer(toast);
+    }
+
+    layout();
+  }
+
+  /* ================= STACK (iOS STYLE) ================= */
+
+  function layout() {
+    state.active.forEach((t, i) => {
+      const el = t.el;
+
+      const scale = 1 - i * 0.05;
+      const y = i * 10;
+
+      el.style.transform = `translateY(${y}px) scale(${scale})`;
+      el.style.zIndex = 1000 - i;
+      el.style.opacity = i === 0 ? 1 : 0.92;
     });
+  }
 
-    t.style.zIndex = 1000 - i;
-    t.style.filter = `blur(${blur}px)`;
-    t.style.opacity = i > 3 ? 0 : 1;
-  });
-}
+  /* ================= ENTRY ================= */
 
-/* ===========================
-   REMOVE
-=========================== */
+  function animateIn(t) {
+    const el = t.el;
 
-function removeToast(toast) {
-  if (!toast) return;
+    el.style.opacity = 0;
+    el.style.transform = "translateY(-18px) scale(0.92)";
 
-  toasts = toasts.filter((t) => t !== toast);
+    requestAnimationFrame(() => {
+      el.style.transition =
+        "transform 0.4s cubic-bezier(.2,.9,.2,1), opacity 0.3s ease";
 
-  gsap.to(toast, {
-    x: 120,
-    opacity: 0,
-    scale: 0.9,
-    duration: 0.2,
-    onComplete: () => {
-      toast.remove();
-      updateStack();
-    },
-  });
-}
+      el.style.opacity = 1;
+      el.style.transform = "translateY(0px) scale(1)";
+    });
+  }
 
-/* ===========================
-   TIMER
-=========================== */
+  /* ================= TIMER ================= */
 
-function startTimer(toast, duration) {
-  const bar = toast.querySelector(".toast-progress");
-  let start = Date.now();
+  function startTimer(t) {
+    const el = t.el;
+    const bar = el.querySelector(".toast-progress");
 
-  function tick() {
-    const p = 1 - (Date.now() - start) / duration;
+    function tick() {
+      if (state.hovered) {
+        requestAnimationFrame(tick);
+        return;
+      }
 
-    if (bar) bar.style.transform = `scaleX(${p})`;
+      const elapsed = Date.now() - t.start;
+      const p = 1 - elapsed / BASE_DURATION;
 
-    if (p <= 0) {
-      removeToast(toast);
-      return;
+      bar.style.transform = `scaleX(${p})`;
+
+      if (p <= 0) {
+        remove(t);
+      } else {
+        requestAnimationFrame(tick);
+      }
     }
 
     requestAnimationFrame(tick);
   }
 
-  requestAnimationFrame(tick);
-}
+  /* ================= REMOVE ================= */
 
-/* ===========================
-   MORPH UPDATE (OPTIONAL USE)
-=========================== */
+  function remove(t) {
+    state.active = state.active.filter((x) => x !== t);
 
-function updateToast(toast, newData) {
-  if (!toast) return;
+    const el = t.el;
 
-  toast.querySelector(".toast-title").textContent = newData.title;
-  toast.querySelector(".toast-message").textContent = newData.message;
+    el.style.transition = "all 0.3s ease";
+    el.style.opacity = "0";
+    el.style.transform = "translateX(120px) scale(0.75)";
 
-  playSound(newData.type || "info");
-}
+    setTimeout(() => {
+      el.remove();
+      processQueue();
+    }, 280);
+  }
 
-/* ===========================
-   PUBLIC API
-=========================== */
+  /* ================= SHAKE ================= */
 
-function notify(entity, action, meta = {}) {
-  const db = {
-    app: { reset: "All data reset successfully" },
-    account: {
-      create: "Account created",
-      delete: "Account deleted",
-    },
-  };
+  function shake(el) {
+    let v = 7;
 
-  const message = db?.[entity]?.[action] || "Done";
+    function frame() {
+      v *= 0.82;
+      const x = Math.sin(Date.now() * 0.02) * v;
 
-  return createToast({
-    title: entity.toUpperCase(),
-    message,
-    type: meta.type || "success",
-  });
-}
+      // IMPORTANT FIX: don't overwrite transform stack
+      el.style.transform += ` translateX(${x}px)`;
 
-/* PROMISE */
+      if (v > 0.3) requestAnimationFrame(frame);
+    }
 
-function notifyPromise(promise, messages = {}) {
-  const t = createToast({
-    title: "Loading",
-    message: messages.loading || "Please wait",
-    type: "info",
-  });
+    requestAnimationFrame(frame);
+  }
 
-  promise
-    .then((r) => {
-      removeToast(t);
-      createToast({
-        title: "Success",
-        message: messages.success || "Done",
-        type: "success",
-      });
-      return r;
-    })
-    .catch(() => {
-      removeToast(t);
-      createToast({
-        title: "Error",
-        message: messages.error || "Failed",
-        type: "error",
-      });
+  /* ================= BIND ================= */
+
+  function bind(t) {
+    const el = t.el;
+
+    const close = el.querySelector(".toast-close");
+    close.onclick = () => remove(t);
+
+    if (t.type === "error") shake(el);
+
+    let startX = 0;
+
+    el.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
     });
-}
 
-/* ===========================
-   GLOBAL EXPORT
-=========================== */
+    el.addEventListener("pointerup", (e) => {
+      if (e.clientX - startX > 80) {
+        remove(t);
+      }
+    });
 
-window.notify = notify;
-window.notifyPromise = notifyPromise;
-window.updateToast = updateToast;
+    /* hover freeze */
+    el.addEventListener("mouseenter", () => {
+      state.hovered = true;
+    });
+
+    el.addEventListener("mouseleave", () => {
+      state.hovered = false;
+    });
+  }
+
+  /* ================= API ================= */
+
+  window.notify = {
+    success: (m) => create(m, "success"),
+    error: (m) => create(m, "error"),
+    warning: (m) => create(m, "warning"),
+    info: (m) => create(m, "info"),
+  };
+})();
