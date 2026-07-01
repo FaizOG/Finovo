@@ -426,7 +426,7 @@ input,
 
 
 /* Toster Message */
-#toast-container {
+/* #toast-container {
     position: absolute;
     top: 80px;
     right: 20px;
@@ -477,8 +477,120 @@ input,
     background: rgba(255,255,255,0.4);
 }
 
-/* TYPES */
+/* TYPES 
 .toast.success { background: #1f8f4a; }
 .toast.error { background: #c0392b; }
 .toast.warning { background: #d68910; }
-.toast.info { background: #2e86c1; }
+.toast.info { background: #2e86c1; } */
+
+/* ===========================
+   FINOVO TOAST SYSTEM
+   =========================== */
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 999999;
+}
+
+/* TOAST CARD */
+.toast {
+    position: relative;
+    display: flex;
+    gap: 12px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+
+    color: var(--text);
+
+    overflow: hidden;
+}
+
+/* ICON */
+.toast-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--surface-2);
+    color: var(--primary);
+
+    font-weight: 700;
+}
+
+/* TEXT */
+.toast-text {
+    flex: 1;
+}
+
+.toast-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.toast-message {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* CLOSE */
+.toast-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 8px;
+
+    border: 1px solid var(--border);
+    background: var(--surface);
+
+    cursor: pointer;
+}
+
+/* PROGRESS */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    height: 3px;
+    width: 100%;
+
+    background: var(--primary);
+
+    transform-origin: left;
+}
+
+/* TYPES */
+.toast.success { border-left: 3px solid var(--primary); }
+.toast.error { border-left: 3px solid #ef4444; }
+.toast.warning { border-left: 3px solid #f59e0b; }
+.toast.info { border-left: 3px solid #3b82f6; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+    #toast-container {
+        left: 12px;
+        right: 12px;
+        width: auto;
+    }
+}
