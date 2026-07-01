@@ -238,22 +238,25 @@ function OpenAccountPopUp() {
   document
     .querySelector(".accounts-page-new-account-btn")
     .addEventListener("click", () => {
+
       const overlay = document.querySelector(".account-modal-overlay");
       const modal = document.querySelector(".account-modal");
 
       overlay.classList.add("show-pop-up");
 
-      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+      gsap.fromTo(overlay,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.2 }
+      );
 
       gsap.fromTo(
         modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3 },
+        { scale: 1, y: 0, opacity: 1, duration: 0.3 }
       );
 
-      // ✅ FIX: wait for DOM paint
       requestAnimationFrame(() => {
-        // initAllDropdowns(modal);
+        initAllDropdowns(modal);   // ← uncomment this
       });
     });
 }
@@ -282,10 +285,14 @@ function closeAccountPopUp() {
 // Drop Down
 
 function initDropdown(dropdown) {
-  const toggle = dropdown.querySelector("[data-toggle]");
-  const menu = dropdown.querySelector(".dropdown-menu");
-  const selected = dropdown.querySelector("[data-selected]");
-  const items = dropdown.querySelectorAll(".dropdown-item");
+    if (dropdown.dataset.initialized) return;
+    dropdown.dataset.initialized = "true";
+
+    const toggle = dropdown.querySelector("[data-toggle]");
+    const menu = dropdown.querySelector(".dropdown-menu");
+    const selected = dropdown.querySelector("[data-selected]");
+    const items = dropdown.querySelectorAll(".dropdown-item");
+
 
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();

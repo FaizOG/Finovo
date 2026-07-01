@@ -1,4 +1,4 @@
-import { getData, updateData, changedSymbol } from "../js/core/store.js";
+import { getData, updateData, changedSymbol, clearData } from "../js/core/store.js";
 
 function createPreferencesSection() {
     const section = document.createElement("section");
@@ -269,21 +269,25 @@ export function initTheme(container) {
 
 export default {
     mount(container) {
-    container.innerHTML = `
-        <h2 class="setting-tab-title">Settings</h2>
-        <p class="setting-tab-subtitle">Preferences, recurring entries and backups</p>
-    `;
+        container.innerHTML = `
+            <h2 class="setting-tab-title">Settings</h2>
+            <p class="setting-tab-subtitle">
+                Preferences, recurring entries and backups
+            </p>
+        `;
 
-    container.appendChild(createPreferencesSection());
-    container.appendChild(createBackAndDataSection());
+        container.appendChild(createPreferencesSection());
+        container.appendChild(createBackAndDataSection());
 
-    initTheme(container);
-    initCurrencyDropdown(); // ✅ now DOM exists
+        initTheme(container);
+        initCurrencyDropdown();
+        initCurrencyUI();
+        updateCurrencyUI();
 
-    // window.addEventListener("DOMContentLoaded", () => {
-    //     console.log(changedSymbol());
-    // });
-    initCurrencyUI();
-    updateCurrencyUI();
-}
+        const resetBtn = container.querySelector(".RestAccount-btn");
+
+        resetBtn?.addEventListener("click", () => {
+            clearData();
+        });
+    }
 };

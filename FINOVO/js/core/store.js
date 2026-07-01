@@ -4,9 +4,9 @@ const defaultData = {
   accounts: [],
   settings: {
     theme: "dark",
-    currency: "₹"
+    currency: "₹",
   },
-  transaction:[],
+  transaction: [],
 };
 
 if (!localStorage.getItem(STORAGE_KEY)) {
@@ -33,34 +33,40 @@ export function updateData(partial) {
     ...partial,
     settings: {
       ...current.settings,
-      ...(partial.settings || {})
-    }
+      ...(partial.settings || {}),
+    },
   };
 
   saveData(updated);
 }
 
-
-export function changedSymbol(){
+export function changedSymbol() {
   const data = localStorage.getItem(STORAGE_KEY);
   // console.log(JSON.parse(data).settings.currency);
   return JSON.parse(data).settings.currency || "₹";
-  
 }
 
-
 function updateCurrencyUI() {
-    const symbol = changedSymbol();
+  const symbol = changedSymbol();
 
-    const totalEl = document.querySelector(".total__aside_balance h3 span");
+  const totalEl = document.querySelector(".total__aside_balance h3 span");
 
-    if (totalEl) {
-        totalEl.textContent = symbol;
-    }
+  if (totalEl) {
+    totalEl.textContent = symbol;
+  }
 
-    document.querySelectorAll(".currency-symbol").forEach(el => {
-        el.textContent = symbol;
-    });
+  document.querySelectorAll(".currency-symbol").forEach((el) => {
+    el.textContent = symbol;
+  });
 }
 
 updateCurrencyUI();
+
+export function clearData() {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+
+  updateCurrencyUI();
+
+  notify("app", "reset");
+}

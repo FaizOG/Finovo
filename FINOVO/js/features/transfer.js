@@ -209,5 +209,17 @@ function initTransferForm() {
 }
 
 
+// const form = document.querySelector(".transfer-modal-overlay");
+// console.log("Form:", form);
+
+const transferSubmitBtn = document.querySelector(".transfer-popup-submit-btn");
+// console.log("Button:", transferSubmitBtn);
+transferSubmitBtn.addEventListener("click", function(){
+    const AccountFrom = document.querySelector(".fromAccountValue data-selected").innerHTML
+    console.log(AccountFrom);
+    
+})
+
+
 // Expose close function globally (used by UI buttons in HTML)
 window.closeTransferPopUp = closeTransferPopUp;
