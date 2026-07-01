@@ -414,67 +414,6 @@ input,
 }
 
 /* Toster Message */
-/* #toast-container {
-    position: absolute;
-    top: 80px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
-}
-
-.toast {
-    position: relative;
-    min-width: 260px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: #222;
-    color: #fff;
-    overflow: hidden;
-    transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.toast-content {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.toast-icon {
-    font-weight: bold;
-}
-
-.toast-close {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    background: transparent;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 100%;
-    background: rgba(255,255,255,0.4);
-}
-
-/* TYPES 
-.toast.success { background: #1f8f4a; }
-.toast.error { background: #c0392b; }
-.toast.warning { background: #d68910; }
-.toast.info { background: #2e86c1; } */
-
-/* ===========================
-   FINOVO TOAST SYSTEM
-   =========================== */
-
 #toast-container {
   position: fixed;
   top: 20px;
