@@ -389,9 +389,22 @@ export function refreshAccountsUI() {
 
 window.closeAccountPopUp = closeAccountPopUp;
 
-function animateBalanceChange(el, fromValue, toValue, color) {
+const styles = getComputedStyle(document.documentElement);
+
+const primary = styles.getPropertyValue("--primary").trim();
+const text = styles.getPropertyValue("--text").trim();
+
+function animateBalanceChange(el, fromValue, toValue, type = "up") {
   const obj = { value: fromValue };
 
+  const flashClass =
+    type === "up" ? "up-flash" : type === "down" ? "down-flash" : "";
+
+  const finalColor = getComputedStyle(document.documentElement)
+    .getPropertyValue("--text")
+    .trim();
+
+  // number animation
   gsap.fromTo(
     obj,
     { value: fromValue },
@@ -400,21 +413,36 @@ function animateBalanceChange(el, fromValue, toValue, color) {
       duration: 0.6,
       ease: "power2.out",
       onUpdate: () => {
-        el.textContent = `${getCurrencySymbol()} ${Math.floor(obj.value.toFixed(2))}`;
+        el.textContent = `${getCurrencySymbol()} ${Math.floor(obj.value)}`;
       },
     },
   );
 
+  // RESET FIRST (important)
+  el.classList.remove("up-flash", "down-flash");
+
+  // force reflow so class re-triggers properly
+  void el.offsetWidth;
+
+  // apply flash class
+  el.classList.add(flashClass);
+
+  // animation
   gsap.fromTo(
     el,
-    { scale: 1, color: "#ffffff" },
+    { scale: 1 },
     {
       scale: 1.15,
-      color,
-      duration: 0.3,
+      duration: 0.2,
       yoyo: true,
       repeat: 1,
       ease: "power2.out",
+      onComplete: () => {
+        el.classList.remove("up-flash", "down-flash");
+
+        // restore base color cleanly
+        el.style.color = finalColor;
+      },
     },
   );
 }
@@ -427,18 +455,120 @@ export function animateTransferUI(
   toOld,
   toNew,
 ) {
-  const fromCard = document.querySelector(
-    `.account-details-card[data-id="${fromId}"] [data-balance]`,
+  requestAnimationFrame(() => {
+    const fromEl = document.querySelector(
+      `.account-details-card[data-id="${fromId}"] [data-balance]`,
+    );
+
+    const toEl = document.querySelector(
+      `.account-details-card[data-id="${toId}"] [data-balance]`,
+    );
+
+    if (!fromEl || !toEl) return;
+
+    // 💸 NEW: flying money effect (use OLD amount for realism)
+    createMoneyFly(fromEl, toEl, fromOld - fromNew);
+
+    // balance animations
+    animateBalanceChange(fromEl, fromOld, fromNew, "down");
+    gsap.delayedCall(0.1, () => {
+      animateATMCount(toEl, toOld, toNew);
+    });
+
+    const fromRect = fromEl.getBoundingClientRect();
+
+    // 💥 burst at sender
+    createParticles(
+      fromRect.left + fromRect.width / 2,
+      fromRect.top + fromRect.height / 2,
+    );
+  });
+}
+
+function createMoneyFly(fromEl, toEl, amount) {
+  const fromRect = fromEl.getBoundingClientRect();
+  const toRect = toEl.getBoundingClientRect();
+
+  const fly = document.createElement("div");
+
+  fly.textContent = `${getCurrencySymbol()} ${Math.floor(amount)}`;
+  fly.style.position = "fixed";
+  fly.style.left = `${fromRect.left + fromRect.width / 2}px`;
+  fly.style.top = `${fromRect.top}px`;
+  fly.style.zIndex = "9999";
+  fly.style.padding = "6px 10px";
+  fly.style.borderRadius = "999px";
+  fly.style.background = "#11151d";
+  fly.style.color = "#d7f000";
+  fly.style.fontSize = "12px";
+  fly.style.fontWeight = "600";
+  fly.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
+  fly.style.pointerEvents = "none";
+
+  document.body.appendChild(fly);
+
+  gsap.to(fly, {
+    x: toRect.left - fromRect.left,
+    y: toRect.top - fromRect.top,
+    scale: 0.8,
+    opacity: 0,
+    duration: 0.8,
+    ease: "power2.inOut",
+    onComplete: () => fly.remove(),
+  });
+
+  // small pop at start
+  gsap.fromTo(
+    fly,
+    { scale: 0.5 },
+    { scale: 1, duration: 0.2, ease: "back.out(2)" },
   );
+}
 
-  const toCard = document.querySelector(
-    `.account-details-card[data-id="${toId}"] [data-balance]`,
-  );
+function createParticles(x, y) {
+  const colors = ["#d7f000", "#22c55e", "#ffffff"];
 
-  if (!fromCard || !toCard) return;
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement("div");
 
-  animateBalanceChange(fromCard, fromOld, fromNew, "#ff4d4d"); // red
-  animateBalanceChange(toCard, toOld, toNew, "#22c55e"); // green
+    p.style.position = "fixed";
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.width = "6px";
+    p.style.height = "6px";
+    p.style.borderRadius = "50%";
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.zIndex = "9999";
+    p.style.pointerEvents = "none";
+
+    document.body.appendChild(p);
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 40 + Math.random() * 60;
+
+    gsap.to(p, {
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance,
+      opacity: 0,
+      scale: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      onComplete: () => p.remove(),
+    });
+  }
+}
+
+function animateATMCount(el, fromValue, toValue) {
+  const obj = { value: fromValue };
+
+  gsap.to(obj, {
+    value: toValue,
+    duration: 0.9,
+    ease: "power1.out",
+    onUpdate: () => {
+      el.textContent = `${getCurrencySymbol()} ${Math.floor(obj.value)}`;
+    },
+  });
 }
 
 export default {
