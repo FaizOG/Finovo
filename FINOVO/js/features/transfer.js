@@ -1,5 +1,5 @@
 import { getData, updateData } from "../core/store.js";
-import { refreshAccountsUI } from "../../pages/accounts.js";
+import { refreshAccountsUI, animateTransferUI } from "../../pages/accounts.js";
 
 /**
  - Entry point for transfer modal functionality.
@@ -7,12 +7,10 @@ import { refreshAccountsUI } from "../../pages/accounts.js";
  */
 
 export function initTransfer() {
-    OpenTransferPopUp();
-    initTransferOverlayClose();
-    initTransferForm();
+  OpenTransferPopUp();
+  initTransferOverlayClose();
+  initTransferForm();
 }
-
-
 
 /**
  (Opens the transfer modal when the "Transfer" button is clicked.)
@@ -207,7 +205,7 @@ function submitTransfer(e) {
   e.preventDefault();
 
   const amountInput = document.querySelector(
-    ".transfer-modal input[type='number']"
+    ".transfer-modal input[type='number']",
   );
 
   const amount = Number(amountInput.value);
@@ -230,35 +228,45 @@ function submitTransfer(e) {
   const data = getData();
   const accounts = [...data.accounts];
 
-  const fromAccount = accounts.find(
-    acc => acc.id === transferSelection.from
-  );
+  const oldTotal = accounts.reduce((sum, acc) => sum + acc.currentBalance, 0);
 
-  const toAccount = accounts.find(
-    acc => acc.id === transferSelection.to
-  );
+  const fromAccount = accounts.find((acc) => acc.id === transferSelection.from);
+
+  const toAccount = accounts.find((acc) => acc.id === transferSelection.to);
 
   if (!fromAccount || !toAccount) {
     notify.error("Account not found.");
     return;
   }
 
-  // Check balance
   if (fromAccount.currentBalance < amount) {
     notify.error("Not enough balance.");
     return;
   }
 
-  // Transfer
+  const fromOld = fromAccount.currentBalance;
+  const toOld = toAccount.currentBalance;
+
   fromAccount.currentBalance -= amount;
   toAccount.currentBalance += amount;
 
-  // Save accounts
-  updateData({
-    accounts
+  updateData({ accounts });
+
+  const newTotal = accounts.reduce((sum, acc) => sum + acc.currentBalance, 0);
+
+  refreshAccountsUI();
+
+  requestAnimationFrame(() => {
+    animateTransferUI(
+      fromAccount.id,
+      toAccount.id,
+      fromOld,
+      fromAccount.currentBalance,
+      toOld,
+      toAccount.currentBalance,
+    );
   });
 
-  // Save transaction
   const transactions = data.transaction || [];
 
   transactions.unshift({
@@ -272,28 +280,22 @@ function submitTransfer(e) {
     createdAt: new Date().toISOString(),
   });
 
-  updateData({
-    transaction: transactions
-  });
-
-  refreshAccountsUI();
+  updateData({ transaction: transactions });
 
   notify.success(
-    `Transferred ₹${amount} from "${fromAccount.name}" to "${toAccount.name}".`
+    `Transferred ₹${amount} from "${fromAccount.name}" to "${toAccount.name}".`,
   );
 
   closeTransferPopUp();
 }
 
 function initTransferForm() {
+  const btn = document.querySelector(".transfer-popup-submit-btn");
 
-    const btn = document.querySelector(".transfer-popup-submit-btn");
+  if (!btn) return;
 
-    if (!btn) return;
-
-    btn.addEventListener("click", submitTransfer);
+  btn.addEventListener("click", submitTransfer);
 }
-
 
 // const form = document.querySelector(".transfer-modal-overlay");
 // console.log("Form:", form);

@@ -1,7 +1,6 @@
 import { getData, updateData } from "../js/core/store.js";
 import { initTransfer } from "../js/features/transfer.js";
 
-
 const accountIcons = {
   bank: `
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -136,7 +135,7 @@ function createAccountCard({ id, name, type, openingBalance, currentBalance }) {
         </div>
 
         <div class="card-current-amount">
-            <span class="amount">${symbol} ${currentBalance}</span>
+            <span class="amount" data-balance>${symbol} ${currentBalance}</span>
         </div>
 
         <div class="card-opening-balance">
@@ -390,6 +389,57 @@ export function refreshAccountsUI() {
 
 window.closeAccountPopUp = closeAccountPopUp;
 
+function animateBalanceChange(el, fromValue, toValue, color) {
+  const obj = { value: fromValue };
+
+  gsap.fromTo(
+    obj,
+    { value: fromValue },
+    {
+      value: toValue,
+      duration: 0.6,
+      ease: "power2.out",
+      onUpdate: () => {
+        el.textContent = `${getCurrencySymbol()} ${Math.floor(obj.value.toFixed(2))}`;
+      },
+    },
+  );
+
+  gsap.fromTo(
+    el,
+    { scale: 1, color: "#ffffff" },
+    {
+      scale: 1.15,
+      color,
+      duration: 0.3,
+      yoyo: true,
+      repeat: 1,
+      ease: "power2.out",
+    },
+  );
+}
+
+export function animateTransferUI(
+  fromId,
+  toId,
+  fromOld,
+  fromNew,
+  toOld,
+  toNew,
+) {
+  const fromCard = document.querySelector(
+    `.account-details-card[data-id="${fromId}"] [data-balance]`,
+  );
+
+  const toCard = document.querySelector(
+    `.account-details-card[data-id="${toId}"] [data-balance]`,
+  );
+
+  if (!fromCard || !toCard) return;
+
+  animateBalanceChange(fromCard, fromOld, fromNew, "#ff4d4d"); // red
+  animateBalanceChange(toCard, toOld, toNew, "#22c55e"); // green
+}
 
 export default {
   mount(container) {
