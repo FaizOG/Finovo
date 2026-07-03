@@ -96,7 +96,10 @@ aside {
 }
 
 .account_img {
-  background: var(--primary);
+  /* background: var(--primary); */
+  background-image: url(./favIcon.jpeg);
+  background-position: center;
+  background-size: cover;
   color: #000;
   width: 40px;
   height: 40px;
@@ -104,12 +107,11 @@ aside {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease-in-out;
 }
 
-.account_img img {
-  height: 100%;
-  width: 100%;
-  border-radius: 100%;
+aside:hover .account_img{
+  background-image: url(./kling_20260703_VIDEO_Animate_th_4713_0.gif);
 }
 
 /* NAV */
