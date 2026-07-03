@@ -1,10 +1,15 @@
-import { getData, updateData, changedSymbol, clearData } from "../js/core/store.js";
+import {
+  getData,
+  updateData,
+  changedSymbol,
+  clearData,
+} from "../js/core/store.js";
 
 function createPreferencesSection() {
-    const section = document.createElement("section");
-    // section.className = "settings-card";
+  const section = document.createElement("section");
+  // section.className = "settings-card";
 
-    section.innerHTML = `
+  section.innerHTML = `
   <div class="setting-tab-Preferences-card">
                         <h4 class="setting-tab-Preferences-card-title">Preferences</h4>
 
@@ -74,15 +79,14 @@ function createPreferencesSection() {
                     </div>
   `;
 
-    return section;
+  return section;
 }
 
-
 function createBackAndDataSection() {
-    const section = document.createElement("section");
-    // section.className = "settings-card";
+  const section = document.createElement("section");
+  // section.className = "settings-card";
 
-    section.innerHTML = `
+  section.innerHTML = `
   <div class="setting-tab-Preferences-card">
                         <h4 class="setting-tab-Preferences-card-title">Backup & data</h4>
                         <div class="btn-container">
@@ -139,155 +143,155 @@ function createBackAndDataSection() {
                             </button>
                         </div>
                     </div>
-  `
-    return section;
+  `;
+  return section;
 }
 
 // OPEN / CLOSE
 function toggleCurrencyDropdown() {
-    document
-        .getElementById("currencyDropdownMenu")
-        .classList.toggle("active");
+  document.getElementById("currencyDropdownMenu").classList.toggle("active");
 }
 
 function selectCurrency(el) {
-    document
-        .querySelectorAll("#currencyDropdownMenu .dropdown-item")
-        .forEach(i => i.classList.remove("active"));
+  document
+    .querySelectorAll("#currencyDropdownMenu .dropdown-item")
+    .forEach((i) => i.classList.remove("active"));
 
-    el.classList.add("active");
+  el.classList.add("active");
 
-    const symbol = el.textContent;
+  const symbol = el.textContent;
 
-    document.getElementById("selectedCurrency").textContent = symbol;
+  document.getElementById("selectedCurrency").textContent = symbol;
 
-    document.getElementById("currencyDropdownMenu").classList.remove("active");
+  document.getElementById("currencyDropdownMenu").classList.remove("active");
 
-    // SAVE TO STORAGE
-    updateData({
-        settings: { currency: symbol }
-    });
+  // SAVE TO STORAGE
+  updateData({
+    settings: { currency: symbol },
+  });
 
-    updateCurrencyUI(symbol);
+  updateCurrencyUI(symbol);
 }
 
 function initCurrencyDropdown() {
-    const menu = document.getElementById("currencyDropdownMenu");
+  const menu = document.getElementById("currencyDropdownMenu");
 
-    menu.addEventListener("click", (e) => {
-        if (e.target.classList.contains("dropdown-item")) {
-            selectCurrency(e.target);
-        }
-    });
+  menu.addEventListener("click", (e) => {
+    if (e.target.classList.contains("dropdown-item")) {
+      selectCurrency(e.target);
+    }
+  });
 }
 
 window.toggleCurrencyDropdown = toggleCurrencyDropdown;
 window.selectCurrency = selectCurrency;
 
-
-
 let currencySymbol = document.querySelector("#selectedCurrency");
 
-
-
 function updateCurrencyUI() {
-    const totalEl = document.querySelector(".total__aside_balance h3 span");
-    if (!totalEl) return;
+  const totalEl = document.querySelector(".total__aside_balance h3 span");
+  if (!totalEl) return;
 
-    totalEl.textContent = changedSymbol();
+  totalEl.textContent = changedSymbol();
 }
 
 function initCurrencyUI() {
-    const data = getData();
-    const symbol = data?.settings?.currency || "₹";
+  const data = getData();
+  const symbol = data?.settings?.currency || "₹";
 
-    // set dropdown selected text
-    const selected = document.getElementById("selectedCurrency");
-    if (selected) {
-        selected.textContent = symbol;
-    }
+  // set dropdown selected text
+  const selected = document.getElementById("selectedCurrency");
+  if (selected) {
+    selected.textContent = symbol;
+  }
 
-    // mark active item
-    document.querySelectorAll("#currencyDropdownMenu .dropdown-item")
-        .forEach(el => {
-            el.classList.toggle("active", el.textContent === symbol);
-        });
-
-    // update all UI places
-    document.querySelectorAll(".currency-symbol").forEach(el => {
-        el.textContent = symbol;
+  // mark active item
+  document
+    .querySelectorAll("#currencyDropdownMenu .dropdown-item")
+    .forEach((el) => {
+      el.classList.toggle("active", el.textContent === symbol);
     });
+
+  // update all UI places
+  document.querySelectorAll(".currency-symbol").forEach((el) => {
+    el.textContent = symbol;
+  });
 }
-
-
-
 
 // Light - Dark mode code
 export function initTheme(container) {
-    const darkBtn = container.querySelector("#darkBtn");
-    const lightBtn = container.querySelector("#lightBtn");
-    const body = document.body;
+  const darkBtn = container.querySelector("#darkBtn");
+  const lightBtn = container.querySelector("#lightBtn");
+  const body = document.body;
 
-    if (!darkBtn || !lightBtn) return;
+  if (!darkBtn || !lightBtn) return;
 
-    // APPLY CURRENT STORE STATE
+  // APPLY CURRENT STORE STATE
+  syncThemeUI();
+
+  // CLICK EVENTS
+  darkBtn.addEventListener("click", () => {
+    updateData({
+      settings: { theme: "dark" },
+    });
+
     syncThemeUI();
 
-    // CLICK EVENTS
-    darkBtn.addEventListener("click", () => {
-        updateData({ settings: { theme: "dark" } });
-        syncThemeUI();
+    window.dispatchEvent(new Event("theme-change"));
+  });
+
+  lightBtn.addEventListener("click", () => {
+    updateData({
+      settings: { theme: "light" },
     });
 
-    lightBtn.addEventListener("click", () => {
-        updateData({ settings: { theme: "light" } });
-        syncThemeUI();
-    });
+    syncThemeUI();
 
-    // 🔥 THIS IS THE KEY FUNCTION
-    function syncThemeUI() {
-        const data = getData();
-        const theme = data.settings.theme || "dark";
+    window.dispatchEvent(new Event("theme-change"));
+  });
 
-        // apply body class
-        if (theme === "light") {
-            body.classList.add("light");
-        } else {
-            body.classList.remove("light");
-        }
+  // 🔥 THIS IS THE KEY FUNCTION
+  function syncThemeUI() {
+    const data = getData();
+    const theme = data.settings.theme || "dark";
 
-        // update active buttons
-        darkBtn.classList.toggle("active", theme === "dark");
-        lightBtn.classList.toggle("active", theme === "light");
+    // apply body class
+    if (theme === "light") {
+      body.classList.add("light");
+    } else {
+      body.classList.remove("light");
     }
 
-    // 🔥 GLOBAL SYNC LISTENER (IMPORTANT)
-    window.addEventListener("theme-change", syncThemeUI);
+    // update active buttons
+    darkBtn.classList.toggle("active", theme === "dark");
+    lightBtn.classList.toggle("active", theme === "light");
+  }
+
+  // 🔥 GLOBAL SYNC LISTENER (IMPORTANT)
+  window.addEventListener("theme-change", syncThemeUI);
 }
 
-
-
 export default {
-    mount(container) {
-        container.innerHTML = `
+  mount(container) {
+    container.innerHTML = `
             <h2 class="setting-tab-title">Settings</h2>
             <p class="setting-tab-subtitle">
                 Preferences, recurring entries and backups
             </p>
         `;
 
-        container.appendChild(createPreferencesSection());
-        container.appendChild(createBackAndDataSection());
+    container.appendChild(createPreferencesSection());
+    container.appendChild(createBackAndDataSection());
 
-        initTheme(container);
-        initCurrencyDropdown();
-        initCurrencyUI();
-        updateCurrencyUI();
+    initTheme(container);
+    initCurrencyDropdown();
+    initCurrencyUI();
+    updateCurrencyUI();
 
-        const resetBtn = container.querySelector(".RestAccount-btn");
+    const resetBtn = container.querySelector(".RestAccount-btn");
 
-        resetBtn?.addEventListener("click", () => {
-            clearData();
-        });
-    }
+    resetBtn?.addEventListener("click", () => {
+      clearData();
+    });
+  },
 };
