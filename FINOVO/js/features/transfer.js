@@ -1,4 +1,5 @@
 import { getData, updateData } from "../core/store.js";
+import { refreshAccountsUI } from "../../pages/accounts.js";
 
 /**
  - Entry point for transfer modal functionality.
@@ -6,10 +7,9 @@ import { getData, updateData } from "../core/store.js";
  */
 
 export function initTransfer() {
-  OpenTransferPopUp();
-  initTransferOverlayClose();
-  initTransferForm();
-  initTransferOverlayClose();
+    OpenTransferPopUp();
+    initTransferOverlayClose();
+    initTransferForm();
 }
 
 
@@ -203,23 +203,100 @@ function resetTransferForm() {
   refreshTransferDropdowns();
 }
 
+function submitTransfer(e) {
+  e.preventDefault();
+
+  const amountInput = document.querySelector(
+    ".transfer-modal input[type='number']"
+  );
+
+  const amount = Number(amountInput.value);
+
+  if (!transferSelection.from) {
+    notify.warning("Select the account to transfer from.");
+    return;
+  }
+
+  if (!transferSelection.to) {
+    notify.warning("Select the account to transfer to.");
+    return;
+  }
+
+  if (!amount || amount <= 0) {
+    notify.warning("Enter a valid amount.");
+    return;
+  }
+
+  const data = getData();
+  const accounts = [...data.accounts];
+
+  const fromAccount = accounts.find(
+    acc => acc.id === transferSelection.from
+  );
+
+  const toAccount = accounts.find(
+    acc => acc.id === transferSelection.to
+  );
+
+  if (!fromAccount || !toAccount) {
+    notify.error("Account not found.");
+    return;
+  }
+
+  // Check balance
+  if (fromAccount.currentBalance < amount) {
+    notify.error("Not enough balance.");
+    return;
+  }
+
+  // Transfer
+  fromAccount.currentBalance -= amount;
+  toAccount.currentBalance += amount;
+
+  // Save accounts
+  updateData({
+    accounts
+  });
+
+  // Save transaction
+  const transactions = data.transaction || [];
+
+  transactions.unshift({
+    id: Date.now(),
+    type: "transfer",
+    from: fromAccount.id,
+    to: toAccount.id,
+    fromName: fromAccount.name,
+    toName: toAccount.name,
+    amount,
+    createdAt: new Date().toISOString(),
+  });
+
+  updateData({
+    transaction: transactions
+  });
+
+  refreshAccountsUI();
+
+  notify.success(
+    `Transferred ₹${amount} from "${fromAccount.name}" to "${toAccount.name}".`
+  );
+
+  closeTransferPopUp();
+}
 
 function initTransferForm() {
-  //    main functionality here
+
+    const btn = document.querySelector(".transfer-popup-submit-btn");
+
+    if (!btn) return;
+
+    btn.addEventListener("click", submitTransfer);
 }
 
 
 // const form = document.querySelector(".transfer-modal-overlay");
 // console.log("Form:", form);
-
-const transferSubmitBtn = document.querySelector(".transfer-popup-submit-btn");
-// console.log("Button:", transferSubmitBtn);
-transferSubmitBtn.addEventListener("click", function(){
-    const AccountFrom = document.querySelector(".fromAccountValue data-selected").innerHTML
-    console.log(AccountFrom);
-    
-})
-
 
 // Expose close function globally (used by UI buttons in HTML)
 window.closeTransferPopUp = closeTransferPopUp;

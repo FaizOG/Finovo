@@ -1,6 +1,7 @@
 import { getData, updateData } from "../js/core/store.js";
 import { initTransfer } from "../js/features/transfer.js";
 
+
 const accountIcons = {
   bank: `
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -101,7 +102,7 @@ function updateAccountIcon(container, type) {
   container.innerHTML = accountIcons[key] || accountIcons.bank;
 }
 
-function createAccountCard({ id, name, type, openingBalance }) {
+function createAccountCard({ id, name, type, openingBalance, currentBalance }) {
   const card = document.createElement("div");
   card.className = "account-details-card";
   card.dataset.id = id;
@@ -135,7 +136,7 @@ function createAccountCard({ id, name, type, openingBalance }) {
         </div>
 
         <div class="card-current-amount">
-            <span class="amount">${symbol} ${openingBalance}</span>
+            <span class="amount">${symbol} ${currentBalance}</span>
         </div>
 
         <div class="card-opening-balance">
@@ -155,7 +156,9 @@ function createAccountCard({ id, name, type, openingBalance }) {
 
     updateData({ accounts: updatedAccounts });
 
-    notify("account", "delete");
+    notify.warning(
+      `"${card.querySelector(".account-name").textContent}" deleted`,
+    );
 
     gsap.to(card, {
       opacity: 0,
@@ -226,37 +229,28 @@ function buildAccountDropdownItems() {
     .join("");
 }
 
-
-
 // Closing Transfer Pop Up using "X btn" or "cancel btn" on transfer pop up
-
-
-
 
 // Open Transfer Pop Up using transfer btn on accounts page
 function OpenAccountPopUp() {
   document
     .querySelector(".accounts-page-new-account-btn")
     .addEventListener("click", () => {
-
       const overlay = document.querySelector(".account-modal-overlay");
       const modal = document.querySelector(".account-modal");
 
       overlay.classList.add("show-pop-up");
 
-      gsap.fromTo(overlay,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.2 }
-      );
+      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
       gsap.fromTo(
         modal,
         { scale: 0.9, y: 20, opacity: 0 },
-        { scale: 1, y: 0, opacity: 1, duration: 0.3 }
+        { scale: 1, y: 0, opacity: 1, duration: 0.3 },
       );
 
       requestAnimationFrame(() => {
-        initAllDropdowns(modal);   // ← uncomment this
+        initAllDropdowns(modal); // ← uncomment this
       });
     });
 }
@@ -285,14 +279,13 @@ function closeAccountPopUp() {
 // Drop Down
 
 function initDropdown(dropdown) {
-    if (dropdown.dataset.initialized) return;
-    dropdown.dataset.initialized = "true";
+  if (dropdown.dataset.initialized) return;
+  dropdown.dataset.initialized = "true";
 
-    const toggle = dropdown.querySelector("[data-toggle]");
-    const menu = dropdown.querySelector(".dropdown-menu");
-    const selected = dropdown.querySelector("[data-selected]");
-    const items = dropdown.querySelectorAll(".dropdown-item");
-
+  const toggle = dropdown.querySelector("[data-toggle]");
+  const menu = dropdown.querySelector(".dropdown-menu");
+  const selected = dropdown.querySelector("[data-selected]");
+  const items = dropdown.querySelectorAll(".dropdown-item");
 
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -363,6 +356,8 @@ function initAccountFormSubmit() {
     accounts.push(newAccount);
     updateData({ accounts });
 
+    notify.success(`"${newAccount.name}" account created`);
+
     const card = createAccountCard(newAccount);
     accountCardSection.appendChild(card);
 
@@ -383,10 +378,18 @@ function renderExistingAccounts() {
   });
 }
 
+export function refreshAccountsUI() {
+  if (!accountCardSection) return;
+
+  accountCardSection.innerHTML = "";
+
+  renderExistingAccounts();
+
+  updateTransferButtonState();
+}
+
 window.closeAccountPopUp = closeAccountPopUp;
 
-// make it accessible from HTML onclick
-// window.closeTransferPopUp = closeTransferPopUp;
 
 export default {
   mount(container) {
