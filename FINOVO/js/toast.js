@@ -25,7 +25,9 @@
   function playSound(type) {
     try {
       if (!state.audioCtx) {
-        state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        state.audioCtx = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
       }
 
       const ctx = state.audioCtx;
@@ -39,10 +41,10 @@
         type === "error"
           ? 120
           : type === "warning"
-          ? 220
-          : type === "success"
-          ? 180
-          : 160;
+            ? 220
+            : type === "success"
+              ? 180
+              : 160;
 
       osc.frequency.value = freq;
 
@@ -64,7 +66,7 @@
 
   function create(message, type) {
     const existing = state.active.find(
-      (t) => t.message === message && t.type === type
+      (t) => t.message === message && t.type === type,
     );
 
     if (existing) {
@@ -133,7 +135,7 @@
         { transform: "scale(1.05)" },
         { transform: "scale(1)" },
       ],
-      { duration: 220, easing: "ease-out" }
+      { duration: 220, easing: "ease-out" },
     );
   }
 
@@ -148,10 +150,7 @@
   }
 
   function processQueue() {
-    while (
-      state.active.length < MAX_VISIBLE &&
-      state.queue.length
-    ) {
+    while (state.active.length < MAX_VISIBLE && state.queue.length) {
       const toast = state.queue.shift();
 
       state.active.unshift(toast);

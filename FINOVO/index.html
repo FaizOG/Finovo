@@ -793,7 +793,7 @@
         </form>
 
         <!-- Transfer pop up -->
-        <form class="transfer-modal-overlay" id="modalOverlay">
+        <form class="transfer-modal-overlay" id="modalOverlay-1">
           <div class="transfer-modal">
             <div class="modal-header">
               <h2>Transfer money</h2>
@@ -979,15 +979,13 @@
         </div>
 
         <!-- New Goal Popup -->
-        <div class="goal-modal-overlay" id="goalModal">
+        <div class="goal-modal-overlay">
           <div class="goal-modal">
             <!-- HEADER -->
             <div class="goal-modal-header">
               <h2>New Goal</h2>
 
-              <button class="goal-close-btn" onclick="closeGoalPopUp()">
-                ✕
-              </button>
+              <button class="goal-close-btn">✕</button>
             </div>
 
             <!-- FORM -->
@@ -997,8 +995,8 @@
                 <label>Name</label>
                 <input
                   class="goal-input"
-                  type="text"
                   placeholder="e.g. New Laptop"
+                  type="text"
                 />
               </div>
 
@@ -1014,25 +1012,22 @@
                 <input class="goal-input" type="number" placeholder="0" />
               </div>
 
+              <!-- <div class="goal-field">
+                <label>Already Saved</label>
+                <input type="number" value="0" />
+              </div> -->
+
               <!-- Target Date -->
               <div class="goal-field full">
                 <label>Target Date</label>
                 <input class="goal-input" type="date" />
               </div>
+              <!-- FOOTER -->
+              <div class="goal-footer">
+                <button type="button" class="goal-cancel">Cancel</button>
+                <button type="submit" class="goal-submit">Add Goal</button>
+              </div>
             </form>
-
-            <!-- FOOTER -->
-            <div class="goal-footer">
-              <button
-                class="goal-cancel"
-                type="button"
-                onclick="closeGoalPopUp()"
-              >
-                Cancel
-              </button>
-
-              <button class="goal-submit" type="submit">Add Goal</button>
-            </div>
           </div>
         </div>
       </div>
@@ -1046,6 +1041,6 @@
 
     <script src="/js/toast.js"></script>
     <script type="module" src="/js/app.js"></script>
-    <script src="./pages/goals.js"></script>
+    <script type="module" src="./pages/goals.js"></script>
   </body>
 </html>
