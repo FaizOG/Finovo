@@ -1,589 +1,1051 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finova - Personal Finance Dashboard</title>
 
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./style/universal-pop.css">
-    <link rel="stylesheet" href="./style/settings.css">
-    <link rel="stylesheet" href="./style/accounts.css">
+    <link rel="stylesheet" href="./style/universal-pop.css" />
+    <link rel="stylesheet" href="./style/settings.css" />
+    <link rel="stylesheet" href="./style/accounts.css" />
+    <link rel="stylesheet" href="./style/goals.css" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="icon" href="./pig.svg" />
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="app">
-
-        <aside>
-            <div class="aside-scrool">
-                <div class="account">
-                    <div class="account_img" aria-hidden="true">
-                        <!-- <img src="./kling_20260703_VIDEO_Animate_th_4713_0.gif" alt=""> -->
-                    </div>
-
-                    <div class="account-text">
-                        <h4>Finovo</h4>
-                        <p>Personal finance</p>
-                    </div>
-                </div>
-
-                <nav id="sidebar-nav">
-
-                    <a class="nav-item" href="#" data-page="dashboard">
-                        <div class="asidebar-tab asidebar-active">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-layout-dashboard size-4"
-                                    aria-hidden="true">
-                                    <rect width="7" height="9" x="3" y="3" rx="1"></rect>
-                                    <rect width="7" height="5" x="14" y="3" rx="1"></rect>
-                                    <rect width="7" height="9" x="14" y="12" rx="1"></rect>
-                                    <rect width="7" height="5" x="3" y="16" rx="1"></rect>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Dashboard</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="transactions">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-arrow-left-right size-4"
-                                    aria-hidden="true">
-                                    <path d="M8 3 4 7l4 4"></path>
-                                    <path d="M4 7h16"></path>
-                                    <path d="m16 21 4-4-4-4"></path>
-                                    <path d="M20 17H4"></path>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Transactions</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="budgets">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-wallet size-4" aria-hidden="true">
-                                    <path
-                                        d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1">
-                                    </path>
-                                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Budgets</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="analytics">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chart-column size-4"
-                                    aria-hidden="true">
-                                    <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
-                                    <path d="M18 17V9"></path>
-                                    <path d="M13 17V5"></path>
-                                    <path d="M8 17v-3"></path>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Analytics</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="goals">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-target size-4" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <circle cx="12" cy="12" r="6"></circle>
-                                    <circle cx="12" cy="12" r="2"></circle>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Goals</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="accounts">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-piggy-bank size-4" aria-hidden="true">
-                                    <path
-                                        d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z">
-                                    </path>
-                                    <path d="M16 10h.01"></path>
-                                    <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Accounts</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a class="nav-item" href="#" data-page="settings">
-                        <div class="asidebar-tab">
-                            <div class="tab-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-settings size-4" aria-hidden="true">
-                                    <path
-                                        d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915">
-                                    </path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </div>
-                            <div class="tab-name">
-                                <p>Settings</p>
-                            </div>
-                        </div>
-                    </a>
-
-                </nav>
+      <aside>
+        <div class="aside-scrool">
+          <div class="account">
+            <div class="account_img" aria-hidden="true">
+              <!-- <img src="./kling_20260703_VIDEO_Animate_th_4713_0.gif" alt=""> -->
             </div>
 
-            <div class="total__aside_balance">
-                <p>Total balance</p>
-                <h3>
-                    <span class="currency-symbol">₹</span>
-                    <span class="total-balance-value">0.00</span>
-                </h3>
-                <p>Net this month <span>+<span class="currency-symbol">₹</span>0.00</span></p>
+            <div class="account-text">
+              <h4>Finovo</h4>
+              <p>Personal finance</p>
             </div>
-        </aside>
+          </div>
 
-        <div class="main-content">
-
-            <header>
-
-                <div class="left-header">
-                    <div class="hamburger-menu" aria-label="menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-menu size-4" aria-hidden="true">
-                            <path d="M4 5h16"></path>
-                            <path d="M4 12h16"></path>
-                            <path d="M4 19h16"></path>
-                        </svg>
-                    </div>
-
-                    <div class="search-bar">
-                        <span class="search-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
-                                <path d="m21 21-4.34-4.34"></path>
-                                <circle cx="11" cy="11" r="8"></circle>
-                            </svg>
-                        </span>
-                        <input type="text" placeholder="Search transactions, goals, categories..." />
-                    </div>
-
-                    <div class="search-bar-mobile" aria-label="search">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-search size-4 text-muted-foreground shrink-0" aria-hidden="true">
-                            <path d="m21 21-4.34-4.34"></path>
-                            <circle cx="11" cy="11" r="8"></circle>
-                        </svg>
-                    </div>
+          <nav id="sidebar-nav">
+            <a class="nav-item" href="#" data-page="dashboard">
+              <div class="asidebar-tab asidebar-active">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-layout-dashboard size-4"
+                    aria-hidden="true"
+                  >
+                    <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                    <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                    <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                    <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                  </svg>
                 </div>
-
-                <div class="right-header">
-                    <div title="Switch theme" class="screen-mode-btn" aria-label="theme"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon size-4"
-                            aria-hidden="true">
-                            <path
-                                d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401">
-                            </path>
-                        </svg></div>
-                    <div title="bell Icon" class="bell-icon-btn" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-bell size-4" aria-hidden="true">
-                            <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
-                            <path
-                                d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326">
-                            </path>
-                        </svg></div>
-
-                    <button class="new-transaction" onclick="openModal()">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true">
-                                <path d="M5 12h14"></path>
-                                <path d="M12 5v14"></path>
-                            </svg></span>
-                        <span>New transaction</span>
-                    </button>
-
-                    <button class="new-transaction-mobile" onclick="openModal()">+</button>
+                <div class="tab-name">
+                  <p>Dashboard</p>
                 </div>
+              </div>
+            </a>
 
-            </header>
+            <a class="nav-item" href="#" data-page="transactions">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-arrow-left-right size-4"
+                    aria-hidden="true"
+                  >
+                    <path d="M8 3 4 7l4 4"></path>
+                    <path d="M4 7h16"></path>
+                    <path d="m16 21 4-4-4-4"></path>
+                    <path d="M20 17H4"></path>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Transactions</p>
+                </div>
+              </div>
+            </a>
 
-            <div id="page-content">
-                <!-- The whole content is coming from (pages folder using "navigation.js") -->
-                
-                <!-- Toster Message -->
-            <div id="toast-container"></div>
+            <a class="nav-item" href="#" data-page="budgets">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-wallet size-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+                    ></path>
+                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Budgets</p>
+                </div>
+              </div>
+            </a>
+
+            <a class="nav-item" href="#" data-page="analytics">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chart-column size-4"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                    <path d="M18 17V9"></path>
+                    <path d="M13 17V5"></path>
+                    <path d="M8 17v-3"></path>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Analytics</p>
+                </div>
+              </div>
+            </a>
+
+            <a class="nav-item" href="#" data-page="goals">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-target size-4"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="6"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Goals</p>
+                </div>
+              </div>
+            </a>
+
+            <a class="nav-item" href="#" data-page="accounts">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-piggy-bank size-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"
+                    ></path>
+                    <path d="M16 10h.01"></path>
+                    <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Accounts</p>
+                </div>
+              </div>
+            </a>
+
+            <a class="nav-item" href="#" data-page="settings">
+              <div class="asidebar-tab">
+                <div class="tab-icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewbox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-settings size-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </div>
+                <div class="tab-name">
+                  <p>Settings</p>
+                </div>
+              </div>
+            </a>
+          </nav>
+        </div>
+
+        <div class="total__aside_balance">
+          <p>Total balance</p>
+          <h3>
+            <span class="currency-symbol">₹</span>
+            <span class="total-balance-value">0.00</span>
+          </h3>
+          <p>
+            Net this month
+            <span>+<span class="currency-symbol">₹</span>0.00</span>
+          </p>
+        </div>
+      </aside>
+
+      <div class="main-content">
+        <header>
+          <div class="left-header">
+            <div class="hamburger-menu" aria-label="menu">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewbox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-menu size-4"
+                aria-hidden="true"
+              >
+                <path d="M4 5h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 19h16"></path>
+              </svg>
             </div>
 
-            <!-- add new transaction pop up -->
-            <form class="modal-overlay" id="modalOverlay">
+            <div class="search-bar">
+              <span class="search-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewbox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-search size-4 text-muted-foreground shrink-0"
+                  aria-hidden="true"
+                >
+                  <path d="m21 21-4.34-4.34"></path>
+                  <circle cx="11" cy="11" r="8"></circle>
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search transactions, goals, categories..."
+              />
+            </div>
 
-                <div class="modal">
+            <div class="search-bar-mobile" aria-label="search">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewbox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-search size-4 text-muted-foreground shrink-0"
+                aria-hidden="true"
+              >
+                <path d="m21 21-4.34-4.34"></path>
+                <circle cx="11" cy="11" r="8"></circle>
+              </svg>
+            </div>
+          </div>
 
-                    <div class="modal-header">
-                        <h2>New transaction</h2>
-                        <button type="button" class="close-btn" onclick="closeModal(event)"><svg
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="lucide lucide-x h-4 w-4" aria-hidden="true">
-                                <path d="M18 6 6 18"></path>
-                                <path d="m6 6 12 12"></path>
-                            </svg></button>
-                    </div>
+          <div class="right-header">
+            <div
+              title="Switch theme"
+              class="screen-mode-btn"
+              aria-label="theme"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewbox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-moon size-4"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
+                ></path>
+              </svg>
+            </div>
+            <div
+              title="bell Icon"
+              class="bell-icon-btn"
+              aria-label="notifications"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewbox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-bell size-4"
+                aria-hidden="true"
+              >
+                <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+                <path
+                  d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+                ></path>
+              </svg>
+            </div>
 
-                    <div class="txn-type">
-                        <div class="active-pill"></div>
+            <button class="new-transaction" onclick="openModal()">
+              <span
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewbox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-plus size-4"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path></svg
+              ></span>
+              <span>New transaction</span>
+            </button>
 
-                        <button class="txn-btn active" data-type="expense" type="button">
-                            Expense
-                        </button>
+            <button class="new-transaction-mobile" onclick="openModal()">
+              +
+            </button>
+          </div>
+        </header>
 
-                        <button class="txn-btn" data-type="income" type="button">
-                            Income
-                        </button>
+        <div id="page-content">
+          <!-- The whole content is coming from (pages folder using "navigation.js") -->
 
-                        <button class="txn-btn" data-type="transfer" type="button">
-                            Transfer
-                        </button>
-                    </div>
-
-                    <div class="form-grid">
-
-                        <div class="field">
-                            <label>Amount</label>
-                            <input type="number" placeholder="0.00" required>
-                        </div>
-
-                        <div class="field">
-                            <label>Date</label>
-                            <input type="date" id="dateInput" required>
-                        </div>
-
-                        <div class="field hidden" id="transferFromField">
-                            <label>From Account</label>
-
-                            <div class="custom-dropdown">
-
-                                <div class="dropdown-selected" onclick="toggleFromDropdown()">
-
-                                    <span id="selectedFromAccount">Cash</span>
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                        aria-hidden="true">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-                                </div>
-
-                                <div class="dropdown-menu" id="fromAccountMenu">
-                                    <div class="dropdown-item active" onclick="selectFromAccount(this)">
-                                        Cash
-                                    </div>
-
-                                    <div class="dropdown-item" onclick="selectFromAccount(this)">
-                                        Bank
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="field hidden" id="transferToField">
-                            <label>To Account</label>
-
-                            <div class="custom-dropdown">
-
-                                <div class="dropdown-selected" onclick="toggleToDropdown()">
-
-                                    <span id="selectedToAccount">Bank</span>
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                        aria-hidden="true">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-
-                                </div>
-
-                                <div class="dropdown-menu" id="toAccountMenu">
-                                    <div class="dropdown-item active" onclick="selectToAccount(this)">
-                                        Bank
-                                    </div>
-
-                                    <div class="dropdown-item" onclick="selectToAccount(this)">
-                                        Cash
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="field" id="field1">
-                            <label id="field1Label">Category</label>
-
-
-                            <div class="custom-dropdown" id="categoryDropdown">
-
-                                <div class="dropdown-selected" onclick="toggleDropdown()">
-                                    <span id="selectedCategory">Food</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                        aria-hidden="true">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-                                </div>
-
-                                <div class="dropdown-menu" id="dropdownMenu">
-                                    <!-- Category drop down options comes for modal.js "loadExpenseCategories()"  -->
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="field" id="accountField">
-                            <label>Account</label>
-
-                            <div class="custom-dropdown" id="accountDropdown">
-
-                                <div class="dropdown-selected" onclick="toggleAccountDropdown()">
-                                    <span id="selectedAccount">Cash</span>
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-                                </div>
-
-                                <div class="dropdown-menu" id="accountMenu">
-                                    <div class="dropdown-item active" onclick="selectAccount(this)">Cash</div>
-                                    <div class="dropdown-item" onclick="selectAccount(this)">Bank</div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="field full">
-                            <label>Note (optional)</label>
-                            <input type="text" placeholder="Add a note..." />
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="cancel" onclick="closeModal(event)">Cancel</button>
-                        <button type="submit" id="submit" class="submit">Add transaction</button>
-                    </div>
-
+          <section>
+            <div class="account-page-sub-header">
+              <div class="accounts-page-sub-header-left-content-area">
+                <h2 class="setting-tab-title">Savings goals</h2>
+                <p class="setting-tab-subtitle">
+                  <span class="ActiveGoals">0</span> active goals
+                </p>
+              </div>
+              <div class="accounts-page-sub-header-left-btn-container">
+                <div class="account-page-btn-container">
+                  <button class="goals-page-new-goal-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-plus size-4"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14"></path>
+                      <path d="M12 5v14"></path>
+                    </svg>
+                    New goal
+                  </button>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="goals-page-card-section">
+              <div class="goal-card">
+                <!-- Header -->
+                <div class="goal-header">
+                  <div class="goal-info">
+                    <div class="goal-icon">
+                      <!-- Your SVG/Icon -->
+                      🎯
+                    </div>
+
+                    <div class="goal-title">
+                      <h3>Goa Trip</h3>
+                      <p>by 2026-11-01</p>
+                    </div>
+                  </div>
+
+                  <button class="goal-delete-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M10 11v6"></path>
+                      <path d="M14 11v6"></path>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                      <path d="M3 6h18"></path>
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Amount -->
+
+                <div class="goal-amount">
+                  <span class="saved-amount">$0.00</span>
+
+                  <span class="divider">/</span>
+
+                  <span class="goal-amount-total">$50,000.00</span>
+                </div>
+
+                <!-- Progress -->
+
+                <div class="goal-progress">
+                  <div class="goal-progress-fill" style="width: 0%"></div>
+                </div>
+
+                <!-- Percentage -->
+
+                <div class="goal-complete">0% Complete</div>
+
+                <!-- Buttons -->
+
+                <div class="goal-actions">
+                  <button class="goal-btn">+ $50.00</button>
+
+                  <button class="goal-btn">+ $100.00</button>
+
+                  <button class="goal-minus-btn">−</button>
+                </div>
+              </div>
+              <div class="goal-card">
+                <!-- Header -->
+                <div class="goal-header">
+                  <div class="goal-info">
+                    <div class="goal-icon">
+                      <!-- Your SVG/Icon -->
+                      🎯
+                    </div>
+
+                    <div class="goal-title">
+                      <h3>Goa Trip</h3>
+                      <p>by 2026-11-01</p>
+                    </div>
+                  </div>
+
+                  <button class="goal-delete-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M10 11v6"></path>
+                      <path d="M14 11v6"></path>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                      <path d="M3 6h18"></path>
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Amount -->
+
+                <div class="goal-amount">
+                  <span class="saved-amount">$0.00</span>
+
+                  <span class="divider">/</span>
+
+                  <span class="goal-amount-total">$50,000.00</span>
+                </div>
+
+                <!-- Progress -->
+
+                <div class="goal-progress">
+                  <div class="goal-progress-fill" style="width: 0%"></div>
+                </div>
+
+                <!-- Percentage -->
+
+                <div class="goal-complete">0% Complete</div>
+
+                <!-- Buttons -->
+
+                <div class="goal-actions">
+                  <button class="goal-btn">+ $50.00</button>
+
+                  <button class="goal-btn">+ $100.00</button>
+
+                  <button class="goal-minus-btn">−</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Toster Message -->
+          <div id="toast-container"></div>
+        </div>
+
+        <!-- add new transaction pop up -->
+        <form class="modal-overlay" id="modalOverlay">
+          <div class="modal">
+            <div class="modal-header">
+              <h2>New transaction</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal(event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewbox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-x h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="txn-type">
+              <div class="active-pill"></div>
+
+              <button class="txn-btn active" data-type="expense" type="button">
+                Expense
+              </button>
+
+              <button class="txn-btn" data-type="income" type="button">
+                Income
+              </button>
+
+              <button class="txn-btn" data-type="transfer" type="button">
+                Transfer
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label>Amount</label>
+                <input type="number" placeholder="0.00" required />
+              </div>
+
+              <div class="field">
+                <label>Date</label>
+                <input type="date" id="dateInput" required />
+              </div>
+
+              <div class="field hidden" id="transferFromField">
+                <label>From Account</label>
+
+                <div class="custom-dropdown">
+                  <div class="dropdown-selected" onclick="toggleFromDropdown()">
+                    <span id="selectedFromAccount">Cash</span>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                      aria-hidden="true"
+                    >
+                      <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu" id="fromAccountMenu">
+                    <div
+                      class="dropdown-item active"
+                      onclick="selectFromAccount(this)"
+                    >
+                      Cash
+                    </div>
+
+                    <div
+                      class="dropdown-item"
+                      onclick="selectFromAccount(this)"
+                    >
+                      Bank
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field hidden" id="transferToField">
+                <label>To Account</label>
+
+                <div class="custom-dropdown">
+                  <div class="dropdown-selected" onclick="toggleToDropdown()">
+                    <span id="selectedToAccount">Bank</span>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                      aria-hidden="true"
+                    >
+                      <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu" id="toAccountMenu">
+                    <div
+                      class="dropdown-item active"
+                      onclick="selectToAccount(this)"
+                    >
+                      Bank
+                    </div>
+
+                    <div class="dropdown-item" onclick="selectToAccount(this)">
+                      Cash
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field" id="field1">
+                <label id="field1Label">Category</label>
+
+                <div class="custom-dropdown" id="categoryDropdown">
+                  <div class="dropdown-selected" onclick="toggleDropdown()">
+                    <span id="selectedCategory">Food</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                      aria-hidden="true"
+                    >
+                      <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu" id="dropdownMenu">
+                    <!-- Category drop down options comes for modal.js "loadExpenseCategories()"  -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="field" id="accountField">
+                <label>Account</label>
+
+                <div class="custom-dropdown" id="accountDropdown">
+                  <div
+                    class="dropdown-selected"
+                    onclick="toggleAccountDropdown()"
+                  >
+                    <span id="selectedAccount">Cash</span>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewbox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu" id="accountMenu">
+                    <div
+                      class="dropdown-item active"
+                      onclick="selectAccount(this)"
+                    >
+                      Cash
+                    </div>
+                    <div class="dropdown-item" onclick="selectAccount(this)">
+                      Bank
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field full">
+                <label>Note (optional)</label>
+                <input type="text" placeholder="Add a note..." />
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="cancel" onclick="closeModal(event)">
+                Cancel
+              </button>
+              <button type="submit" id="submit" class="submit">
+                Add transaction
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Transfer pop up -->
+        <form class="transfer-modal-overlay" id="modalOverlay">
+          <div class="transfer-modal">
+            <div class="modal-header">
+              <h2>Transfer money</h2>
+
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeTransferPopUp()"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <!-- FROM -->
+              <div class="field">
+                <label>From</label>
+
+                <!-- FROM -->
+                <div class="custom-dropdown from-dropdown" data-dropdown>
+                  <div class="dropdown-selected fromAccountValue" data-toggle>
+                    <span data-selected></span>
+                    <span class="chev">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewbox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                        aria-hidden="true"
+                      >
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </span>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active">BOB</div>
+                    <div class="dropdown-item">Cash</div>
+                    <div class="dropdown-item">Bank</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TO -->
+              <div class="field">
+                <label>To</label>
+
+                <div class="custom-dropdown to-dropdown" data-dropdown>
+                  <div class="dropdown-selected" data-toggle>
+                    <span data-selected></span>
+                    <span class="chev">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewbox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                        aria-hidden="true"
+                      >
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </span>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active">ihqbwchb</div>
+                    <div class="dropdown-item">Cash</div>
+                    <div class="dropdown-item">Bank</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AMOUNT -->
+              <div class="field full">
+                <label>Amount</label>
+                <input
+                  class="transfer-popup-amount-input"
+                  type="number"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="cancel"
+                onclick="closeTransferPopUp()"
+              >
+                Cancel
+              </button>
+              <button type="button" class="submit transfer-popup-submit-btn">
+                Transfer
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Add account pop up -->
+        <div class="account-modal-overlay" id="accountModal">
+          <div class="account-modal">
+            <!-- HEADER -->
+            <div class="modal-header">
+              <h2>New account</h2>
+
+              <button class="close-btn" onclick="closeAccountPopUp()">✕</button>
+            </div>
+
+            <!-- FORM -->
+            <form class="account-form-grid">
+              <!-- NAME -->
+              <div class="field full">
+                <label>Name</label>
+                <input type="text" placeholder="e.g. Savings" />
+              </div>
+
+              <!-- TYPE -->
+              <div class="account-field">
+                <label>Type</label>
+
+                <div class="custom-dropdown" data-dropdown>
+                  <div class="dropdown-selected" data-toggle>
+                    <span data-selected>Bank account</span>
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewbox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                        aria-hidden="true"
+                      >
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </span>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active">Bank account</div>
+                    <div class="dropdown-item">Cash</div>
+                    <div class="dropdown-item">Wallet</div>
+                    <div class="dropdown-item">Credit card</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- OPENING BALANCE -->
+              <div class="field">
+                <label>Opening balance</label>
+                <input
+                  class="account-input"
+                  type="number"
+                  placeholder="0"
+                  value="0"
+                />
+              </div>
             </form>
 
-            <!-- Transfer pop up -->
-            <form class="transfer-modal-overlay" id="modalOverlay">
-                <div class="transfer-modal">
+            <!-- FOOTER -->
+            <div class="modal-footer">
+              <button class="cancel" onclick="closeAccountPopUp()">
+                Cancel
+              </button>
+              <button class="submit">Add account</button>
+            </div>
+          </div>
+        </div>
 
-                    <div class="modal-header">
-                        <h2>Transfer money</h2>
+        <!-- New Goal Popup -->
+        <div class="goal-modal-overlay" id="goalModal">
+          <div class="goal-modal">
+            <!-- HEADER -->
+            <div class="goal-modal-header">
+              <h2>New Goal</h2>
 
-                        <button type="button" class="close-btn" onclick="closeTransferPopUp()">
-                            ✕
-                        </button>
-                    </div>
-
-                    <div class="form-grid">
-
-                        <!-- FROM -->
-                        <div class="field">
-                            <label>From</label>
-
-                            <!-- FROM -->
-                            <div class="custom-dropdown from-dropdown" data-dropdown>
-                                <div class="dropdown-selected fromAccountValue" data-toggle>
-                                    <span data-selected></span>
-                                    <span class="chev">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                        aria-hidden="true">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-                                    </span>
-                                </div>
-
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-item active">BOB</div>
-                                    <div class="dropdown-item">Cash</div>
-                                    <div class="dropdown-item">Bank</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- TO -->
-                        <div class="field">
-                            <label>To</label>
-
-                            <div class="custom-dropdown to-dropdown" data-dropdown>
-                                <div class="dropdown-selected" data-toggle>
-                                    <span data-selected></span>
-                                    <span class="chev">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                        aria-hidden="true">
-                                        <path d="m6 9 6 6 6-6"></path>
-                                    </svg>
-                                    </span>
-                                </div>
-
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-item active">ihqbwchb</div>
-                                    <div class="dropdown-item">Cash</div>
-                                    <div class="dropdown-item">Bank</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- AMOUNT -->
-                        <div class="field full">
-                            <label>Amount</label>
-                            <input class="transfer-popup-amount-input" type="number" placeholder="0.00" />
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="cancel" onclick="closeTransferPopUp()">Cancel</button>
-                        <button type="button" class="submit transfer-popup-submit-btn">Transfer</button>
-                    </div>
-
-                </div>
-            </form>
-
-            <!-- Add account pop up -->
-            <div class="account-modal-overlay" id="accountModal">
-                <div class="account-modal">
-
-
-                    <!-- HEADER -->
-                    <div class="modal-header">
-                        <h2>New account</h2>
-
-                        <button class="close-btn" onclick="closeAccountPopUp()">
-                            ✕
-                        </button>
-                    </div>
-
-                    <!-- FORM -->
-                    <form class="account-form-grid">
-
-                        <!-- NAME -->
-                        <div class="field full">
-                            <label>Name</label>
-                            <input type="text" placeholder="e.g. Savings" />
-                        </div>
-
-                        <!-- TYPE -->
-                        <div class="account-field">
-                            <label>Type</label>
-
-                            <div class="custom-dropdown" data-dropdown>
-                                <div class="dropdown-selected" data-toggle>
-                                    <span data-selected>Bank account</span>
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-chevron-down h-4 w-4 opacity-50" aria-hidden="true">
-                                            <path d="m6 9 6 6 6-6"></path>
-                                        </svg>
-                                    </span>
-                                </div>
-
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-item active">Bank account</div>
-                                    <div class="dropdown-item">Cash</div>
-                                    <div class="dropdown-item">Wallet</div>
-                                    <div class="dropdown-item">Credit card</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- OPENING BALANCE -->
-                        <div class="field">
-                            <label>Opening balance</label>
-                            <input class="account-input" type="number" placeholder="0" value="0" />
-                        </div>
-
-                    </form>
-
-                    <!-- FOOTER -->
-                    <div class="modal-footer">
-                        <button class="cancel" onclick="closeAccountPopUp()">Cancel</button>
-                        <button class="submit">Add account</button>
-                    </div>
-
-                </div>
+              <button class="goal-close-btn" onclick="closeGoalPopUp()">
+                ✕
+              </button>
             </div>
 
-            
+            <!-- FORM -->
+            <form class="goal-form-grid">
+              <!-- Name -->
+              <div class="goal-field full">
+                <label>Name</label>
+                <input
+                  class="goal-input"
+                  type="text"
+                  placeholder="e.g. New Laptop"
+                />
+              </div>
 
-            <!-- JS Scripts -->
-            <script type="module" src="./js/app.js"></script>
-            <script src="./js/modal.js"></script>
-            <script type="module" src="/js/navigation.js"></script>
-            <script src="./js/notifications.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+              <!-- Target Amount -->
+              <div class="goal-field">
+                <label>Target Amount</label>
+                <input class="goal-input" type="number" placeholder="0" />
+              </div>
 
-            <script src="/js/toast.js"></script>
+              <!-- Already Saved -->
+              <div class="goal-field">
+                <label>Already Saved</label>
+                <input class="goal-input" type="number" placeholder="0" />
+              </div>
 
-            <!-- your app scripts AFTER -->
-            <script type="module" src="/js/app.js"></script>
-</body>
+              <!-- Target Date -->
+              <div class="goal-field full">
+                <label>Target Date</label>
+                <input class="goal-input" type="date" />
+              </div>
+            </form>
 
+            <!-- FOOTER -->
+            <div class="goal-footer">
+              <button
+                class="goal-cancel"
+                type="button"
+                onclick="closeGoalPopUp()"
+              >
+                Cancel
+              </button>
+
+              <button class="goal-submit" type="submit">Add Goal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="./js/modal.js"></script>
+    <script type="module" src="/js/navigation.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+    <script src="/js/toast.js"></script>
+    <script type="module" src="/js/app.js"></script>
+    <script src="./pages/goals.js"></script>
+  </body>
 </html>
