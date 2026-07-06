@@ -1,10 +1,25 @@
 import { getData, updateData } from "../js/core/store.js";
+import gsap from "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js";
 
 const goalIcons = {
   travel: "🎯",
   savings: "💰",
   default: "🎯",
 };
+
+// function triggerConfetti() {
+//   // lightweight placeholder (you can replace with canvas-confetti later)
+//   const emoji = document.createElement("div");
+//   emoji.textContent = "🎊";
+//   emoji.style.position = "fixed";
+//   emoji.style.top = "20px";
+//   emoji.style.left = "50%";
+//   emoji.style.fontSize = "40px";
+//   emoji.style.zIndex = "9999";
+//   document.body.appendChild(emoji);
+
+//   setTimeout(() => emoji.remove(), 1200);
+// }
 
 let goalsContainer = null;
 
@@ -73,10 +88,84 @@ function setDefaultGoalDate() {
   if (input && !input.value) input.value = getDefaultDate();
 }
 
-/* ---------------- CARD ---------------- */
+/* ---------------- RANDOM QUOTE ---------------- */
+const quotes = [
+  "Small steps every day lead to big results.",
+  "Discipline beats motivation every time.",
+  "Your future self will thank you.",
+  "Consistency creates freedom.",
+  "Dreams work only when you do.",
+  "Progress, not perfection.",
+  "You built this one decision at a time.",
+  "Success is a habit, not an event.",
+];
+
+const usedQuotes = new Set();
+
+function getRandomQuote(id) {
+  const available = quotes.filter((q) => !usedQuotes.has(q));
+
+  if (available.length === 0) {
+    usedQuotes.clear();
+  }
+
+  const pool = quotes.filter((q) => !usedQuotes.has(q));
+
+  if (pool.length === 0) return quotes[0];
+
+  const index = id % pool.length; // ✅ FIXED
+
+  const quote = pool[index];
+  usedQuotes.add(quote);
+
+  return quote;
+}
+
+/* ---------------- EXPECTED SAVING (WEIGHTED RANDOM) ---------------- */
+function getExpectedSavingPercent() {
+  const roll = Math.random() * 100;
+
+  // 0–13% (common ~70%)
+  if (roll < 70) return Math.floor(Math.random() * 14);
+
+  // 14–17% (rare ~20%)
+  if (roll < 90) return 14 + Math.floor(Math.random() * 4);
+
+  // 18–20% (very rare ~10%)
+  return 18 + Math.floor(Math.random() * 3);
+}
+
+/* ---------------- DATE HELPERS ---------------- */
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function getDuration(start, end) {
+  if (!start || !end || isNaN(start) || isNaN(end) || end < start)
+    return "0 months 0 days";
+
+  const diff = end - start;
+
+  const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+  const months = Math.floor(days / 30);
+  const remDays = days % 30;
+
+  return `${months} months ${remDays} days`;
+}
+
+const GOAL_DELETE_DELAY = 10 * 60 * 100; // 10 minutes
+// /* ---------------- CARD ---------------- */
 function createGoalCard(goal) {
   const card = document.createElement("div");
   card.className = "goal-card";
+
+  if (goal.completedAt) {
+    card.classList.add("goal-card--completed");
+  }
 
   const saved = Number(goal.savedAmount || 0);
   const target = Number(goal.targetAmount || 0);
@@ -85,9 +174,14 @@ function createGoalCard(goal) {
 
   const isCompleted = !!goal.completedAt;
 
-  const remaining = isCompleted
-    ? Math.max(0, goal.completedAt + 3600000 - Date.now())
-    : 0;
+  const createdAt = goal.createdAt || Date.now();
+  const completedAt = goal.completedAt ?? Date.now();
+
+  const startedOn = formatDate(createdAt);
+  const completedIn = getDuration(createdAt, completedAt);
+
+  const expected = goal.expectedSaving != null ? goal.expectedSaving : 0;
+  const quote = getRandomQuote(goal.id);
 
   card.innerHTML = `
     <div class="goal-header">
@@ -117,63 +211,296 @@ function createGoalCard(goal) {
     ${
       isCompleted
         ? `
-        <div class="goal-achieved">
-          <h3 class="achieved-title">🎉 Goal Achieved</h3>
+      <div class="goal-achieved">
+        <div class="goal-achieved-icon">🎉</div>
 
-          <div class="achieved-sub">
-            Auto-delete in
+        <h3 class="achieved-title">
+          Goal Achieved
+        </h3>
+
+        <p class="achieved-sub">
+          Will be removed from active goals in
+        </p>
+
+        <div class="goal-timer">
+          <span class="countdown">--</span>
+        </div>
+        <div class="goal-reflection">
+
+          <!-- FULL WIDTH -->
+          <div class="reflection-full">
+            📅 Started on: <strong>${startedOn}</strong>
           </div>
 
-          <div class="timer">
-            <span class="countdown">--</span>
+          <!-- 50 / 50 -->
+          <div class="reflection-row">
+            
+            <div class="reflection-box">
+              ⏱️ Completed in: <strong>${completedIn}</strong>
+            </div>
+
+            <div class="reflection-box ${expected >= 14 ? "highlight-rare" : "highlight"}">
+              📈 You saved <strong>${expected}%</strong> faster than expected
+            </div>
+
           </div>
         </div>
+
+        <div class="goal-quote">
+          <p>“${quote}”</p>
+        </div>
+      </div>
       `
         : `
-        <div class="goal-actions">
-          <button class="goal-btn add-50">+ $50</button>
-          <button class="goal-btn add-100">+ $100</button>
-          <button class="goal-minus-btn remove">−</button>
+        
+
+      <div class="goal-actions">
+
+        <button class="goal-btn-minus">−</button>
+
+        <button class="goal-btn-add">+</button>
+
+        <div class="goal-action-panel">
+
+          <span class="currency">$</span>
+
+          <input
+            type="number"
+            min="1"
+            class="goal-action-input"
+            placeholder="0"
+          />
+
+          <button class="goal-submit-btn">
+            Add
+          </button>
+
         </div>
+
+       </div>
       `
     }
   `;
 
   /* ---------------- DELETE (ONLY TOP RIGHT) ---------------- */
   card.querySelector(".goal-delete-btn").addEventListener("click", () => {
-    card.innerHTML = `
-      <div class="confirm-box">
-        <p>Are you sure you want to delete this goal?</p>
-        <button class="yes">Yes</button>
-        <button class="no">No</button>
-      </div>
-    `;
+    if (card.dataset.confirming === "true") return;
 
-    card.querySelector(".no").onclick = renderGoals;
+    card.dataset.confirming = "true";
 
-    card.querySelector(".yes").onclick = () => {
-      const updated = safeGetGoals().filter((g) => g.id !== goal.id);
-      updateData({ goals: updated });
-      renderGoals();
-    };
+    // enter animation
+    gsap.to(card, {
+      scale: 0.98,
+      y: -6,
+      duration: 0.2,
+      ease: "power2.out",
+      onComplete: () => {
+        card.classList.add("goal-card--delete");
+
+        card.innerHTML = `
+        <div class="confirm-box">
+          <p>Are you sure you want to delete this goal?</p>
+          <button class="yes">Yes</button>
+          <button class="no">Cancel</button>
+        </div>
+      `;
+
+        const confirmBox = card.querySelector(".confirm-box");
+
+        gsap.fromTo(
+          confirmBox,
+          { opacity: 0, scale: 0.9, y: 10 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.25, ease: "power2.out" },
+        );
+
+        // ======================
+        // ❌ CANCEL FIXED
+        // ======================
+        card.querySelector(".no").onclick = () => {
+          gsap.to(confirmBox, {
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.15,
+            onComplete: () => {
+              card.dataset.confirming = "false";
+              card.classList.remove("goal-card--delete");
+
+              // IMPORTANT FIX: full re-render
+              renderGoals();
+            },
+          });
+        };
+
+        // ======================
+        // ❌ DELETE FIXED
+        // ======================
+        card.querySelector(".yes").onclick = () => {
+          gsap.to(card, {
+            scale: 0.85,
+            opacity: 0,
+            y: 20,
+            duration: 0.25,
+            ease: "power2.in",
+            onComplete: () => {
+              const updated = safeGetGoals().filter((g) => g.id !== goal.id);
+              updateData({ goals: updated });
+
+              renderGoals(); // IMPORTANT FIX
+            },
+          });
+        };
+      },
+    });
   });
 
-  /* ---------------- ACTIONS ---------------- */
   if (!isCompleted) {
-    card
-      .querySelector(".add-50")
-      ?.addEventListener("click", () => updateAmount(goal.id, 50));
-    card
-      .querySelector(".add-100")
-      ?.addEventListener("click", () => updateAmount(goal.id, 100));
-    card
-      .querySelector(".remove")
-      ?.addEventListener("click", () => updateAmount(goal.id, -50));
+    const actions = card.querySelector(".goal-actions");
+
+    const plusBtn = actions.querySelector(".goal-btn-add");
+    const minusBtn = actions.querySelector(".goal-btn-minus");
+
+    const panel = actions.querySelector(".goal-action-panel");
+    const input = panel.querySelector(".goal-action-input");
+    const submit = panel.querySelector(".goal-submit-btn");
+
+    let mode = null;
+
+    // FIX: remove layout space completely
+    gsap.set(panel, {
+      display: "none",
+      opacity: 0,
+      x: 0,
+      width: 0,
+    });
+
+    function openPanel(type) {
+      mode = type;
+
+      const isAdd = type === "add";
+
+      panel.style.display = "flex";
+
+      submit.textContent = isAdd ? "Add" : "Remove";
+
+      const clickedBtn = isAdd ? plusBtn : minusBtn;
+      const otherBtn = isAdd ? minusBtn : plusBtn;
+
+      // ✅ SET INPUT BACKGROUND BASED ON MODE (THIS IS THE FIX)
+      const color = getComputedStyle(clickedBtn).backgroundColor;
+      panel.style.backgroundColor = color;
+
+      // hide buttons
+      gsap.to([plusBtn, minusBtn], {
+        opacity: 0,
+        scale: 0.8,
+        pointerEvents: "none",
+        duration: 0.15,
+      });
+
+      const fromX = type === "remove" ? -40 : 40;
+
+      gsap.fromTo(
+        panel,
+        {
+          opacity: 0,
+          x: fromX,
+          width: 0,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          width: "100%",
+          duration: 0.25,
+          ease: "power2.out",
+          onComplete() {
+            input.focus();
+          },
+        },
+      );
+    }
+
+    function closePanel() {
+      input.value = "";
+
+      gsap.to(panel, {
+        opacity: 0,
+        x: 0,
+        width: 0,
+        duration: 0.2,
+        onComplete() {
+          panel.style.display = "none";
+
+          // restore buttons
+          gsap.to([plusBtn, minusBtn], {
+            opacity: 1,
+            scale: 1,
+            pointerEvents: "auto",
+            duration: 0.2,
+          });
+
+          // ✅ FIX: RESET STATE (IMPORTANT)
+          mode = null;
+        },
+      });
+    }
+
+    // ✅ OPEN
+    plusBtn.addEventListener("click", () => openPanel("add"));
+    minusBtn.addEventListener("click", () => openPanel("remove"));
+
+    // ✅ SUBMIT
+    submit.addEventListener("click", () => {
+      const amount = Number(input.value);
+
+      if (!amount || amount <= 0) return;
+
+      updateAmount(goal.id, mode === "add" ? amount : -amount);
+      closePanel();
+    });
+
+    // ✅ CLOSE BUTTON (NEW)
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "goal-panel-close";
+    closeBtn.innerHTML = "✕";
+    panel.appendChild(closeBtn);
+
+    // IMPORTANT: attach AFTER DOM insertion
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closePanel();
+    });
   }
+
+  /* ---------------- ACTIONS ---------------- */
+  // if (!isCompleted) {
+  //   card
+  //     .querySelector(".add-50")
+  //     ?.addEventListener("click", () => updateAmount(goal.id, 50));
+
+  //   card
+  //     .querySelector(".add-100")
+  //     ?.addEventListener("click", () => updateAmount(goal.id, 100));
+
+  //   card
+  //     .querySelector(".remove")
+  //     ?.addEventListener("click", () => updateAmount(goal.id, -50));
+  // }
 
   return card;
 }
 
+// const usedQuotes = new Set();
+
+// const quotes = [
+//   "Small steps every day lead to big results.",
+//   "Discipline beats motivation every time.",
+//   "Your future self will thank you.",
+//   "Consistency creates freedom.",
+//   "Dreams work only when you do.",
+//   "Progress, not perfection.",
+//   "You built this one decision at a time.",
+//   "Success is a habit, not an event.",
+// ];
 /* ---------------- UPDATE ---------------- */
 function updateAmount(id, change) {
   const updated = safeGetGoals().map((g) => {
@@ -186,15 +513,19 @@ function updateAmount(id, change) {
 
     const completed = newSaved >= g.targetAmount;
 
+    // 🎊 trigger confetti ONLY when first time completed
     if (completed && !g.completedAt) {
-      return {
-        ...g,
-        savedAmount: g.targetAmount,
-        completedAt: Date.now(),
-      };
+      // triggerConfetti();
     }
 
-    return { ...g, savedAmount: newSaved };
+    const expectedSaving = getExpectedSavingPercent();
+
+    return {
+      ...g,
+      savedAmount: newSaved,
+      completedAt: completed ? Date.now() : g.completedAt,
+      expectedSaving: g.expectedSaving ?? expectedSaving,
+    };
   });
 
   updateData({ goals: updated });
@@ -206,30 +537,35 @@ function startAutoDeleteWatcher() {
   setInterval(() => {
     const now = Date.now();
 
-    const filtered = safeGetGoals().filter((g) => {
+    const goals = safeGetGoals();
+
+    const filtered = goals.filter((g) => {
       if (!g.completedAt) return true;
-      return now - g.completedAt < 3600000;
+      return now < g.completedAt + GOAL_DELETE_DELAY;
     });
 
+    // Nothing changed
+    if (filtered.length === goals.length) return;
+
     updateData({ goals: filtered });
-  }, 60000); // NOT every second
+    renderGoals();
+  }, 1000);
 }
 
 /* ---------------- TIMER (ONLY UPDATE TEXT, NO RENDER) ---------------- */
 function startTimerUIUpdater() {
   setInterval(() => {
-    const goals = safeGetGoals();
     const now = Date.now();
+
+    const goals = safeGetGoals(); // ✅ FIX: define it here
 
     let changed = false;
 
     const updatedGoals = goals.filter((g) => {
       if (!g.completedAt) return true;
 
-      const expiryTime = g.completedAt + 3600000;
-      const remaining = expiryTime - now;
+      const remaining = g.completedAt + GOAL_DELETE_DELAY - now;
 
-      // ✅ AUTO DELETE WHEN EXPIRED
       if (remaining <= 0) {
         changed = true;
         return false;
@@ -241,15 +577,14 @@ function startTimerUIUpdater() {
     if (changed) {
       updateData({ goals: updatedGoals });
       renderGoals();
-      return; // stop UI update this cycle
+      return;
     }
 
-    // ✅ ONLY UPDATE TIMER TEXT (NO RE-RENDER)
     document.querySelectorAll(".goal-card").forEach((card, i) => {
       const g = goals[i];
       if (!g?.completedAt) return;
 
-      const left = g.completedAt + 3600000 - now;
+      const left = g.completedAt + GOAL_DELETE_DELAY - now;
       const el = card.querySelector(".countdown");
       if (!el) return;
 
@@ -260,10 +595,7 @@ function startTimerUIUpdater() {
 
       el.textContent = `${h}h ${m}m ${s}s`;
 
-      // optional visual warning
-      if (sec <= 60) {
-        el.style.color = "red";
-      }
+      if (sec <= 60) el.style.color = "red";
     });
   }, 1000);
 }
@@ -277,7 +609,7 @@ function renderGoals() {
   goalsContainer.innerHTML = "";
 
   if (!goals.length) {
-    goalsContainer.innerHTML = `<p style="text-align:center;opacity:.6;">No goals yet</p>`;
+    goalsContainer.innerHTML = `<p style="width:100%; hight:100%; text-align:center;opacity:.6;">No goals yet</p>`;
     return;
   }
 
@@ -311,6 +643,7 @@ function initForm() {
       return notify.error("Past date not allowed");
     }
 
+    const now = Date.now();
     const goals = safeGetGoals();
 
     goals.push({
@@ -320,6 +653,7 @@ function initForm() {
       savedAmount: saved,
       deadline,
       type: "default",
+      createdAt: now,
       completedAt: null,
     });
 
@@ -337,7 +671,7 @@ function cleanupExpiredGoals() {
 
   const filtered = goals.filter((g) => {
     if (!g.completedAt) return true;
-    return now - g.completedAt < 3600000;
+    return now - g.completedAt < GOAL_DELETE_DELAY;
   });
 
   updateData({ goals: filtered });
@@ -361,6 +695,19 @@ function initEvents() {
       if (e.target.classList.contains("goal-modal-overlay")) closePopup();
     });
 }
+
+// document.querySelectorAll(".goal-panel-close").forEach((btn) => {
+//   btn.addEventListener("click", () => {
+//     const panel = btn.closest(".goal-action-panel");
+
+//     panel.classList.remove("active");
+
+//     const actions = panel.parentElement;
+
+//     actions.querySelector(".goal-btn-add")?.classList.remove("hidden");
+//     actions.querySelector(".goal-btn-minus")?.classList.remove("hidden");
+//   });
+// });
 
 /* ---------------- INIT ---------------- */
 function createContainer() {
