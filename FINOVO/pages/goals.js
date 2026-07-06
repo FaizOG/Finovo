@@ -183,6 +183,8 @@ function createGoalCard(goal) {
   const expected = goal.expectedSaving != null ? goal.expectedSaving : 0;
   const quote = getRandomQuote(goal.id);
 
+  card.dataset.id = goal.id;
+
   card.innerHTML = `
     <div class="goal-header">
       <div class="goal-info">
@@ -204,9 +206,9 @@ function createGoalCard(goal) {
       <span class="goal-amount-total">$${target.toFixed(2)}</span>
     </div>
 
-    <div class="goal-progress">
-      <div class="goal-progress-fill" style="width:${progress}%"></div>
-    </div>
+     <div class="goal-progress">
+    <div class="goal-progress-fill" style="width:${progress}%"></div>
+  </div>
 
     ${
       isCompleted
@@ -503,7 +505,9 @@ function createGoalCard(goal) {
 // ];
 /* ---------------- UPDATE ---------------- */
 function updateAmount(id, change) {
-  const updated = safeGetGoals().map((g) => {
+  const goals = safeGetGoals();
+
+  const updated = goals.map((g) => {
     if (g.id !== id) return g;
 
     const newSaved = Math.min(
@@ -513,23 +517,43 @@ function updateAmount(id, change) {
 
     const completed = newSaved >= g.targetAmount;
 
-    // 🎊 trigger confetti ONLY when first time completed
-    if (completed && !g.completedAt) {
-      // triggerConfetti();
-    }
-
-    const expectedSaving = getExpectedSavingPercent();
-
     return {
       ...g,
       savedAmount: newSaved,
       completedAt: completed ? Date.now() : g.completedAt,
-      expectedSaving: g.expectedSaving ?? expectedSaving,
     };
   });
 
   updateData({ goals: updated });
-  renderGoals();
+
+  // ✅ ONLY update UI of affected card
+  updateSingleCard(
+    id,
+    updated.find((g) => g.id === id),
+  );
+}
+
+function updateSingleCard(id, goal) {
+  const card = document.querySelector(`.goal-card[data-id="${id}"]`);
+  if (!card) {
+    renderGoals(); // fallback
+    return;
+  }
+
+  const saved = Number(goal.savedAmount || 0);
+  const target = Number(goal.targetAmount || 0);
+  const progress = target ? (saved / target) * 100 : 0;
+
+  // update numbers
+  card.querySelector(".saved-amount").textContent = `$${saved.toFixed(2)}`;
+
+  const fill = card.querySelector(".goal-progress-fill");
+
+  gsap.to(fill, {
+    width: `${progress}%`,
+    duration: 0.5,
+    ease: "power3.out",
+  });
 }
 
 /* ---------------- SAFE AUTO DELETE (NO DOM LOOP) ---------------- */
@@ -604,19 +628,54 @@ function startTimerUIUpdater() {
 function renderGoals() {
   if (!goalsContainer) return;
 
+  const oldCards = goalsContainer.querySelectorAll(".goal-card");
+
+  if (oldCards.length) {
+    gsap.to(oldCards, {
+      opacity: 0,
+      y: -10,
+      duration: 0.15,
+      stagger: 0.02,
+      onComplete: () => {
+        buildGoals();
+      },
+    });
+  } else {
+    buildGoals();
+  }
+}
+
+function updateCounter() {
+  const goals = safeGetGoals();
+  const active = goals.filter((g) => !g.completedAt).length;
+
+  const el = document.querySelector(".ActiveGoals");
+  if (el) el.textContent = active;
+}
+
+function buildGoals() {
   const goals = safeGetGoals();
 
   goalsContainer.innerHTML = "";
 
   if (!goals.length) {
-    goalsContainer.innerHTML = `<p style="width:100%; hight:100%; text-align:center;opacity:.6;">No goals yet</p>`;
+    goalsContainer.innerHTML = `<p style="width:100%; text-align:center; opacity:.6;">No goals yet</p>`;
     return;
   }
 
   goals.forEach((g) => goalsContainer.appendChild(createGoalCard(g)));
 
-  const counter = document.querySelector(".ActiveGoals");
-  if (counter) counter.textContent = goals.length;
+  updateCounter();
+
+  // 👇 ENTER ANIMATION (FIX #1)
+  gsap.from(".goal-card", {
+    opacity: 0,
+    y: 20,
+    scale: 0.98,
+    duration: 0.35,
+    stagger: 0.06,
+    ease: "power2.out",
+  });
 }
 
 /* ---------------- FORM ---------------- */
