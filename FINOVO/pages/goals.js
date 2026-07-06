@@ -158,6 +158,7 @@ function getDuration(start, end) {
 }
 
 const GOAL_DELETE_DELAY = 10 * 60 * 100; // 10 minutes
+
 // /* ---------------- CARD ---------------- */
 function createGoalCard(goal) {
   const card = document.createElement("div");
@@ -284,6 +285,11 @@ function createGoalCard(goal) {
     }
   `;
 
+  const savedEl = card.querySelector(".saved-amount");
+  if (savedEl) {
+    savedEl.dataset.value = saved;
+  }
+
   /* ---------------- DELETE (ONLY TOP RIGHT) ---------------- */
   card.querySelector(".goal-delete-btn").addEventListener("click", () => {
     if (card.dataset.confirming === "true") return;
@@ -338,11 +344,13 @@ function createGoalCard(goal) {
         // ======================
         card.querySelector(".yes").onclick = () => {
           gsap.to(card, {
-            scale: 0.85,
+            scale: 0.9,
             opacity: 0,
-            y: 20,
-            duration: 0.25,
+            y: -10,
+            filter: "blur(6px)",
+            duration: 0.3,
             ease: "power2.in",
+
             onComplete: () => {
               const updated = safeGetGoals().filter((g) => g.id !== goal.id);
               updateData({ goals: updated });
@@ -504,8 +512,42 @@ function createGoalCard(goal) {
 //   "Success is a habit, not an event.",
 // ];
 /* ---------------- UPDATE ---------------- */
+
+export function animateNumberWithFeedback(
+  el,
+  from,
+  to,
+  currency = "$",
+  type = "neutral",
+) {
+  const obj = { value: from };
+
+  const colors = {
+    up: "#22c55e",
+    down: "#ef4444",
+    neutral: "",
+  };
+
+  el.style.color = colors[type];
+
+  gsap.to(obj, {
+    value: to,
+    duration: 0.7,
+    ease: "power2.out",
+    onUpdate: () => {
+      el.textContent = `${currency} ${obj.value.toFixed(0)}`;
+    },
+    onComplete: () => {
+      // return to default theme color
+      el.style.color = "";
+    },
+  });
+}
+
 function updateAmount(id, change) {
   const goals = safeGetGoals();
+
+  let becameCompleted = false;
 
   const updated = goals.map((g) => {
     if (g.id !== id) return g;
@@ -515,45 +557,79 @@ function updateAmount(id, change) {
       Math.max(0, (g.savedAmount || 0) + change),
     );
 
-    const completed = newSaved >= g.targetAmount;
+    const wasCompleted = !!g.completedAt;
+    const isNowCompleted = newSaved >= g.targetAmount;
+
+    if (!wasCompleted && isNowCompleted) {
+      becameCompleted = true;
+    }
 
     return {
       ...g,
       savedAmount: newSaved,
-      completedAt: completed ? Date.now() : g.completedAt,
+      completedAt: isNowCompleted ? Date.now() : g.completedAt,
     };
   });
 
   updateData({ goals: updated });
 
-  // ✅ ONLY update UI of affected card
-  updateSingleCard(
-    id,
-    updated.find((g) => g.id === id),
-  );
-}
+  const goal = updated.find((g) => g.id === id);
+  const isAdd = change > 0;
 
-function updateSingleCard(id, goal) {
-  const card = document.querySelector(`.goal-card[data-id="${id}"]`);
-  if (!card) {
-    renderGoals(); // fallback
+  if (becameCompleted) {
+    renderGoals(); // 🔥 FULL REBUILD (IMPORTANT FIX)
     return;
   }
+
+  updateSingleCard(id, goal, isAdd);
+}
+
+function updateSingleCard(id, goal, isAdd) {
+  const card = document.querySelector(`.goal-card[data-id="${id}"]`);
+  if (!card) return;
 
   const saved = Number(goal.savedAmount || 0);
   const target = Number(goal.targetAmount || 0);
   const progress = target ? (saved / target) * 100 : 0;
 
-  // update numbers
-  card.querySelector(".saved-amount").textContent = `$${saved.toFixed(2)}`;
-
   const fill = card.querySelector(".goal-progress-fill");
 
-  gsap.to(fill, {
-    width: `${progress}%`,
-    duration: 0.5,
-    ease: "power3.out",
-  });
+  // 🎯 COLOR CHANGE LOGIC
+  const color = isAdd ? "#22c55e" : "#ef4444"; // green / red
+
+  const PRIMARY_COLOR = getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary-color")
+    .trim();
+
+  const flashColor = isAdd ? "#22c55e" : "#ef4444"; // green / red
+
+  gsap
+    .timeline()
+    .to(fill, {
+      width: `${progress}%`,
+      backgroundColor: flashColor,
+      duration: 0.5,
+      ease: "power3.out",
+    })
+    .to(fill, {
+      backgroundColor: PRIMARY_COLOR,
+      duration: 0.4,
+      ease: "power2.inOut",
+    });
+
+  // update number
+  // card.querySelector(".saved-amount").textContent = `$${saved.toFixed(2)}`;
+  const savedEl = card.querySelector(".saved-amount");
+
+  const prevValue = Number(savedEl.dataset.value || 0);
+  const newValue = saved;
+
+  const type = isAdd ? "up" : "down";
+
+  animateNumberWithFeedback(savedEl, prevValue, newValue, "$", type);
+
+  // store new value for next animation
+  savedEl.dataset.value = newValue;
 }
 
 /* ---------------- SAFE AUTO DELETE (NO DOM LOOP) ---------------- */
