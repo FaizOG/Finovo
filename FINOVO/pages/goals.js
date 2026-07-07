@@ -1,5 +1,7 @@
-import { getData, updateData } from "../js/core/store.js";
+import { getData, updateData, changedSymbol } from "../js/core/store.js";
 import gsap from "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js";
+
+const currency = () => changedSymbol();
 
 const goalIcons = {
   travel: "🎯",
@@ -7,28 +9,12 @@ const goalIcons = {
   default: "🎯",
 };
 
-// function triggerConfetti() {
-//   // lightweight placeholder (you can replace with canvas-confetti later)
-//   const emoji = document.createElement("div");
-//   emoji.textContent = "🎊";
-//   emoji.style.position = "fixed";
-//   emoji.style.top = "20px";
-//   emoji.style.left = "50%";
-//   emoji.style.fontSize = "40px";
-//   emoji.style.zIndex = "9999";
-//   document.body.appendChild(emoji);
-
-//   setTimeout(() => emoji.remove(), 1200);
-// }
-
 let goalsContainer = null;
 
-/* ---------------- SAFE ---------------- */
 function safeGetGoals() {
   return Array.isArray(getData()?.goals) ? getData().goals : [];
 }
 
-/* ---------------- HEADER ---------------- */
 function createHeader() {
   const section = document.createElement("section");
 
@@ -45,7 +31,6 @@ function createHeader() {
   return section;
 }
 
-/* ---------------- DATE FIX (STRICT) ---------------- */
 function isPastDate(dateStr) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -56,7 +41,6 @@ function isPastDate(dateStr) {
   return d < today;
 }
 
-/* ---------------- FORM RESET ---------------- */
 function resetForm() {
   const form = document.querySelector(".goal-form-grid");
   if (!form) return;
@@ -64,7 +48,6 @@ function resetForm() {
   setDefaultGoalDate();
 }
 
-/* ---------------- POPUP ---------------- */
 function openPopup() {
   document.querySelector(".goal-modal-overlay")?.classList.add("show-pop-up");
 }
@@ -76,7 +59,6 @@ function closePopup() {
   resetForm();
 }
 
-/* ---------------- DATE DEFAULT ---------------- */
 function getDefaultDate() {
   const d = new Date();
   d.setMonth(d.getMonth() + 6);
@@ -88,7 +70,6 @@ function setDefaultGoalDate() {
   if (input && !input.value) input.value = getDefaultDate();
 }
 
-/* ---------------- RANDOM QUOTE ---------------- */
 const quotes = [
   "Small steps every day lead to big results.",
   "Discipline beats motivation every time.",
@@ -113,7 +94,7 @@ function getRandomQuote(id) {
 
   if (pool.length === 0) return quotes[0];
 
-  const index = id % pool.length; // ✅ FIXED
+  const index = id % pool.length;
 
   const quote = pool[index];
   usedQuotes.add(quote);
@@ -121,21 +102,16 @@ function getRandomQuote(id) {
   return quote;
 }
 
-/* ---------------- EXPECTED SAVING (WEIGHTED RANDOM) ---------------- */
 function getExpectedSavingPercent() {
   const roll = Math.random() * 100;
 
-  // 0–13% (common ~70%)
   if (roll < 70) return Math.floor(Math.random() * 14);
 
-  // 14–17% (rare ~20%)
   if (roll < 90) return 14 + Math.floor(Math.random() * 4);
 
-  // 18–20% (very rare ~10%)
   return 18 + Math.floor(Math.random() * 3);
 }
 
-/* ---------------- DATE HELPERS ---------------- */
 function formatDate(ts) {
   return new Date(ts).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -157,9 +133,8 @@ function getDuration(start, end) {
   return `${months} months ${remDays} days`;
 }
 
-const GOAL_DELETE_DELAY = 10 * 60 * 100; // 10 minutes
+const GOAL_DELETE_DELAY = 10 * 60 * 1000;
 
-// /* ---------------- CARD ---------------- */
 function createGoalCard(goal) {
   const card = document.createElement("div");
   card.className = "goal-card";
@@ -202,9 +177,9 @@ function createGoalCard(goal) {
 
     <!-- RESTORED ORIGINAL AMOUNT STYLE -->
     <div class="goal-amount">
-      <span class="saved-amount">$${saved.toFixed(2)}</span>
+      <span class="saved-amount">${currency()}${saved.toFixed(2)}</span>
       <span class="divider">/</span>
-      <span class="goal-amount-total">$${target.toFixed(2)}</span>
+      <span class="goal-amount-total">${currency()}${target.toFixed(2)}</span>
     </div>
 
      <div class="goal-progress">
@@ -265,7 +240,7 @@ function createGoalCard(goal) {
 
         <div class="goal-action-panel">
 
-          <span class="currency">$</span>
+          <span class="currency">${currency()}</span>
 
           <input
             type="number"
@@ -290,13 +265,11 @@ function createGoalCard(goal) {
     savedEl.dataset.value = saved;
   }
 
-  /* ---------------- DELETE (ONLY TOP RIGHT) ---------------- */
   card.querySelector(".goal-delete-btn").addEventListener("click", () => {
     if (card.dataset.confirming === "true") return;
 
     card.dataset.confirming = "true";
 
-    // enter animation
     gsap.to(card, {
       scale: 0.98,
       y: -6,
@@ -321,9 +294,6 @@ function createGoalCard(goal) {
           { opacity: 1, scale: 1, y: 0, duration: 0.25, ease: "power2.out" },
         );
 
-        // ======================
-        // ❌ CANCEL FIXED
-        // ======================
         card.querySelector(".no").onclick = () => {
           gsap.to(confirmBox, {
             opacity: 0,
@@ -333,15 +303,11 @@ function createGoalCard(goal) {
               card.dataset.confirming = "false";
               card.classList.remove("goal-card--delete");
 
-              // IMPORTANT FIX: full re-render
               renderGoals();
             },
           });
         };
 
-        // ======================
-        // ❌ DELETE FIXED
-        // ======================
         card.querySelector(".yes").onclick = () => {
           gsap.to(card, {
             scale: 0.9,
@@ -355,7 +321,7 @@ function createGoalCard(goal) {
               const updated = safeGetGoals().filter((g) => g.id !== goal.id);
               updateData({ goals: updated });
 
-              renderGoals(); // IMPORTANT FIX
+              renderGoals();
             },
           });
         };
@@ -375,7 +341,6 @@ function createGoalCard(goal) {
 
     let mode = null;
 
-    // FIX: remove layout space completely
     gsap.set(panel, {
       display: "none",
       opacity: 0,
@@ -395,11 +360,9 @@ function createGoalCard(goal) {
       const clickedBtn = isAdd ? plusBtn : minusBtn;
       const otherBtn = isAdd ? minusBtn : plusBtn;
 
-      // ✅ SET INPUT BACKGROUND BASED ON MODE (THIS IS THE FIX)
       const color = getComputedStyle(clickedBtn).backgroundColor;
       panel.style.backgroundColor = color;
 
-      // hide buttons
       gsap.to([plusBtn, minusBtn], {
         opacity: 0,
         scale: 0.8,
@@ -440,7 +403,6 @@ function createGoalCard(goal) {
         onComplete() {
           panel.style.display = "none";
 
-          // restore buttons
           gsap.to([plusBtn, minusBtn], {
             opacity: 1,
             scale: 1,
@@ -448,17 +410,14 @@ function createGoalCard(goal) {
             duration: 0.2,
           });
 
-          // ✅ FIX: RESET STATE (IMPORTANT)
           mode = null;
         },
       });
     }
 
-    // ✅ OPEN
     plusBtn.addEventListener("click", () => openPanel("add"));
     minusBtn.addEventListener("click", () => openPanel("remove"));
 
-    // ✅ SUBMIT
     submit.addEventListener("click", () => {
       const amount = Number(input.value);
 
@@ -468,50 +427,19 @@ function createGoalCard(goal) {
       closePanel();
     });
 
-    // ✅ CLOSE BUTTON (NEW)
     const closeBtn = document.createElement("button");
     closeBtn.className = "goal-panel-close";
     closeBtn.innerHTML = "✕";
     panel.appendChild(closeBtn);
 
-    // IMPORTANT: attach AFTER DOM insertion
     closeBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       closePanel();
     });
   }
 
-  /* ---------------- ACTIONS ---------------- */
-  // if (!isCompleted) {
-  //   card
-  //     .querySelector(".add-50")
-  //     ?.addEventListener("click", () => updateAmount(goal.id, 50));
-
-  //   card
-  //     .querySelector(".add-100")
-  //     ?.addEventListener("click", () => updateAmount(goal.id, 100));
-
-  //   card
-  //     .querySelector(".remove")
-  //     ?.addEventListener("click", () => updateAmount(goal.id, -50));
-  // }
-
   return card;
 }
-
-// const usedQuotes = new Set();
-
-// const quotes = [
-//   "Small steps every day lead to big results.",
-//   "Discipline beats motivation every time.",
-//   "Your future self will thank you.",
-//   "Consistency creates freedom.",
-//   "Dreams work only when you do.",
-//   "Progress, not perfection.",
-//   "You built this one decision at a time.",
-//   "Success is a habit, not an event.",
-// ];
-/* ---------------- UPDATE ---------------- */
 
 export function animateNumberWithFeedback(
   el,
@@ -535,10 +463,9 @@ export function animateNumberWithFeedback(
     duration: 0.7,
     ease: "power2.out",
     onUpdate: () => {
-      el.textContent = `${currency} ${obj.value.toFixed(0)}`;
+      el.textContent = `${currency}${obj.value.toFixed(2)}`;
     },
     onComplete: () => {
-      // return to default theme color
       el.style.color = "";
     },
   });
@@ -577,7 +504,7 @@ function updateAmount(id, change) {
   const isAdd = change > 0;
 
   if (becameCompleted) {
-    renderGoals(); // 🔥 FULL REBUILD (IMPORTANT FIX)
+    renderGoals();
     return;
   }
 
@@ -594,14 +521,13 @@ function updateSingleCard(id, goal, isAdd) {
 
   const fill = card.querySelector(".goal-progress-fill");
 
-  // 🎯 COLOR CHANGE LOGIC
-  const color = isAdd ? "#22c55e" : "#ef4444"; // green / red
+  const color = isAdd ? "#22c55e" : "#ef4444";
 
   const PRIMARY_COLOR = getComputedStyle(document.documentElement)
     .getPropertyValue("--primary-color")
     .trim();
 
-  const flashColor = isAdd ? "#22c55e" : "#ef4444"; // green / red
+  const flashColor = isAdd ? "#22c55e" : "#ef4444";
 
   gsap
     .timeline()
@@ -617,8 +543,6 @@ function updateSingleCard(id, goal, isAdd) {
       ease: "power2.inOut",
     });
 
-  // update number
-  // card.querySelector(".saved-amount").textContent = `$${saved.toFixed(2)}`;
   const savedEl = card.querySelector(".saved-amount");
 
   const prevValue = Number(savedEl.dataset.value || 0);
@@ -626,13 +550,11 @@ function updateSingleCard(id, goal, isAdd) {
 
   const type = isAdd ? "up" : "down";
 
-  animateNumberWithFeedback(savedEl, prevValue, newValue, "$", type);
+  animateNumberWithFeedback(savedEl, prevValue, newValue, currency(), type);
 
-  // store new value for next animation
   savedEl.dataset.value = newValue;
 }
 
-/* ---------------- SAFE AUTO DELETE (NO DOM LOOP) ---------------- */
 function startAutoDeleteWatcher() {
   setInterval(() => {
     const now = Date.now();
@@ -644,7 +566,6 @@ function startAutoDeleteWatcher() {
       return now < g.completedAt + GOAL_DELETE_DELAY;
     });
 
-    // Nothing changed
     if (filtered.length === goals.length) return;
 
     updateData({ goals: filtered });
@@ -652,12 +573,11 @@ function startAutoDeleteWatcher() {
   }, 1000);
 }
 
-/* ---------------- TIMER (ONLY UPDATE TEXT, NO RENDER) ---------------- */
 function startTimerUIUpdater() {
   setInterval(() => {
     const now = Date.now();
 
-    const goals = safeGetGoals(); // ✅ FIX: define it here
+    const goals = safeGetGoals();
 
     let changed = false;
 
@@ -700,7 +620,6 @@ function startTimerUIUpdater() {
   }, 1000);
 }
 
-/* ---------------- RENDER ---------------- */
 function renderGoals() {
   if (!goalsContainer) return;
 
@@ -743,7 +662,6 @@ function buildGoals() {
 
   updateCounter();
 
-  // 👇 ENTER ANIMATION (FIX #1)
   gsap.from(".goal-card", {
     opacity: 0,
     y: 20,
@@ -754,7 +672,6 @@ function buildGoals() {
   });
 }
 
-/* ---------------- FORM ---------------- */
 function initForm() {
   const form = document.querySelector(".goal-form-grid");
   if (!form) return;
@@ -773,7 +690,6 @@ function initForm() {
     if (target <= 0) return notify.error("Invalid target");
     if (saved >= target) return notify.error("Saved must be < target");
 
-    /* ✅ FIXED PAST DATE BUG */
     if (isPastDate(deadline)) {
       return notify.error("Past date not allowed");
     }
@@ -812,7 +728,6 @@ function cleanupExpiredGoals() {
   updateData({ goals: filtered });
 }
 
-/* ---------------- EVENTS ---------------- */
 function initEvents() {
   document
     .querySelector(".goals-page-new-goal-btn")
@@ -831,20 +746,6 @@ function initEvents() {
     });
 }
 
-// document.querySelectorAll(".goal-panel-close").forEach((btn) => {
-//   btn.addEventListener("click", () => {
-//     const panel = btn.closest(".goal-action-panel");
-
-//     panel.classList.remove("active");
-
-//     const actions = panel.parentElement;
-
-//     actions.querySelector(".goal-btn-add")?.classList.remove("hidden");
-//     actions.querySelector(".goal-btn-minus")?.classList.remove("hidden");
-//   });
-// });
-
-/* ---------------- INIT ---------------- */
 function createContainer() {
   const section = document.createElement("section");
   section.className = "goals-page-card-section";
@@ -866,7 +767,7 @@ export default {
     setDefaultGoalDate();
 
     startAutoDeleteWatcher();
-    startTimerUIUpdater(); // ✅ important FIX (no re-render loop)
+    startTimerUIUpdater();
     cleanupExpiredGoals();
   },
 };

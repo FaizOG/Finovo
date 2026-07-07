@@ -383,16 +383,6 @@
    Buttons
 =========================== */
 
-/* .goal-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  overflow: hidden;
-
-  margin-top: 20px;
-} */
-
 .goal-actions {
   position: relative;
   display: flex;
@@ -400,6 +390,7 @@
   width: 100%;
   height: 48px;
   margin-top: 20px;
+  gap: 10px;
   overflow: hidden;
 }
 
@@ -839,51 +830,6 @@
   transform: scale(1.05);
 }
 
-/* .goal-btn-add,
-.goal-btn-minus {
-  background-color: var(--primary);
-  width: 50%;
-  padding: 0.5rem 1rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  height: 2.5rem;
-  border-radius: 2.15rem;
-  color: rgb(19, 22, 27);
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.goal-btn-add:hover,
-.goal-btn-minus:hover {
-  transform: scale(1.05);
-}
-
-.goal-btn-minus {
-  background-color: red;
-  color: white;
-} */
-
-.goal-actions {
-  /* display: flex; */
-  gap: 10px;
-  overflow: hidden;
-}
-
-/* .goal-btn-add,
-.goal-btn-minus {
-  flex: 1;
-  min-width: 0;
-  height: 45px;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 22px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-} */
-
 .goal-btn-add,
 .goal-btn-minus {
   flex: 1;
@@ -912,24 +858,6 @@
   overflow: hidden;
 }
 
-/* .goal-action-panel {
-  display: flex;
-  align-items: center;
-
-  flex: 0 0 auto;
-  width: 0;
-  opacity: 0;
-
-  overflow: hidden;
-  height: 48px;
-
-  border-radius: 12px;
-  padding: 0 6px;
-
-  background: var(--primary);
-  transition: all 0.3s ease;
-} */
-
 .goal-action-panel {
   position: absolute;
   inset: 0;
@@ -944,7 +872,6 @@
   overflow: hidden;
 
   opacity: 0;
-  /* pointer-events: none; */
   height: 48px;
 }
 
@@ -966,20 +893,6 @@
   font-weight: 600;
 }
 
-/* .goal-action-input {
-  flex: 1;
-  min-width: 60px;
-  border: none;
-  outline: none;
-
-  background: transparent;
-
-  color: #fff;
-
-  font-size: 17px;
-  font-weight: 600;
-} */
-
 .goal-action-input {
   flex: 1;
   border: none;
@@ -996,25 +909,6 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* .goal-submit-btn {
-  height: 36px;
-  flex-shrink: 0;
-  white-space: nowrap;
-  border: none;
-
-  border-radius: 8px;
-
-  padding: 0 18px;
-
-  background: #fff;
-
-  color: var(--primary);
-
-  font-weight: 700;
-
-  cursor: pointer;
-} */
-
 .goal-action-panel.remove-mode .goal-submit-btn {
   color: #ef4444;
 }
@@ -1026,9 +920,9 @@
   margin: 0;
 }
 
-.goal-action-input {
+/* .goal-action-input {
   -moz-appearance: textfield;
-}
+} */
 
 .goal-submit-btn {
   flex-shrink: 0;
@@ -1040,15 +934,6 @@
   font-weight: 700;
   cursor: pointer;
 }
-
-/* panel should take full width */
-/* .goal-action-panel {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-} */
 
 /* close button */
 .goal-panel-close {
