@@ -139,8 +139,17 @@ function createGoalCard(goal) {
   const card = document.createElement("div");
   card.className = "goal-card";
 
-  if (goal.completedAt) {
+  const isCompleted = !!goal.completedAt;
+  const isExpired = !isCompleted && isPastDate(goal.deadline);
+
+  const deadlineStatus = getDeadlineStatus(goal.deadline);
+
+  if (isCompleted) {
     card.classList.add("goal-card--completed");
+  }
+
+  if (isExpired) {
+    card.classList.add("goal-card--expired");
   }
 
   const saved = Number(goal.savedAmount || 0);
@@ -148,7 +157,8 @@ function createGoalCard(goal) {
 
   const progress = target ? Math.min((saved / target) * 100, 100) : 0;
 
-  const isCompleted = !!goal.completedAt;
+  // const isCompleted = !!goal.completedAt;
+  // const isExpired = !isCompleted && isPastDate(goal.deadline);
 
   const createdAt = goal.createdAt || Date.now();
   const completedAt = goal.completedAt ?? Date.now();
@@ -167,7 +177,13 @@ function createGoalCard(goal) {
         <div class="goal-icon">${goalIcons[goal.type] || "🎯"}</div>
         <div class="goal-title">
           <h3>${goal.name}</h3>
-          <p>by ${goal.deadline}</p>
+            <p>
+              ${
+                deadlineStatus.expired
+                  ? `<span class="goal-expired-badge">${deadlineStatus.text}</span>`
+                  : deadlineStatus.text
+              }
+            </p>
         </div>
       </div>
 
@@ -750,6 +766,30 @@ function createContainer() {
   const section = document.createElement("section");
   section.className = "goals-page-card-section";
   return section;
+}
+
+function getDeadlineStatus(dateStr) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const deadline = new Date(dateStr);
+  deadline.setHours(0, 0, 0, 0);
+
+  const diff = deadline - today;
+
+  const days = Math.ceil(Math.abs(diff) / (1000 * 60 * 60 * 24));
+
+  if (diff < 0) {
+    return {
+      expired: true,
+      text: `Expired ${days} day${days === 1 ? "" : "s"} ago`,
+    };
+  }
+
+  return {
+    expired: false,
+    text: `${days} day${days === 1 ? "" : "s"} left`,
+  };
 }
 
 export default {
