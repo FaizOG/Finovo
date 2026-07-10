@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finova - Personal Finance Dashboard</title>
 
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./style/universal-pop.css" />
-    <link rel="stylesheet" href="./style/settings.css" />
-    <link rel="stylesheet" href="./style/accounts.css" />
-    <link rel="stylesheet" href="./style/goals.css" />
+    <!-- CSS Sheet Link -->
+    <link rel="stylesheet" href="routher.css" />
 
+    <!-- Google Font's Link -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,6 +16,7 @@
       rel="stylesheet"
     />
 
+    <!-- SVG  -->
     <link rel="icon" href="./pig.svg" />
   </head>
 
@@ -394,6 +393,15 @@
 
         <div id="page-content">
           <!-- The whole content is coming from (pages folder using "navigation.js") -->
+
+          <section>
+            <h2 class="setting-tab-title">Dashboard</h2>
+            <p class="setting-tab-subtitle">
+              Here's how your money is moving this month.
+            </p>
+          </section>
+
+          <section class="numbers-overview"></section>
 
           <!-- Toster Message -->
           <div id="toast-container"></div>

@@ -1,0 +1,8 @@
+/* This CSS file words as a router */
+
+@import url("./style.css");
+@import url("./style/universal-pop.css");
+
+@import url("./style/goals.css");
+@import url("./style/accounts.css");
+@import url("./style/settings.css");
