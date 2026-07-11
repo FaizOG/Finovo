@@ -213,10 +213,143 @@ function createCashFlowBudgetGrid() {
   return section;
 }
 
+// import { getData, changedSymbol } from "../js/core/store.js";
+
 function createRecentTransactionsSection() {
   const wrapper = document.createElement("div");
 
   wrapper.className = "dashboard-grid__main";
+
+  const currency = changedSymbol();
+
+  const transactions = Array.isArray(getData()?.transaction)
+    ? getData().transaction
+    : [];
+
+  const icons = {
+    expense: `
+      <svg xmlns="http://www.w3.org/2000/svg"
+        width="16" height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m7 7 10 10"></path>
+        <path d="M17 7v10H7"></path>
+      </svg>
+    `,
+
+    income: `
+      <svg xmlns="http://www.w3.org/2000/svg"
+        width="16" height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M7 17 17 7"></path>
+        <path d="M7 7h10v10"></path>
+      </svg>
+    `,
+
+    transfer: `
+      <svg xmlns="http://www.w3.org/2000/svg"
+        width="16" height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M17 3l4 4-4 4"></path>
+        <path d="M3 7h18"></path>
+        <path d="M7 21l-4-4 4-4"></path>
+        <path d="M21 17H3"></path>
+      </svg>
+    `,
+  };
+
+  const transactionHTML = transactions.length
+    ? transactions
+        .slice()
+        .sort((a, b) => {
+          const dateA = new Date(a.date || a.createdAt || a.id);
+          const dateB = new Date(b.date || b.createdAt || b.id);
+
+          return dateB - dateA; // newest first
+        })
+        .slice(0, 5)
+        .map((transaction) => {
+          const type = transaction.type || "expense";
+
+          const amount = Number(transaction.amount || 0);
+
+          const isIncome = type === "income";
+
+          return `
+            <div class="transaction-item">
+
+              <div class="
+                transaction-item__icon 
+                transaction-item__icon--${type}
+              ">
+                ${icons[type]}
+              </div>
+
+
+              <div class="transaction-item__content">
+
+                <div class="transaction-item__name">
+                  ${
+                    type === "transfer"
+                      ? "Transfer"
+                      : transaction.category || transaction.name || type
+                  }
+                </div>
+
+
+                <div class="transaction-item__meta">
+
+                  ${
+                    type === "transfer"
+                      ? `${transaction.fromName || "From"} • ${transaction.toName || "To"}`
+                      : type === "income"
+                        ? `${transaction.source || transaction.category || "Income"}`
+                        : `${transaction.category || "Expense"}`
+                  }
+
+                  •
+
+                  ${formatTransactionDate(transaction)}
+
+                </div>
+
+              </div>
+
+
+              <div class="
+                transaction-item__amount
+                ${isIncome ? "transaction-item__amount--income" : ""}
+              ">
+
+                ${type === "expense" ? "-" : "+"}
+
+                ${currency}${amount.toFixed(2)}
+
+              </div>
+
+            </div>
+          `;
+        })
+        .join("")
+    : `
+      <p class="empty-message">
+        No transactions yet.
+      </p>
+    `;
 
   wrapper.innerHTML = `
     <div class="panel recent-transactions">
@@ -227,40 +360,17 @@ function createRecentTransactionsSection() {
           Recent transactions
         </h2>
 
+
         <a href="#" class="recent-transactions__link">
           View all
         </a>
 
       </div>
 
+
       <div class="transaction-list">
 
-        <div class="transaction-item">
-
-          <div class="transaction-item__icon transaction-item__icon--expense">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-              viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="m7 7 10 10"></path>
-              <path d="M17 7v10H7"></path>
-            </svg>
-          </div>
-
-          <div class="transaction-item__content">
-            <div class="transaction-item__name">
-              Food
-            </div>
-
-            <div class="transaction-item__meta">
-              Food • BOB • 2026-07-10
-            </div>
-          </div>
-
-          <div class="transaction-item__amount">
-            −$500.00
-          </div>
-
-        </div>
+        ${transactionHTML}
 
       </div>
 
@@ -313,6 +423,7 @@ function createSavingsGoalsSection() {
               <div class="goal-item__header">
 
                 <span class="goal-item__name">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target size-4" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                   ${goal.name}
                 </span>
 
@@ -398,6 +509,18 @@ function createSavingsGoalsSection() {
   });
 
   return wrapper;
+}
+
+function formatTransactionDate(transaction) {
+  const date = new Date(
+    transaction.date || transaction.createdAt || transaction.id,
+  );
+
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function createActivityGrid() {
