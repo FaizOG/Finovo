@@ -1,3 +1,12 @@
+import { changedSymbol } from "../js/core/store.js";
+
+import {
+  getTotalBalance,
+  getMonthlyIncome,
+  getMonthlyExpenses,
+  getSavingsAmount,
+} from "../js/core/dashboard.utils.js";
+
 function createDashboardHeader() {
   const section = document.createElement("section");
 
@@ -47,7 +56,7 @@ function createNumbersOverview() {
   section.append(
     createSummaryCard({
       title: "Total Balance",
-      value: "$12,345.67",
+      value: `${changedSymbol()}${getTotalBalance().toLocaleString()}`,
       subtitle: `
         <span>
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-3" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
@@ -62,7 +71,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Income (this month)",
-      value: "$4,200.00",
+      value: `${changedSymbol()}${getMonthlyIncome().toLocaleString()}`,
       subtitle: "+ deposits & salary",
       icon: `
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right size-4" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
@@ -71,7 +80,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Expenses (this month)",
-      value: "$1,600.00",
+      value: `${changedSymbol()}${getMonthlyExpenses().toLocaleString()}`,
       subtitle: "− spending",
       icon: `
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-right size-4" aria-hidden="true"><path d="m7 7 10 10"></path><path d="M17 7v10H7"></path></svg>
@@ -80,7 +89,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Savings (goals)",
-      value: "$0.00",
+      value: `${changedSymbol()}${getSavingsAmount().toLocaleString()}`,
       subtitle: "across all goals",
       icon: `
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-piggy-bank size-4" aria-hidden="true"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"></path><path d="M16 10h.01"></path><path d="M2 8v1a2 2 0 0 0 2 2h1"></path></svg>
@@ -158,7 +167,7 @@ function createMonthlyBudgetSection() {
         </div>
 
 
-        <a href="/budgets" class="monthly-budget__link">
+        <a href="#" class="monthly-budget__link">
           Manage
         </a>
 
@@ -167,13 +176,29 @@ function createMonthlyBudgetSection() {
 
       <p class="monthly-budget__message">
         No monthly budget set.
-        <a href="/budgets" class="monthly-budget__action">
+        <a href="#" class="monthly-budget__action">
           Create one
         </a>.
       </p>
 
     </div>
   `;
+
+  const createBtn = wrapper.querySelector(".monthly-budget__action");
+  const manageBtn = wrapper.querySelector(".monthly-budget__link");
+
+  function navigateToBudgets(e) {
+    e.preventDefault();
+
+    window.dispatchEvent(
+      new CustomEvent("navigate", {
+        detail: "budgets",
+      }),
+    );
+  }
+
+  createBtn.addEventListener("click", navigateToBudgets);
+  manageBtn.addEventListener("click", navigateToBudgets);
 
   return wrapper;
 }
@@ -202,27 +227,26 @@ function createRecentTransactionsSection() {
           Recent transactions
         </h2>
 
-
-        <a href="/transactions"
-          class="recent-transactions__link">
+        <a href="#" class="recent-transactions__link">
           View all
         </a>
 
       </div>
 
-
       <div class="transaction-list">
-
 
         <div class="transaction-item">
 
           <div class="transaction-item__icon transaction-item__icon--expense">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-right size-5" aria-hidden="true"><path d="m7 7 10 10"></path><path d="M17 7v10H7"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+              viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="m7 7 10 10"></path>
+              <path d="M17 7v10H7"></path>
+            </svg>
           </div>
 
-
           <div class="transaction-item__content">
-
             <div class="transaction-item__name">
               Food
             </div>
@@ -230,9 +254,7 @@ function createRecentTransactionsSection() {
             <div class="transaction-item__meta">
               Food • BOB • 2026-07-10
             </div>
-
           </div>
-
 
           <div class="transaction-item__amount">
             −$500.00
@@ -240,38 +262,22 @@ function createRecentTransactionsSection() {
 
         </div>
 
-
-        <div class="transaction-item">
-
-          <div class="transaction-item__icon transaction-item__icon--income">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right size-5" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
-          </div>
-
-
-          <div class="transaction-item__content">
-
-            <div class="transaction-item__name">
-              Salary (recurring)
-            </div>
-
-            <div class="transaction-item__meta">
-              Salary • • 2026-07-10
-            </div>
-
-          </div>
-
-
-          <div class="transaction-item__amount transaction-item__amount--income">
-            +$4,200.00
-          </div>
-
-        </div>
-
-
       </div>
 
     </div>
   `;
+
+  const viewAll = wrapper.querySelector(".recent-transactions__link");
+
+  viewAll.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    window.dispatchEvent(
+      new CustomEvent("navigate", {
+        detail: "transactions",
+      }),
+    );
+  });
 
   return wrapper;
 }
@@ -289,8 +295,7 @@ function createSavingsGoalsSection() {
         </h2>
 
 
-        <a href="/goals"
-          class="savings-goals__link">
+        <a href="#" class="savings-goals__link">
           All goals
         </a>
 
@@ -316,10 +321,7 @@ function createSavingsGoalsSection() {
 
 
           <div class="goal-progress">
-
-            <div class="goal-progress__bar">
-            </div>
-
+            <div class="goal-progress__bar"></div>
           </div>
 
         </div>
@@ -328,6 +330,18 @@ function createSavingsGoalsSection() {
 
     </div>
   `;
+
+  const allGoals = wrapper.querySelector(".savings-goals__link");
+
+  allGoals.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    window.dispatchEvent(
+      new CustomEvent("navigate", {
+        detail: "goals",
+      }),
+    );
+  });
 
   return wrapper;
 }

@@ -1,4 +1,5 @@
 // navigation.js
+import { updateSidebarBalance } from "../js/core/sidebar.utils.js";
 
 const pages = {
   dashboard: () => import("../pages/dashboard.js"),
@@ -7,10 +8,9 @@ const pages = {
   analytics: () => import("../pages/analytics.js"),
   goals: () => import("../pages/goals.js"),
   accounts: () => import("../pages/accounts.js"),
-  settings: () => import("../pages/settings.js")
+  settings: () => import("../pages/settings.js"),
 };
 
-// Load and render page
 async function loadPage(page) {
   const content = document.getElementById("page-content");
 
@@ -19,19 +19,21 @@ async function loadPage(page) {
     return;
   }
 
-  document.querySelectorAll(".asidebar-tab")
-    .forEach(tab => tab.classList.remove("asidebar-active"));
+  document
+    .querySelectorAll(".asidebar-tab")
+    .forEach((tab) => tab.classList.remove("asidebar-active"));
 
-  const activeTab = document.querySelector(`[data-page="${page}"] .asidebar-tab`);
+  const activeTab = document.querySelector(
+    `[data-page="${page}"] .asidebar-tab`,
+  );
   if (activeTab) activeTab.classList.add("asidebar-active");
 
   try {
-    // exit animation
     await gsap.to(content, {
       opacity: 0,
       y: 10,
       duration: 0.4,
-      ease: "power2.inout"
+      ease: "power2.inout",
     });
 
     content.innerHTML = "";
@@ -40,40 +42,30 @@ async function loadPage(page) {
 
     let pageElement;
 
-    // ✅ CASE 1: render() returns DOM
     if (typeof module.render === "function") {
       pageElement = module.render();
       content.appendChild(pageElement);
-
-      // ✅ CASE 2: default export function
     } else if (typeof module.default === "function") {
       pageElement = module.default();
       content.appendChild(pageElement);
-
-      // ✅ CASE 3: default with mount(container)
     } else if (module.default?.mount) {
       module.default.mount(content);
       pageElement = content;
-
     } else {
       throw new Error(`Invalid export in page: ${page}`);
     }
 
-    // entry animation
-    gsap.fromTo(content,
+    gsap.fromTo(
+      content,
       { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }
+      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
     );
-
   } catch (err) {
     console.error("Failed to load page:", page, err);
 
     content.innerHTML = `<h2>Failed to load page</h2>`;
 
-    gsap.fromTo(content,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.3 }
-    );
+    gsap.fromTo(content, { opacity: 0 }, { opacity: 1, duration: 0.3 });
   }
 }
 
@@ -85,15 +77,13 @@ function animateTabIcon(tab, page) {
 
   const reset = {
     clearProps: "transform",
-    transformOrigin: "50% 50%"
+    transformOrigin: "50% 50%",
   };
 
   switch (page) {
-
-    // ================= DASHBOARD =================
     case "dashboard":
-      // subtle shuffle shake
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { x: -2, y: -2, rotation: -2 },
         {
           x: 2,
@@ -103,15 +93,14 @@ function animateTabIcon(tab, page) {
           repeat: 8,
           yoyo: true,
           ease: "none",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
 
-    // ================= TRANSACTIONS =================
     case "transactions":
-      // arrows opposite direction (targets all paths)
-      gsap.fromTo(svg.querySelectorAll("path"),
+      gsap.fromTo(
+        svg.querySelectorAll("path"),
         { x: -6 },
         {
           x: 6,
@@ -120,15 +109,14 @@ function animateTabIcon(tab, page) {
           repeat: 4,
           yoyo: true,
           ease: "power1.inOut",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
 
-    // ================= BUDGET =================
     case "budgets":
-      // wallet + popping currency note effect
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { scale: 1 },
         {
           scale: 1.08,
@@ -136,27 +124,26 @@ function animateTabIcon(tab, page) {
           yoyo: true,
           repeat: 1,
           ease: "back.out(2)",
-          ...reset
-        }
+          ...reset,
+        },
       );
 
-      // fake “note pop out” using a pulse
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { y: 0 },
         {
           y: -4,
           duration: 0.2,
           yoyo: true,
           repeat: 1,
-          ease: "power2.out"
-        }
+          ease: "power2.out",
+        },
       );
       break;
 
-    // ================= ANALYTICS =================
     case "analytics":
-      // graph pulse up/down (scaleY)
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { scaleY: 1 },
         {
           scaleY: 1.25,
@@ -165,15 +152,14 @@ function animateTabIcon(tab, page) {
           repeat: 6,
           yoyo: true,
           ease: "power1.inOut",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
 
-    // ================= GOALS =================
     case "goals":
-      // dart hit → zoom in/out shake
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { scale: 1 },
         {
           scale: 1.25,
@@ -181,15 +167,14 @@ function animateTabIcon(tab, page) {
           repeat: 4,
           yoyo: true,
           ease: "power2.inOut",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
 
-    // ================= ACCOUNTS =================
     case "accounts":
-      // pig run = bounce zoom
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { scale: 1 },
         {
           scale: 1.18,
@@ -197,32 +182,32 @@ function animateTabIcon(tab, page) {
           repeat: 5,
           yoyo: true,
           ease: "sine.inOut",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
 
-    // ================= SETTINGS =================
     case "settings":
-      // smooth full rotation
-      gsap.fromTo(svg,
+      gsap.fromTo(
+        svg,
         { rotate: 0 },
         {
           rotate: 360,
           duration: 1,
           ease: "power2.inOut",
-          ...reset
-        }
+          ...reset,
+        },
       );
       break;
   }
 }
 
-// Initialize navigation
 function initNavigation() {
+  updateSidebarBalance();
+
   const items = document.querySelectorAll(".nav-item");
 
-  items.forEach(item => {
+  items.forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
 
@@ -231,7 +216,7 @@ function initNavigation() {
 
       const tab = item.querySelector(".asidebar-tab");
 
-      animateTabIcon(tab, page); // 🎯 animation
+      animateTabIcon(tab, page);
 
       loadPage(page);
     });
@@ -242,3 +227,10 @@ function initNavigation() {
 
 // run on load
 initNavigation();
+window.addEventListener("appDataUpdated", () => {
+  updateSidebarBalance();
+});
+
+window.addEventListener("navigate", (e) => {
+  loadPage(e.detail);
+});

@@ -22,6 +22,8 @@ export function getData() {
 // 2. SAVE full data
 export function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  window.dispatchEvent(new Event("appDataUpdated"));
 }
 
 // 3. UPDATE only parts safely
