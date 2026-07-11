@@ -58,6 +58,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  min-height: 27.5rem;
 }
 
 .analytics-split-grid {

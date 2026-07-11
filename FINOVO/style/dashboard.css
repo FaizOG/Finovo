@@ -429,3 +429,13 @@
     font-size: 2rem;
   }
 }
+
+.cash-flow-chart__body {
+  position: relative;
+  height: 320px;
+}
+
+.cash-flow-chart__canvas {
+  width: 100%;
+  height: 100%;
+}

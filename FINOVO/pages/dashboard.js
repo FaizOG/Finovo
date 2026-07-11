@@ -1,4 +1,5 @@
 import { getData, changedSymbol } from "../js/core/store.js";
+import Chart from "https://cdn.jsdelivr.net/npm/chart.js@4.4.3/auto/+esm";
 
 import {
   getTotalBalance,
@@ -100,50 +101,173 @@ function createNumbersOverview() {
   return section;
 }
 
+function getCashFlowData() {
+  const transactions = Array.isArray(getData()?.transaction)
+    ? getData().transaction
+    : [];
+
+  const today = new Date();
+
+  const months = [];
+
+  // create last 6 months
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+
+    months.push({
+      key: `${date.getFullYear()}-${date.getMonth()}`,
+      label: date.toLocaleString("default", {
+        month: "short",
+      }),
+      income: 0,
+      expense: 0,
+    });
+  }
+
+  transactions.forEach((transaction) => {
+    const date = new Date(
+      transaction.date || transaction.createdAt || transaction.id,
+    );
+
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+
+    const month = months.find((m) => m.key === key);
+
+    if (!month) return;
+
+    const amount = Number(transaction.amount) || 0;
+
+    if (transaction.type === "income") {
+      month.income += amount;
+    }
+
+    if (transaction.type === "expense") {
+      month.expense += amount;
+    }
+  });
+
+  return {
+    labels: months.map((m) => m.label),
+    income: months.map((m) => m.income),
+    expense: months.map((m) => m.expense),
+  };
+}
+
 function createCashFlowSection() {
   const wrapper = document.createElement("div");
 
   wrapper.className = "dashboard-grid__main";
 
   wrapper.innerHTML = `
-    <div class="panel cash-flow-chart">
+<div class="panel cash-flow-chart">
 
-      <div class="cash-flow-chart__header">
+    <div class="cash-flow-chart__header">
 
         <div>
-          <h2 class="cash-flow-chart__title">
-            Cash flow
-          </h2>
+            <h2 class="cash-flow-chart__title">
+                Cash flow
+            </h2>
 
-          <p class="cash-flow-chart__subtitle">
-            Income vs expenses, last 6 months
-          </p>
+            <p class="cash-flow-chart__subtitle">
+                Income vs expenses, last 6 months
+            </p>
         </div>
-
 
         <div class="cash-flow-chart__legend">
 
-          <span class="legend-item">
-            <span class="legend-dot legend-dot--income"></span>
-            Income
-          </span>
+            <span class="legend-item">
+                <span class="legend-dot legend-dot--income"></span>
+                Income
+            </span>
 
-
-          <span class="legend-item">
-            <span class="legend-dot legend-dot--expense"></span>
-            Expense
-          </span>
+            <span class="legend-item">
+                <span class="legend-dot legend-dot--expense"></span>
+                Expense
+            </span>
 
         </div>
 
-      </div>
-
-
-      <div class="cash-flow-chart__body">
-      </div>
-
     </div>
-  `;
+
+    <div class="cash-flow-chart__body">
+        <canvas class="cash-flow-chart__canvas"></canvas>
+    </div>
+
+</div>
+`;
+
+  const canvas = wrapper.querySelector(".cash-flow-chart__canvas");
+
+  const { labels, income, expense } = getCashFlowData();
+  const styles = getComputedStyle(document.documentElement);
+
+  const incomeColor = styles.getPropertyValue("--primary").trim();
+  const expenseColor = styles.getPropertyValue("--text-muted").trim();
+  new Chart(canvas, {
+    type: "bar",
+
+    data: {
+      labels,
+
+      datasets: [
+        {
+          label: "Income",
+          data: income,
+          backgroundColor: incomeColor,
+          borderRadius: {
+            topLeft: 12,
+            topRight: 12,
+            bottomLeft: 0,
+            bottomRight: 0,
+          },
+          borderSkipped: "bottom",
+        },
+
+        {
+          label: "Expense",
+          data: expense,
+          backgroundColor: expenseColor,
+          borderRadius: {
+            topLeft: 12,
+            topRight: 12,
+            bottomLeft: 0,
+            bottomRight: 0,
+          },
+          borderSkipped: "bottom",
+        },
+      ],
+    },
+
+    options: {
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+
+        y: {
+          beginAtZero: true,
+
+          ticks: {
+            callback(value) {
+              return `${changedSymbol()}${value}`;
+            },
+          },
+        },
+      },
+    },
+  });
 
   return wrapper;
 }
