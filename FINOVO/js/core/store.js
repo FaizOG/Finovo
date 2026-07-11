@@ -2,11 +2,12 @@ const STORAGE_KEY = "appData";
 
 const defaultData = {
   accounts: [],
+  transaction: [],
+  goals: [],
   settings: {
     theme: "dark",
     currency: "₹",
   },
-  transaction: [],
 };
 
 if (!localStorage.getItem(STORAGE_KEY)) {
