@@ -397,44 +397,45 @@
         <div id="page-content">
           <!-- The whole content is coming from (pages folder using "navigation.js") -->
 
-          <!-- <section>
-            <h2 class="setting-tab-title">Dashboard</h2>
-            <p class="setting-tab-subtitle">
-              Here's how your money is moving this month.
-            </p>
+          <section>
+            <h2 class="setting-tab-title">Analytics</h2>
+            <p class="setting-tab-subtitle">Spending insights and trends</p>
           </section>
 
-          <section class="numbers-overview">
-            <div class="summary-card total-balance-card">
-              <div class="summary-card__header">
-                <span class="summary-card__title">Total Balance</span>
+          <section class="analytics-overview">
+            <div class="analytics-card">
+              <div class="analytics-card__header">
+                <span class="analytics-card__title">Top category</span>
 
-                <div class="summary-card__icon__container">
+                <div class="analytics-card__icon-container">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="summary-card__icon"
+                    class="lucide lucide-flame size-4 summary-card__icon"
                     aria-hidden="true"
                   >
                     <path
-                      d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+                      d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
                     ></path>
-                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
                   </svg>
                 </div>
               </div>
 
-              <h3 class="summary-card__value">$12,345.67</h3>
+              <h3 class="analytics-card__value">Bills</h3>
+            </div>
 
-              <p class="summary-card__subtitle">
-                <span>
+            <div class="analytics-card">
+              <div class="analytics-card__header">
+                <span class="analytics-card__title">Avg daily spend</span>
+
+                <div class="analytics-card__icon-container">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -445,79 +446,27 @@
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="summary-card__subtitle_icon"
+                    class="lucide lucide-trending-down size-4 summary-card__icon"
                     aria-hidden="true"
                   >
-                    <path d="M16 7h6v6"></path>
-                    <path d="m22 7-8.5 8.5-5-5L2 17"></path>
-                  </svg>
-                </span>
-                across all accounts
-              </p>
-            </div>
-
-            <div class="summary-card">
-              <div class="summary-card__header">
-                <span class="summary-card__title">Income (this month)</span>
-                <div class="summary-card__icon__container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-arrow-up-right size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path d="M7 7h10v10"></path>
-                    <path d="M7 17 17 7"></path>
+                    <path d="M16 17h6v-6"></path>
+                    <path d="m22 17-8.5-8.5-5 5L2 7"></path>
                   </svg>
                 </div>
               </div>
 
-              <h3 class="summary-card__value">$4,200.00</h3>
-              <p class="summary-card__subtitle">+ deposits & salary</p>
+              <h3 class="analytics-card__value">$145.45</h3>
             </div>
 
-            <div class="summary-card">
-              <div class="summary-card__header">
-                <span class="summary-card__title">Expenses (this month)</span>
-                <div class="summary-card__icon__container">
+            <div class="analytics-card">
+              <div class="analytics-card__header">
+                <span class="analytics-card__title">Savings rate</span>
+
+                <div class="analytics-card__icon-container">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-arrow-down-right size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path d="m7 7 10 10"></path>
-                    <path d="M17 7v10H7"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <h3 class="summary-card__value">$1,600.00</h3>
-              <p class="summary-card__subtitle">− spending</p>
-            </div>
-
-            <div class="summary-card">
-              <div class="summary-card__header">
-                <span class="summary-card__title">Savings (goals)</span>
-                <div class="summary-card__icon__container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -536,179 +485,104 @@
                 </div>
               </div>
 
-              <h3 class="summary-card__value">$0.00</h3>
-              <p class="summary-card__subtitle">across all goals</p>
+              <h3 class="analytics-card__value">62%</h3>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card__header">
+                <span class="analytics-card__title">vs last month</span>
+
+                <div class="analytics-card__icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-trending-up size-4 summary-card__icon"
+                    aria-hidden="true"
+                  >
+                    <path d="M16 7h6v6"></path>
+                    <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <h3 class="analytics-card__value">+7904%</h3>
             </div>
           </section>
 
-          <section class="dashboard-grid">
-            <div class="dashboard-grid__main">
-              <div class="panel cash-flow-chart">
-                <div class="cash-flow-chart__header">
+          <section class="analytics-grid">
+            <div class="analytics-grid__main">
+              <div class="panel analytics-chart">
+                <div class="analytics-chart__header">
                   <div>
-                    <h2 class="cash-flow-chart__title">Cash flow</h2>
-                    <p class="cash-flow-chart__subtitle">
-                      Income vs expenses, last 6 months
-                    </p>
+                    <h2 class="analytics-chart__title">Weekly spending</h2>
                   </div>
 
-                  <div class="cash-flow-chart__legend">
-                    <span class="legend-item">
-                      <span class="legend-dot legend-dot--income"></span>
+                  <div class="analytics-chart__legend">
+                    <span class="analytics-legend-item">
+                      <span
+                        class="analytics-legend-dot analytics-legend-dot--income"
+                      ></span>
                       Income
                     </span>
 
-                    <span class="legend-item">
-                      <span class="legend-dot legend-dot--expense"></span>
+                    <span class="analytics-legend-item">
+                      <span
+                        class="analytics-legend-dot analytics-legend-dot--expense"
+                      ></span>
                       Expense
                     </span>
                   </div>
                 </div>
 
-                <div class="cash-flow-chart__body">
-                  Chart component goes here
+                <div class="analytics-chart__body">
+                  <!-- Chart component goes here -->
                 </div>
               </div>
             </div>
 
             <div>
-              <div class="panel monthly-budget">
-                <div class="monthly-budget__header">
-                  <div>
-                    <h2 class="monthly-budget__title">Monthly budget</h2>
-                    <p class="monthly-budget__subtitle">July 2026</p>
-                  </div>
-
-                  <a href="/budgets" class="monthly-budget__link"> Manage </a>
+              <div class="panel analytics-category-panel">
+                <div class="analytics-category-panel__header">
+                  <h2 class="analytics-category-panel__title">
+                    Expense categories
+                  </h2>
                 </div>
-
-                <p class="monthly-budget__message">
-                  No monthly budget set.
-                  <a href="/budgets" class="monthly-budget__action">
-                    Create one </a
-                  >.
-                </p>
               </div>
             </div>
           </section>
 
-          <section class="dashboard-grid">
-            <div class="dashboard-grid__main">
-              <div class="panel recent-transactions">
-                <div class="recent-transactions__header">
-                  <h2 class="recent-transactions__title">
-                    Recent transactions
+          <section class="analytics-split-grid">
+            <div class="analytics-split-grid__chart">
+              <div class="panel analytics-chart">
+                <div class="analytics-chart__header">
+                  <div>
+                    <h2 class="analytics-chart__title">Income vs expenses</h2>
+                  </div>
+                </div>
+
+                <div class="analytics-chart__body">
+                  <!-- Chart component goes here -->
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-split-grid__categories">
+              <div class="panel analytics-category-panel">
+                <div class="analytics-category-panel__header">
+                  <h2 class="analytics-category-panel__title">
+                    Expense categories
                   </h2>
-
-                  <a href="/transactions" class="recent-transactions__link">
-                    View all
-                  </a>
-                </div>
-
-                <div class="transaction-list">
-                  <div class="transaction-item">
-                    <div
-                      class="transaction-item__icon transaction-item__icon--expense"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-arrow-down-right size-5 icon--expense"
-                        aria-hidden="true"
-                      >
-                        <path d="m7 7 10 10"></path>
-                        <path d="M17 7v10H7"></path>
-                      </svg>
-                    </div>
-
-                    <div class="transaction-item__content">
-                      <div class="transaction-item__name">Food</div>
-                      <div class="transaction-item__meta">
-                        Food • BOB • 2026-07-10
-                      </div>
-                    </div>
-
-                    <div
-                      class="transaction-item__amount transaction-item__amount--expense"
-                    >
-                      −$500.00
-                    </div>
-                  </div>
-
-                  <div class="transaction-item">
-                    <div
-                      class="transaction-item__icon transaction-item__icon--income"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-arrow-up-right size-5"
-                        aria-hidden="true"
-                      >
-                        <path d="M7 7h10v10"></path>
-                        <path d="M7 17 17 7"></path>
-                      </svg>
-                    </div>
-
-                    <div class="transaction-item__content">
-                      <div class="transaction-item__name">
-                        Salary (recurring)
-                      </div>
-                      <div class="transaction-item__meta">
-                        Salary • • 2026-07-10
-                      </div>
-                    </div>
-
-                    <div
-                      class="transaction-item__amount transaction-item__amount--income"
-                    >
-                      +$4,200.00
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
-
-            <div>
-              <div class="panel savings-goals">
-                <div class="savings-goals__header">
-                  <h2 class="savings-goals__title">Savings goals</h2>
-
-                  <a href="/goals" class="savings-goals__link"> All goals </a>
-                </div>
-
-                <div class="savings-goals__list">
-                   Goal items go here 
-
-                  <div class="goal-item">
-                    <div class="goal-item__header">
-                      <span class="goal-item__name"> Emergency Fund </span>
-
-                      <span class="goal-item__amount"> $2,500 / $5,000 </span>
-                    </div>
-
-                    <div class="goal-progress">
-                      <div class="goal-progress__bar"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section> -->
+          </section>
 
           <!-- Toster Message -->
           <div id="toast-container"></div>
