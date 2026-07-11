@@ -1,4 +1,4 @@
-import { changedSymbol } from "../js/core/store.js";
+import { getData, changedSymbol } from "../js/core/store.js";
 
 import {
   getTotalBalance,
@@ -56,7 +56,7 @@ function createNumbersOverview() {
   section.append(
     createSummaryCard({
       title: "Total Balance",
-      value: `${changedSymbol()}${getTotalBalance().toLocaleString()}`,
+      value: `${changedSymbol()} ${getTotalBalance().toLocaleString()}`,
       subtitle: `
         <span>
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-3" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
@@ -71,7 +71,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Income (this month)",
-      value: `${changedSymbol()}${getMonthlyIncome().toLocaleString()}`,
+      value: `${changedSymbol()} ${getMonthlyIncome().toLocaleString()}`,
       subtitle: "+ deposits & salary",
       icon: `
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right size-4" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
@@ -80,7 +80,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Expenses (this month)",
-      value: `${changedSymbol()}${getMonthlyExpenses().toLocaleString()}`,
+      value: `${changedSymbol()} ${getMonthlyExpenses().toLocaleString()}`,
       subtitle: "− spending",
       icon: `
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-right size-4" aria-hidden="true"><path d="m7 7 10 10"></path><path d="M17 7v10H7"></path></svg>
@@ -89,7 +89,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Savings (goals)",
-      value: `${changedSymbol()}${getSavingsAmount().toLocaleString()}`,
+      value: `${changedSymbol()} ${getSavingsAmount().toLocaleString()}`,
       subtitle: "across all goals",
       icon: `
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-piggy-bank size-4" aria-hidden="true"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"></path><path d="M16 10h.01"></path><path d="M2 8v1a2 2 0 0 0 2 2h1"></path></svg>
@@ -285,6 +285,80 @@ function createRecentTransactionsSection() {
 function createSavingsGoalsSection() {
   const wrapper = document.createElement("div");
 
+  const currency = changedSymbol();
+
+  const goals = Array.isArray(getData()?.goals) ? getData().goals : [];
+
+  const activeGoals = goals.filter((goal) => !goal.completedAt);
+
+  const goalHTML = activeGoals.length
+    ? activeGoals
+        .slice(0, 3)
+        .map((goal) => {
+          const saved = Number(goal.savedAmount || 0);
+          const target = Number(goal.targetAmount || 0);
+
+          const progress = target ? Math.min((saved / target) * 100, 100) : 0;
+
+          const today = new Date();
+          const deadline = new Date(goal.deadline);
+
+          const diff = deadline - today;
+
+          const daysLeft = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+
+          return `
+            <div class="goal-item">
+
+              <div class="goal-item__header">
+
+                <span class="goal-item__name">
+                  ${goal.name}
+                </span>
+
+
+                <small>
+                  ${progress.toFixed(0)}%
+                </small>
+
+              </div>
+
+
+              <div class="goal-progress">
+
+                <div 
+                  class="goal-progress__bar"
+                  style="width:${progress}%">
+                </div>
+
+              </div>
+
+
+              <div class="goal-item__header">
+
+                <span class="goal-item__amount">
+                  ${currency} ${saved.toFixed(2)}
+                  /
+                  ${currency} ${target.toFixed(2)}
+                </span>
+
+
+                <small>
+                  ${daysLeft} days left
+                </small>
+
+              </div>
+
+            </div>
+          `;
+        })
+        .join("")
+    : `
+      <p class="empty-message">
+        No savings goals yet.
+      </p>
+    `;
+
   wrapper.innerHTML = `
     <div class="panel savings-goals">
 
@@ -304,27 +378,7 @@ function createSavingsGoalsSection() {
 
       <div class="savings-goals__list">
 
-        <div class="goal-item">
-
-          <div class="goal-item__header">
-
-            <span class="goal-item__name">
-              Emergency Fund
-            </span>
-
-
-            <span class="goal-item__amount">
-              $2,500 / $5,000
-            </span>
-
-          </div>
-
-
-          <div class="goal-progress">
-            <div class="goal-progress__bar"></div>
-          </div>
-
-        </div>
+        ${goalHTML}
 
       </div>
 
