@@ -4,6 +4,7 @@ const defaultData = {
   accounts: [],
   transaction: [],
   goals: [],
+  goalTransactions: [],
   settings: {
     theme: "dark",
     currency: "₹",
