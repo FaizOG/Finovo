@@ -721,7 +721,20 @@ function createAnalyticsSplitGrid() {
     .getPropertyValue("--primary")
     .trim();
 
-  new Chart(savingsCanvas, {
+  const ctx = savingsCanvas.getContext("2d");
+
+  // Create gradient
+  const gradient = ctx.createLinearGradient(
+    0,
+    0,
+    0,
+    savingsCanvas.parentElement.clientHeight,
+  );
+
+  gradient.addColorStop(0, `${savingsColor}80`);
+  gradient.addColorStop(1, `${savingsColor}00`);
+
+  new Chart(ctx, {
     type: "line",
 
     data: {
@@ -735,19 +748,45 @@ function createAnalyticsSplitGrid() {
 
           borderColor: savingsColor,
 
-          backgroundColor: `${savingsColor}20`,
+          backgroundColor: (context) => {
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
 
-          fill: true,
+            // Wait until chart is fully rendered
+            if (!chartArea) {
+              return null;
+            }
+
+            const gradient = ctx.createLinearGradient(
+              0,
+              chartArea.top,
+              0,
+              chartArea.bottom,
+            );
+
+            gradient.addColorStop(0, "rgba(215, 240, 0, 0.45)");
+            gradient.addColorStop(1, "rgba(215, 240, 0, 0");
+
+            return gradient;
+          },
+
+          fill: {
+            target: "origin",
+          },
+
+          borderWidth: 2,
 
           tension: 0.45,
 
-          borderWidth: 3,
+          cubicInterpolationMode: "monotone",
 
-          pointRadius: 5,
+          spanGaps: true,
 
-          pointHoverRadius: 7,
+          pointRadius: 0,
 
-          pointBackgroundColor: savingsColor,
+          pointHoverRadius: 4,
+
+          pointHitRadius: 20,
         },
       ],
     },
@@ -757,9 +796,49 @@ function createAnalyticsSplitGrid() {
 
       maintainAspectRatio: false,
 
+      animation: {
+        duration: 900,
+        easing: "easeOutQuart",
+      },
+
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
+
+      layout: {
+        padding: 0,
+      },
+
       plugins: {
         legend: {
           display: false,
+        },
+
+        tooltip: {
+          mode: "index",
+          intersect: false,
+
+          backgroundColor: "#111827",
+
+          titleColor: "#fff",
+
+          bodyColor: "#fff",
+
+          displayColors: false,
+
+          callbacks: {
+            label(context) {
+              return `${changedSymbol()}${context.raw}`;
+            },
+          },
+        },
+      },
+
+      elements: {
+        line: {
+          borderCapStyle: "round",
+          borderJoinStyle: "round",
         },
       },
 
@@ -768,12 +847,39 @@ function createAnalyticsSplitGrid() {
           grid: {
             display: false,
           },
+
+          border: {
+            display: false,
+          },
+
+          ticks: {
+            color: "#6b7280",
+            font: {
+              size: 12,
+            },
+          },
         },
 
         y: {
           beginAtZero: true,
 
+          border: {
+            display: false,
+          },
+
+          grid: {
+            color: "#e5e7eb",
+
+            drawTicks: false,
+          },
+
           ticks: {
+            color: "#6b7280",
+
+            padding: 8,
+
+            maxTicksLimit: 5,
+
             callback(value) {
               return `${changedSymbol()}${value}`;
             },
