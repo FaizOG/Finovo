@@ -1,6 +1,153 @@
+import { buildAccountDropdownItems } from "./../pages/accounts.js";
+import { getData, updateData } from "./core/store.js";
+
 // MODAL (open / close / date)
 
 const modal = document.querySelector("#modalOverlay");
+
+function refreshAccountDropdown() {
+  const menu = document.querySelector("#accountMenu");
+
+  if (!menu) return;
+
+  menu.innerHTML = buildAccountDropdownItems();
+
+  const items = menu.querySelectorAll(".dropdown-item");
+
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      selectAccount(item);
+    });
+  });
+
+  // set first account as default
+  // const firstAccount = items[0];
+
+  // if (firstAccount) {
+  //   selectAccount(firstAccount);
+  // }
+
+  const selected = document.querySelector("#selectedAccount");
+
+  selected.textContent = "Select account";
+
+  delete selected.dataset.accountId;
+}
+
+function validateTransaction(type) {
+  const amountInput = document.querySelector("#amountInput");
+
+  const dateInput = document.querySelector("#dateInput");
+
+  const amount = Number(amountInput.value);
+
+  if (!amount || amount <= 0) {
+    notify.warning("Please enter a valid amount");
+
+    amountInput.focus();
+
+    return false;
+  }
+
+  if (!dateInput.value) {
+    notify.warning("Please select transaction date");
+
+    dateInput.focus();
+
+    return false;
+  }
+
+  if (type === "expense" || type === "income") {
+    const selectedAccount = document.querySelector("#selectedAccount");
+
+    if (!selectedAccount.dataset.accountId) {
+      notify.warning("Please select an account");
+
+      return false;
+    }
+
+    const category = document
+      .querySelector("#selectedCategory")
+      .textContent.trim();
+
+    if (!category) {
+      notify.warning("Please select category");
+
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function createTransaction(type) {
+  const amount = Number(document.querySelector("#amountInput").value);
+
+  const date = document.querySelector("#dateInput").value;
+
+  const note = document.querySelector("#noteInput").value.trim();
+
+  const category = document
+    .querySelector("#selectedCategory")
+    .textContent.trim();
+
+  const selectedAccount = document.querySelector("#selectedAccount");
+
+  const accountId = Number(selectedAccount.dataset.accountId);
+
+  const data = getData();
+
+  const account = data.accounts.find((acc) => acc.id === accountId);
+
+  if (!account) {
+    notify.error("Account not found");
+    return false;
+  }
+
+  // Update account balance
+  if (type === "expense") {
+    account.currentBalance -= amount;
+  }
+
+  if (type === "income") {
+    account.currentBalance += amount;
+  }
+
+  const transaction = {
+    id: Date.now(),
+
+    type,
+
+    amount,
+
+    date,
+
+    category,
+
+    accountId,
+
+    accountName: account.name,
+
+    note,
+
+    createdAt: new Date().toISOString(),
+  };
+
+  // add transaction
+  const transactions = data.transaction || [];
+
+  transactions.push(transaction);
+
+  // save everything together
+  updateData({
+    accounts: data.accounts,
+    transaction: transactions,
+  });
+
+  window.dispatchEvent(new CustomEvent("dataUpdated"));
+
+  return transaction;
+}
 
 function initModal() {
   // close when clicking outside modal box
@@ -14,7 +161,47 @@ function initModal() {
 
     const activeType = document.querySelector(".txn-btn.active").dataset.type;
 
-    notify("transaction", "create", { type: activeType });
+    if (!validateTransaction(activeType)) {
+      return;
+    }
+
+    const amount = Number(document.querySelector("#amountInput").value);
+
+    const selectedAccount = document.querySelector("#selectedAccount");
+
+    const accountId = Number(selectedAccount.dataset.accountId);
+
+    if (activeType === "expense") {
+      const data = getData();
+
+      const account = data.accounts.find((acc) => acc.id === accountId);
+
+      if (amount > account.currentBalance) {
+        notify.warning(
+          `Insufficient balance. Available: ₹${account.currentBalance}`,
+        );
+
+        return;
+      }
+
+      const result = createTransaction("expense");
+
+      if (result) {
+        notify.success("Expense added successfully");
+      }
+    }
+
+    if (activeType === "income") {
+      const result = createTransaction("income");
+
+      if (result) {
+        notify.success("Income added successfully");
+      }
+    }
+
+    if (activeType === "transfer") {
+      notify.info("Transfer completed");
+    }
 
     closeModal();
   });
@@ -25,6 +212,7 @@ initModal();
 // open modal + set today's date
 function openModal() {
   modal.classList.add("active");
+  refreshAccountDropdown();
 
   requestAnimationFrame(() => {
     const expenseBtn = document.querySelector('.txn-btn[data-type="expense"]');
@@ -46,9 +234,13 @@ function openModal() {
     changeTransactionType("expense");
   });
 
-  document.querySelector("#dateInput").value = new Date()
-    .toISOString()
-    .split("T")[0];
+  const today = new Date();
+
+  const localDate = `${today.getFullYear()}-${String(
+    today.getMonth() + 1,
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  document.querySelector("#dateInput").value = localDate;
 
   gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.2 });
 
@@ -74,8 +266,83 @@ function closeModal() {
     duration: 0.25,
     onComplete: () => {
       modal.classList.remove("active");
+
+      resetModal();
     },
   });
+}
+
+function resetModal() {
+  const form = document.querySelector("#modalOverlay");
+
+  if (!form) return;
+
+  // reset inputs
+  form.reset();
+
+  // reset account selection
+  const selectedAccount = document.querySelector("#selectedAccount");
+
+  if (selectedAccount) {
+    selectedAccount.textContent = "Select account";
+    delete selectedAccount.dataset.accountId;
+  }
+
+  // remove account balance info
+  const balanceBox = document.querySelector("#accountBalanceInfo");
+
+  if (balanceBox) {
+    balanceBox.textContent = "";
+  }
+
+  // reset category
+  const selectedCategory = document.querySelector("#selectedCategory");
+
+  if (selectedCategory) {
+    selectedCategory.textContent = "Food";
+  }
+
+  // reset dropdown menus
+  document
+    .querySelectorAll(".dropdown-menu")
+    .forEach((menu) => menu.classList.remove("active"));
+
+  document
+    .querySelectorAll(".dropdown-item")
+    .forEach((item) => item.classList.remove("active"));
+
+  // reset transaction tab to expense
+  const buttons = document.querySelectorAll(".txn-btn");
+
+  buttons.forEach((btn) => btn.classList.remove("active"));
+
+  const expenseBtn = document.querySelector('.txn-btn[data-type="expense"]');
+
+  if (expenseBtn) {
+    expenseBtn.classList.add("active");
+
+    const pill = document.querySelector(".active-pill");
+
+    if (pill) {
+      gsap.set(pill, {
+        x: expenseBtn.offsetLeft,
+        width: expenseBtn.offsetWidth,
+      });
+    }
+  }
+
+  changeTransactionType("expense");
+
+  // reset date
+  const dateInput = document.querySelector("#dateInput");
+
+  if (dateInput) {
+    const today = new Date();
+
+    dateInput.value = `${today.getFullYear()}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  }
 }
 
 // CATEGORY DROPDOWN
@@ -124,9 +391,15 @@ function selectAccount(dets) {
 
   dets.classList.add("active");
 
-  document.getElementById("selectedAccount").textContent = dets.textContent;
+  const selected = document.getElementById("selectedAccount");
+
+  selected.textContent = dets.textContent;
+
+  selected.dataset.accountId = dets.dataset.id;
 
   document.getElementById("accountMenu").classList.remove("active");
+
+  showSelectedAccountBalance();
 }
 
 // TRANSFER DROPDOWNS
@@ -237,21 +510,6 @@ function changeTransactionType(type) {
   }
 }
 
-// init transaction buttons
-function initTransactionType() {
-  const buttons = document.querySelectorAll(".txn-btn");
-
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      buttons.forEach((b) => b.classList.remove("active"));
-
-      btn.classList.add("active");
-
-      changeTransactionType(btn.dataset.type);
-    });
-  });
-}
-
 function initTransactionTabs() {
   const container = document.querySelector(".txn-type");
   const buttons = document.querySelectorAll(".txn-btn");
@@ -321,13 +579,30 @@ function initTransactionTabs() {
   });
 }
 
+function showSelectedAccountBalance() {
+  const accountId = Number(
+    document.querySelector("#selectedAccount").dataset.accountId,
+  );
+
+  if (!accountId) return;
+
+  const data = getData();
+
+  const account = data.accounts.find((acc) => acc.id === accountId);
+
+  if (!account) return;
+
+  const balanceBox = document.querySelector("#accountBalanceInfo");
+
+  if (balanceBox) {
+    balanceBox.textContent = `Available balance: ₹${account.currentBalance}`;
+  }
+}
+
 initTransactionTabs();
 
-// initialize default state
-initTransactionType();
 changeTransactionType("expense");
 
-// EXPOSE FUNCTIONS TO HTML
 window.openModal = openModal;
 window.closeModal = closeModal;
 

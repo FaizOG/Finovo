@@ -660,19 +660,39 @@ function createActivityGrid() {
   return section;
 }
 
+let dashboardContainer;
+
+function renderDashboard() {
+  if (!dashboardContainer) return;
+
+  dashboardContainer.innerHTML = "";
+
+  const dashboard = document.createElement("div");
+
+  dashboard.className = "dashboard-page";
+
+  dashboard.append(
+    createDashboardHeader(),
+    createNumbersOverview(),
+    createCashFlowBudgetGrid(),
+    createActivityGrid(),
+  );
+
+  dashboardContainer.appendChild(dashboard);
+}
+
 export default {
   mount(container) {
-    const dashboard = document.createElement("div");
+    dashboardContainer = container;
 
-    dashboard.className = "dashboard-page";
+    renderDashboard();
 
-    dashboard.append(
-      createDashboardHeader(),
-      createNumbersOverview(),
-      createCashFlowBudgetGrid(),
-      createActivityGrid(),
-    );
+    window.addEventListener("dataUpdated", () => {
+      const dashboardPage = document.querySelector(".dashboard-page");
 
-    container.appendChild(dashboard);
+      if (dashboardPage) {
+        renderDashboard();
+      }
+    });
   },
 };

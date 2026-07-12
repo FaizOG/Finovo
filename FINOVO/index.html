@@ -242,9 +242,9 @@
           </h3>
 
           <p>
-            Net this month
+            Total Out Flow :
             <span class="net-month-value">
-              +<span class="currency-symbol"></span>0.00
+              +<span class="currency-symbol"></span> 0.00
             </span>
           </p>
         </div>
@@ -589,7 +589,7 @@
         </div>
 
         <!-- add new transaction pop up -->
-        <form class="modal-overlay" id="modalOverlay">
+        <form class="modal-overlay" id="modalOverlay" novalidate>
           <div class="modal">
             <div class="modal-header">
               <h2>New transaction</h2>
@@ -636,12 +636,12 @@
             <div class="form-grid">
               <div class="field">
                 <label>Amount</label>
-                <input type="number" placeholder="0.00" required />
+                <input id="amountInput" type="number" placeholder="0.00" />
               </div>
 
               <div class="field">
                 <label>Date</label>
-                <input type="date" id="dateInput" required />
+                <input type="date" id="dateInput" />
               </div>
 
               <div class="field hidden" id="transferFromField">
@@ -762,7 +762,7 @@
                     class="dropdown-selected"
                     onclick="toggleAccountDropdown()"
                   >
-                    <span id="selectedAccount">Cash</span>
+                    <span id="selectedAccount">Select account</span>
 
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -780,22 +780,28 @@
                   </div>
 
                   <div class="dropdown-menu" id="accountMenu">
-                    <div
+                    <!-- <div
                       class="dropdown-item active"
+                      data-id="cash"
                       onclick="selectAccount(this)"
                     >
                       Cash
                     </div>
-                    <div class="dropdown-item" onclick="selectAccount(this)">
+                    <div
+                      class="dropdown-item"
+                      data-id="bank"
+                      onclick="selectAccount(this)"
+                    >
                       Bank
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
+              <!-- <p>Your account currect balance is 500,000</p> -->
 
               <div class="field full">
                 <label>Note (optional)</label>
-                <input type="text" placeholder="Add a note..." />
+                <input id="noteInput" type="text" placeholder="Add a note..." />
               </div>
             </div>
 
@@ -1054,7 +1060,7 @@
     <!-- JS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-interpolation"></script>
-    <script src="./js/modal.js"></script>
+    <script type="module" src="js/modal.js"></script>
     <script type="module" src="/js/navigation.js"></script>
     <script src="./js/notifications.js"></script>
 

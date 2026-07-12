@@ -20,7 +20,9 @@
 
 .amount {
   color: var(--text);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 /* FORCE override using higher specificity */
@@ -562,4 +564,13 @@ input,
 }
 .toast.info {
   background: rgba(59, 130, 246, 0.18);
+}
+
+/* Aside bar Total out flow css */
+.net-month-value.negative {
+  color: red;
+}
+
+.net-month-value.negative .currency-symbol {
+  color: red;
 }

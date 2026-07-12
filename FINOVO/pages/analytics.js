@@ -548,9 +548,9 @@ function getSavingsTrendData() {
   }
 
   goalTransactions.forEach((item) => {
-    if (item.type !== "goal_saving") return;
+    if (item.type !== "deposit") return;
 
-    const date = new Date(item.date || item.id);
+    const date = new Date(item.createdAt || item.date || item.id);
 
     const key = `${date.getFullYear()}-${date.getMonth()}`;
 

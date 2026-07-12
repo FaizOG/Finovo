@@ -488,6 +488,7 @@ export function animateNumberWithFeedback(
 }
 
 function updateAmount(id, change) {
+  const data = getData();
   const goals = safeGetGoals();
 
   let becameCompleted = false;
@@ -514,10 +515,31 @@ function updateAmount(id, change) {
     };
   });
 
-  updateData({ goals: updated });
-
   const goal = updated.find((g) => g.id === id);
   const isAdd = change > 0;
+
+  // Log the transaction
+  const goalTransactions = Array.isArray(data.goalTransactions)
+    ? [...data.goalTransactions]
+    : [];
+
+  goalTransactions.unshift({
+    id: Date.now(),
+    goalId: goal.id,
+    goalName: goal.name,
+    type: isAdd ? "deposit" : "withdraw",
+    amount: Math.abs(change),
+    savedAmount: goal.savedAmount,
+    targetAmount: goal.targetAmount,
+    createdAt: Date.now(),
+  });
+
+  updateData({
+    goals: updated,
+    goalTransactions,
+  });
+
+  console.log(getData().goalTransactions);
 
   if (becameCompleted) {
     renderGoals();

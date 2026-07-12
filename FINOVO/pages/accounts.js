@@ -215,7 +215,7 @@ function syncAccountsUI() {
   updateTransferButtonState();
 }
 // this create dynamic dropdown list
-function buildAccountDropdownItems() {
+export function buildAccountDropdownItems() {
   const data = getData();
   const accounts = data?.accounts || [];
 
@@ -224,7 +224,16 @@ function buildAccountDropdownItems() {
   }
 
   return accounts
-    .map((acc) => `<div class="dropdown-item">${acc.name} (${acc.type})</div>`)
+    .map(
+      (acc) => `
+        <div
+          class="dropdown-item"
+          data-id="${acc.id}"
+        >
+          ${acc.name} (${acc.type})
+        </div>
+      `,
+    )
     .join("");
 }
 
@@ -580,8 +589,6 @@ export default {
 
     renderExistingAccounts();
 
-    // OpenTransferPopUp();
-    // initTransferOverlayClose();
     initTransfer();
 
     OpenAccountPopUp();
@@ -589,5 +596,7 @@ export default {
     initAccountFormSubmit();
 
     updateTransferButtonState();
+
+    window.addEventListener("dataUpdated", refreshAccountsUI);
   },
 };

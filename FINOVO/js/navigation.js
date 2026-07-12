@@ -1,6 +1,8 @@
 // navigation.js
 import { updateSidebarBalance } from "../js/core/sidebar.utils.js";
 
+let currentPage = "dashboard";
+
 const pages = {
   dashboard: () => import("../pages/dashboard.js"),
   transactions: () => import("../pages/transactions.js"),
@@ -12,6 +14,8 @@ const pages = {
 };
 
 async function loadPage(page) {
+  currentPage = page;
+
   const content = document.getElementById("page-content");
 
   if (!content) {
@@ -212,6 +216,7 @@ function initNavigation() {
       e.preventDefault();
 
       const page = item.dataset.page;
+
       if (!page) return;
 
       const tab = item.querySelector(".asidebar-tab");
@@ -229,6 +234,13 @@ function initNavigation() {
 initNavigation();
 window.addEventListener("appDataUpdated", () => {
   updateSidebarBalance();
+
+  // refresh only the current page if needed
+  window.dispatchEvent(
+    new CustomEvent("pageDataUpdated", {
+      detail: currentPage,
+    }),
+  );
 });
 
 window.addEventListener("navigate", (e) => {

@@ -68,9 +68,12 @@ updateCurrencyUI();
 
 export function clearData() {
   localStorage.removeItem(STORAGE_KEY);
+
   localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
 
   updateCurrencyUI();
+
+  window.dispatchEvent(new Event("appDataUpdated"));
 
   notify.info("All data has been reset successfully.");
 }

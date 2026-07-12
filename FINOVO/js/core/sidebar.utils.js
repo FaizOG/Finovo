@@ -34,5 +34,9 @@ export function updateSidebarBalance() {
     ).toLocaleString(undefined, {
       minimumFractionDigits: 2,
     })}`;
+
+    // Update color classes
+    netElement.classList.toggle("negative", net < 0);
+    netElement.classList.toggle("positive", net >= 0);
   }
 }
