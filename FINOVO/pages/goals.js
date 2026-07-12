@@ -201,9 +201,9 @@ function createGoalCard(goal) {
 
     <!-- RESTORED ORIGINAL AMOUNT STYLE -->
     <div class="goal-amount">
-      <span class="saved-amount">${currency()}${saved.toFixed(2)}</span>
+      <span class="saved-amount">${currency()} ${saved.toFixed(2)}</span>
       <span class="divider">/</span>
-      <span class="goal-amount-total">${currency()}${target.toFixed(2)}</span>
+      <span class="goal-amount-total">${currency()} ${target.toFixed(2)}</span>
     </div>
 
      <div class="goal-progress">

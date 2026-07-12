@@ -29,7 +29,7 @@ export function updateSidebarBalance() {
 
     const sign = net >= 0 ? "+" : "-";
 
-    netElement.innerHTML = `${sign}<span class="currency-symbol">${symbol}</span>${Math.abs(
+    netElement.innerHTML = `${sign}<span class="currency-symbol"> ${symbol} </span>${Math.abs(
       net,
     ).toLocaleString(undefined, {
       minimumFractionDigits: 2,
