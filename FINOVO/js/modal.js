@@ -3,6 +3,7 @@ import { getData, updateData } from "./core/store.js";
 
 // MODAL (open / close / date)
 
+let editingTransactionId = null;
 const modal = document.querySelector("#modalOverlay");
 
 function refreshAccountDropdown() {
@@ -80,7 +81,15 @@ function validateTransaction(type) {
   return true;
 }
 
-function createTransaction(type) {
+function updateTransactionBalance(oldTransaction, newTransaction) {
+  reverseTransaction(oldTransaction);
+
+  applyTransactionBalance(newTransaction);
+}
+
+function saveTransaction(type) {
+  const data = getData();
+
   const amount = Number(document.querySelector("#amountInput").value);
 
   const date = document.querySelector("#dateInput").value;
@@ -95,8 +104,6 @@ function createTransaction(type) {
 
   const accountId = Number(selectedAccount.dataset.accountId);
 
-  const data = getData();
-
   const account = data.accounts.find((acc) => acc.id === accountId);
 
   if (!account) {
@@ -104,14 +111,73 @@ function createTransaction(type) {
     return false;
   }
 
-  // Update account balance
-  if (type === "expense") {
-    account.currentBalance -= amount;
+  // ==========================
+  // EDIT MODE
+  // ==========================
+
+  if (editingTransactionId) {
+    const oldTransaction = data.transaction.find(
+      (t) => t.id === editingTransactionId,
+    );
+
+    if (!oldTransaction) {
+      return false;
+    }
+
+    updateTransactionBalance(oldTransaction, {
+      type,
+      amount,
+      accountId,
+    });
+
+    const updatedTransaction = {
+      ...oldTransaction,
+
+      type,
+
+      amount,
+
+      date,
+
+      category,
+
+      accountId,
+
+      accountName: account.name,
+
+      note,
+
+      updatedAt: new Date().toISOString(),
+    };
+
+    const index = data.transaction.findIndex(
+      (t) => t.id === editingTransactionId,
+    );
+
+    data.transaction[index] = updatedTransaction;
+
+    updateData({
+      accounts: data.accounts,
+
+      transaction: data.transaction,
+    });
+
+    window.dispatchEvent(new Event("dataUpdated"));
+
+    return updatedTransaction;
   }
 
-  if (type === "income") {
-    account.currentBalance += amount;
-  }
+  // ==========================
+  // CREATE MODE
+  // ==========================
+
+  applyTransactionBalance({
+    type,
+
+    amount,
+
+    accountId,
+  });
 
   const transaction = {
     id: Date.now(),
@@ -133,20 +199,51 @@ function createTransaction(type) {
     createdAt: new Date().toISOString(),
   };
 
-  // add transaction
   const transactions = data.transaction || [];
 
   transactions.push(transaction);
 
-  // save everything together
   updateData({
     accounts: data.accounts,
+
     transaction: transactions,
   });
 
-  window.dispatchEvent(new CustomEvent("dataUpdated"));
+  window.dispatchEvent(new Event("dataUpdated"));
 
   return transaction;
+}
+
+function applyTransactionBalance(transaction) {
+  const data = getData();
+
+  const account = data.accounts.find((acc) => acc.id === transaction.accountId);
+
+  if (!account) return;
+
+  if (transaction.type === "expense") {
+    account.currentBalance -= Number(transaction.amount);
+  }
+
+  if (transaction.type === "income") {
+    account.currentBalance += Number(transaction.amount);
+  }
+}
+
+function reverseTransaction(transaction) {
+  const data = getData();
+
+  const account = data.accounts.find((acc) => acc.id === transaction.accountId);
+
+  if (!account) return;
+
+  if (transaction.type === "expense") {
+    account.currentBalance += Number(transaction.amount);
+  }
+
+  if (transaction.type === "income") {
+    account.currentBalance -= Number(transaction.amount);
+  }
 }
 
 function initModal() {
@@ -176,7 +273,20 @@ function initModal() {
 
       const account = data.accounts.find((acc) => acc.id === accountId);
 
-      if (amount > account.currentBalance) {
+      let availableBalance = account.currentBalance;
+
+      // if editing expense, add back old amount first
+      if (editingTransactionId && activeType === "expense") {
+        const oldTransaction = getData().transaction.find(
+          (t) => t.id === editingTransactionId,
+        );
+
+        if (oldTransaction && oldTransaction.type === "expense") {
+          availableBalance += Number(oldTransaction.amount);
+        }
+      }
+
+      if (amount > availableBalance) {
         notify.warning(
           `Insufficient balance. Available: ₹${account.currentBalance}`,
         );
@@ -184,18 +294,26 @@ function initModal() {
         return;
       }
 
-      const result = createTransaction("expense");
+      const result = saveTransaction("expense");
 
       if (result) {
-        notify.success("Expense added successfully");
+        notify.success(
+          editingTransactionId
+            ? "Expense updated successfully"
+            : "Expense added successfully",
+        );
       }
     }
 
     if (activeType === "income") {
-      const result = createTransaction("income");
+      const result = saveTransaction("income");
 
       if (result) {
-        notify.success("Income added successfully");
+        notify.success(
+          editingTransactionId
+            ? "Income updated successfully"
+            : "Income added successfully",
+        );
       }
     }
 
@@ -210,45 +328,136 @@ function initModal() {
 initModal();
 
 // open modal + set today's date
-function openModal() {
+// let editingTransactionId = null;
+
+function openModal(transactionId = null) {
+  editingTransactionId = transactionId;
+
   modal.classList.add("active");
+
   refreshAccountDropdown();
 
   requestAnimationFrame(() => {
-    const expenseBtn = document.querySelector('.txn-btn[data-type="expense"]');
+    const buttons = document.querySelectorAll(".txn-btn");
 
-    if (!expenseBtn) return;
+    let activeBtn;
 
-    document
-      .querySelectorAll(".txn-btn")
-      .forEach((btn) => btn.classList.remove("active"));
-    expenseBtn.classList.add("active");
+    // EDIT MODE
+    if (transactionId) {
+      const data = getData();
+
+      const transaction = data.transaction.find((t) => t.id === transactionId);
+
+      if (transaction) {
+        activeBtn = document.querySelector(
+          `.txn-btn[data-type="${transaction.type}"]`,
+        );
+      }
+    }
+
+    // CREATE MODE DEFAULT = EXPENSE
+    if (!activeBtn) {
+      activeBtn = document.querySelector('.txn-btn[data-type="expense"]');
+    }
+
+    if (!activeBtn) return;
+
+    buttons.forEach((btn) => btn.classList.remove("active"));
+
+    activeBtn.classList.add("active");
 
     const pill = document.querySelector(".active-pill");
 
-    gsap.set(pill, {
-      x: expenseBtn.offsetLeft,
-      width: expenseBtn.offsetWidth,
-    });
+    if (pill) {
+      gsap.set(pill, {
+        x: activeBtn.offsetLeft,
 
-    changeTransactionType("expense");
+        width: activeBtn.offsetWidth,
+      });
+    }
+
+    changeTransactionType(activeBtn.dataset.type);
+
+    // EDIT MODE FILL DATA
+    if (transactionId) {
+      fillTransactionData(transactionId);
+    }
   });
 
-  const today = new Date();
+  // CREATE MODE DATE
+  if (!transactionId) {
+    const today = new Date();
 
-  const localDate = `${today.getFullYear()}-${String(
-    today.getMonth() + 1,
-  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const localDate = `${today.getFullYear()}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  document.querySelector("#dateInput").value = localDate;
+    document.querySelector("#dateInput").value = localDate;
+  }
 
-  gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+  gsap.fromTo(
+    modal,
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+      duration: 0.2,
+    },
+  );
 
   gsap.fromTo(
     ".modal",
-    { y: 50, opacity: 0, scale: 0.95 },
-    { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" },
+    {
+      y: 50,
+      opacity: 0,
+      scale: 0.95,
+    },
+    {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.4,
+      ease: "power3.out",
+    },
   );
+}
+
+function fillTransactionData(id) {
+  const data = getData();
+
+  const transaction = data.transaction.find((t) => t.id === id);
+
+  if (!transaction) return;
+
+  document.querySelector("#amountInput").value = transaction.amount;
+
+  document.querySelector("#dateInput").value = transaction.date;
+
+  document.querySelector("#noteInput").value = transaction.note || "";
+
+  const categoryMenu = document.querySelector("#dropdownMenu");
+
+  document.querySelectorAll("#dropdownMenu .dropdown-item").forEach((item) => {
+    item.classList.remove("active");
+
+    if (item.textContent.trim() === transaction.category) {
+      item.classList.add("active");
+    }
+  });
+
+  document.querySelector("#selectedCategory").textContent =
+    transaction.category;
+
+  // select account
+
+  const accountItem = document.querySelector(
+    `#accountMenu .dropdown-item[data-id="${transaction.accountId}"]`,
+  );
+
+  if (accountItem) {
+    selectAccount(accountItem);
+  }
 }
 
 // close modal
@@ -264,8 +473,11 @@ function closeModal() {
   gsap.to(modal, {
     opacity: 0,
     duration: 0.25,
+
     onComplete: () => {
       modal.classList.remove("active");
+
+      editingTransactionId = null;
 
       resetModal();
     },
