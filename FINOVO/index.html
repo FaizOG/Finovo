@@ -368,8 +368,8 @@
             </div>
 
             <button class="new-transaction" onclick="openModal()">
-              <span
-                ><svg
+              <span>
+                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
@@ -383,8 +383,9 @@
                   aria-hidden="true"
                 >
                   <path d="M5 12h14"></path>
-                  <path d="M12 5v14"></path></svg
-              ></span>
+                  <path d="M12 5v14"></path>
+                </svg>
+              </span>
               <span>New transaction</span>
             </button>
 
@@ -397,196 +398,553 @@
         <div id="page-content">
           <!-- The whole content is coming from (pages folder using "navigation.js") -->
 
-          <section>
-            <h2 class="setting-tab-title">Analytics</h2>
-            <p class="setting-tab-subtitle">Spending insights and trends</p>
-          </section>
-
-          <section class="analytics-overview">
-            <div class="analytics-card">
-              <div class="analytics-card__header">
-                <span class="analytics-card__title">Top category</span>
-
-                <div class="analytics-card__icon-container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-flame size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
-                    ></path>
-                  </svg>
-                </div>
-              </div>
-
-              <h3 class="analytics-card__value">Bills</h3>
-            </div>
-
-            <div class="analytics-card">
-              <div class="analytics-card__header">
-                <span class="analytics-card__title">Avg daily spend</span>
-
-                <div class="analytics-card__icon-container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-trending-down size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path d="M16 17h6v-6"></path>
-                    <path d="m22 17-8.5-8.5-5 5L2 7"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <h3 class="analytics-card__value">$145.45</h3>
-            </div>
-
-            <div class="analytics-card">
-              <div class="analytics-card__header">
-                <span class="analytics-card__title">Savings rate</span>
-
-                <div class="analytics-card__icon-container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-piggy-bank size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"
-                    ></path>
-                    <path d="M16 10h.01"></path>
-                    <path d="M2 8v1a2 2 0 0 0 2 2h1"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <h3 class="analytics-card__value">62%</h3>
-            </div>
-
-            <div class="analytics-card">
-              <div class="analytics-card__header">
-                <span class="analytics-card__title">vs last month</span>
-
-                <div class="analytics-card__icon-container">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-trending-up size-4 summary-card__icon"
-                    aria-hidden="true"
-                  >
-                    <path d="M16 7h6v6"></path>
-                    <path d="m22 7-8.5 8.5-5-5L2 17"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <h3 class="analytics-card__value">+7904%</h3>
-            </div>
-          </section>
-
-          <section class="analytics-grid">
-            <div class="analytics-grid__main">
-              <div class="panel analytics-chart">
-                <div class="analytics-chart__header">
-                  <div>
-                    <h2 class="analytics-chart__title">Weekly spending</h2>
-                  </div>
-
-                  <div class="analytics-chart__legend">
-                    <span class="analytics-legend-item">
-                      <span
-                        class="analytics-legend-dot analytics-legend-dot--income"
-                      ></span>
-                      Income
-                    </span>
-
-                    <span class="analytics-legend-item">
-                      <span
-                        class="analytics-legend-dot analytics-legend-dot--expense"
-                      ></span>
-                      Expense
-                    </span>
-                  </div>
-                </div>
-
-                <div class="analytics-chart__body">
-                  <!-- Chart component goes here -->
-                </div>
-              </div>
-            </div>
-
+          <!-- <section class="transactions-page-btn-container">
             <div>
-              <div class="panel analytics-category-panel">
-                <div class="analytics-category-panel__header">
-                  <h2 class="analytics-category-panel__title">
-                    Expense categories
-                  </h2>
-                </div>
-              </div>
+              <h2 class="setting-tab-title">Transactions</h2>
+              <p><span class="ActiveGoals">22</span> of 22 entries</p>
             </div>
+            <button class="goals-page-new-goal-btn">+ New transaction</button>
           </section>
 
-          <section class="analytics-split-grid">
-            <div class="analytics-split-grid__chart">
-              <div class="panel analytics-chart">
-                <div class="analytics-chart__header">
+          <section class="transaction-filter-container">
+            <div class="filter-toolbar">
+              Search 
+              <div class="search-box">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.34-4.34"></path>
+                </svg>
+
+                <input type="text" placeholder="Search notes or category..." />
+              </div>
+
+              Filter Button 
+              <button class="filter-btn">
+                <svg
+                  width="16px"
+                  height="16px"
+                  viewBox="0 0 24 24"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <title>Adjustment</title>
+                  <g
+                    id="Page-1"
+                    stroke="none"
+                    stroke-width="1"
+                    fill="none"
+                    fill-rule="evenodd"
+                  >
+                    <g id="Adjustment">
+                      <rect
+                        id="Rectangle"
+                        fill-rule="nonzero"
+                        x="0"
+                        y="0"
+                        width="24"
+                        height="24"
+                      ></rect>
+                      <line
+                        x1="4"
+                        y1="7"
+                        x2="12"
+                        y2="7"
+                        id="Path"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      ></line>
+                      <line
+                        x1="4"
+                        y1="17"
+                        x2="6"
+                        y2="17"
+                        id="Path"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      ></line>
+                      <line
+                        x1="18"
+                        y1="7"
+                        x2="20"
+                        y2="7"
+                        id="Path"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      ></line>
+                      <line
+                        x1="13"
+                        y1="17"
+                        x2="20"
+                        y2="17"
+                        id="Path"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      ></line>
+                      <circle
+                        id="Oval"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        cx="15"
+                        cy="7"
+                        r="3"
+                      ></circle>
+                      <circle
+                        id="Oval"
+                        stroke="#0C0310"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        cx="9"
+                        cy="17"
+                        r="3"
+                      ></circle>
+                    </g>
+                  </g>
+                </svg>
+                <span>Filter</span>
+              </button>
+            </div>
+          </section>
+          <section>
+            <div class="transactions">
+              <div class="table-header">
+                <div>Description</div>
+                <div>Category</div>
+                <div>Account</div>
+                <div class="text-right">Amount</div>
+                <div class="text-right">Actions</div>
+              </div>
+
+              Transaction 
+              <div class="transaction-row">
+                <div class="description">
+                  <div class="icon icon-expense">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M7 7L17 17M17 7V17H7" />
+                    </svg>
+                  </div>
+
                   <div>
-                    <h2 class="analytics-chart__title">Income vs expenses</h2>
+                    <h4>BBQ</h4>
+                    <span>2026-07-12</span>
                   </div>
                 </div>
 
-                <div class="analytics-chart__body">
-                  <!-- Chart component goes here -->
-                </div>
-              </div>
-            </div>
+                <div>Food</div>
 
-            <div class="analytics-split-grid__categories">
-              <div class="panel analytics-category-panel">
-                <div class="analytics-category-panel__header">
-                  <h2 class="analytics-category-panel__title">
-                    Expense categories
-                  </h2>
+                <div class="account">BOB</div>
+
+                <div class="amount expense">−$500.00</div>
+
+                <div class="actions">
+                  <button>
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"
+                      />
+                      <path d="M14.06 4.94l3.75 3.75" />
+                    </svg>
+                  </button>
+
+                  <button class="delete">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="M19 6v14H5V6" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              Transfer 
+
+              <div class="transaction-row">
+                <div class="description">
+                  <div class="icon icon-transfer">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M17 2l4 4-4 4" />
+                      <path d="M3 10a4 4 0 014-4h14" />
+                      <path d="M7 22l-4-4 4-4" />
+                      <path d="M21 14a4 4 0 01-4 4H3" />
+                    </svg>
+                  </div>
+
+                  <div>
+                    <h4>Food</h4>
+                    <span>2026-07-12</span>
+                  </div>
+                </div>
+
+                <div>Food</div>
+
+                <div class="account">BOB → ihqbwchb</div>
+
+                <div class="amount transfer">$300.00</div>
+
+                <div class="actions">
+                  <button>
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"
+                      />
+                      <path d="M14.06 4.94l3.75 3.75" />
+                    </svg>
+                  </button>
+
+                  <button class="delete">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="M19 6v14H5V6" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+               Income 
+
+              <div class="transaction-row">
+                <div class="description">
+                  <div class="icon icon-income">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M7 17L17 7" />
+                      <path d="M7 7h10v10" />
+                    </svg>
+                  </div>
+
+                  <div>
+                    <h4>Freelance</h4>
+                    <span>2026-07-12</span>
+                  </div>
+                </div>
+
+                <div>Freelance</div>
+
+                <div class="account">BOB</div>
+
+                <div class="amount income">+$5,000.00</div>
+
+                <div class="actions">
+                  <button>
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"
+                      />
+                      <path d="M14.06 4.94l3.75 3.75" />
+                    </svg>
+                  </button>
+
+                  <button class="delete">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="M19 6v14H5V6" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
-          </section>
+          </section> -->
 
           <!-- Toster Message -->
           <div id="toast-container"></div>
         </div>
+
+        <form class="transactions-filter-overlay">
+          <div class="transactioins-modal">
+            <div class="transactions-overlay-heading">
+              <h4>Filter</h4>
+              <button
+                type="button"
+                class="transactions-overlay-close-btn close-btn"
+              >
+                <svg
+                  width="24px"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z"
+                    fill="#0F1729"
+                  />
+                </svg>
+              </button>
+            </div>
+            <form class="goal-form-grid">
+              <!-- Transaction Type -->
+              <!-- Transaction Type -->
+              <div class="transactions-field">
+                <label for="transactionType">Transaction Type</label>
+
+                <div
+                  class="custom-dropdown filter-dropdown"
+                  id="transactionType"
+                >
+                  <div
+                    class="dropdown-selected"
+                    onclick="toggleFilterDropdown(this)"
+                  >
+                    <span>All Transactions</span>
+
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path
+                        d="m6 9 6 6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active" data-value="">
+                      All Transactions
+                    </div>
+
+                    <div class="dropdown-item" data-value="income">Income</div>
+
+                    <div class="dropdown-item" data-value="expense">
+                      Expense
+                    </div>
+
+                    <div class="dropdown-item" data-value="transfer">
+                      Transfer
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div class="transactions-field">
+                <label for="transactionCategory">Category</label>
+
+                <div
+                  class="custom-dropdown filter-dropdown"
+                  id="transactionCategory"
+                >
+                  <div
+                    class="dropdown-selected"
+                    onclick="toggleFilterDropdown(this)"
+                  >
+                    <span>All Categories</span>
+
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path
+                        d="m6 9 6 6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active" data-value="">
+                      All Categories
+                    </div>
+
+                    <!-- Income -->
+
+                    <div class="dropdown-item" data-value="salary">Salary</div>
+
+                    <div class="dropdown-item" data-value="freelance">
+                      Freelance
+                    </div>
+
+                    <div class="dropdown-item" data-value="gift">Gift</div>
+
+                    <!-- Expense -->
+
+                    <div class="dropdown-item" data-value="food">Food</div>
+
+                    <div class="dropdown-item" data-value="shopping">
+                      Shopping
+                    </div>
+
+                    <div class="dropdown-item" data-value="transport">
+                      Transport
+                    </div>
+
+                    <div class="dropdown-item" data-value="entertainment">
+                      Entertainment
+                    </div>
+
+                    <div class="dropdown-item" data-value="bills">Bills</div>
+
+                    <!-- Transfer -->
+
+                    <div class="dropdown-item" data-value="transfer">
+                      Transfer
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account -->
+              <div class="transactions-field">
+                <label for="transactionAccount">Account</label>
+
+                <div
+                  class="custom-dropdown filter-dropdown"
+                  id="transactionAccount"
+                >
+                  <div
+                    class="dropdown-selected"
+                    onclick="toggleFilterDropdown(this)"
+                  >
+                    <span>All Accounts</span>
+
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path
+                        d="m6 9 6 6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active" data-value="">
+                      All Accounts
+                    </div>
+
+                    <div class="dropdown-item" data-value="cash">Cash</div>
+
+                    <div class="dropdown-item" data-value="bank">Bank</div>
+
+                    <div class="dropdown-item" data-value="wallet">Wallet</div>
+
+                    <div class="dropdown-item" data-value="credit-card">
+                      Credit Card
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort -->
+              <div class="transactions-field">
+                <label for="sortBy">Sort By</label>
+
+                <div class="custom-dropdown filter-dropdown" id="sortBy">
+                  <div
+                    class="dropdown-selected"
+                    onclick="toggleFilterDropdown(this)"
+                  >
+                    <span>Newest First</span>
+
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path
+                        d="m6 9 6 6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item active" data-value="newest">
+                      Newest First
+                    </div>
+
+                    <div class="dropdown-item" data-value="oldest">
+                      Oldest First
+                    </div>
+
+                    <div class="dropdown-item" data-value="highest">
+                      Highest Amount
+                    </div>
+
+                    <div class="dropdown-item" data-value="lowest">
+                      Lowest Amount
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Date Filters -->
+              <div class="transactions-field full">
+                <label>Quick Date Filters</label>
+
+                <div class="dateRangeBtnContainer">
+                  <button type="button" id="filterLast7Days">
+                    Last 7 Days
+                  </button>
+
+                  <button type="button" id="filterLast30Days">
+                    Last 30 Days
+                  </button>
+
+                  <button type="button" id="filterLast6Months">
+                    Last 6 Months
+                  </button>
+
+                  <button type="button" id="filterThisMonth">This Month</button>
+
+                  <button type="button" id="filterThisYear">This Year</button>
+
+                  <button type="button" id="clearDateFilter">Clear</button>
+                </div>
+              </div>
+
+              <!-- Custom Date Range -->
+              <div class="transactions-field full">
+                <label>Custom Date Range</label>
+
+                <div class="customeDateRange">
+                  <div>
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" class="goal-input" />
+                  </div>
+
+                  <div>
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" class="goal-input" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="goal-footer">
+                <button type="reset" class="goal-cancel">Reset</button>
+
+                <button type="submit" class="goal-submit">Apply Filters</button>
+              </div>
+            </form>
+          </div>
+        </form>
 
         <!-- add new transaction pop up -->
         <form class="modal-overlay" id="modalOverlay" novalidate>
@@ -1056,6 +1414,54 @@
         </div>
       </div>
     </div>
+
+    <!-- <script>
+      function toggleFilterDropdown(element) {
+        let dropdown = element.parentElement;
+
+        let menu = dropdown.querySelector(".dropdown-menu");
+
+        document
+          .querySelectorAll(".filter-dropdown .dropdown-menu")
+          .forEach((item) => {
+            if (item !== menu) {
+              item.classList.remove("active");
+            }
+          });
+
+        menu.classList.toggle("active");
+      }
+
+      document
+        .querySelectorAll(".filter-dropdown .dropdown-item")
+        .forEach((item) => {
+          item.addEventListener("click", function () {
+            let dropdown = this.closest(".filter-dropdown");
+
+            let selected = dropdown.querySelector(".dropdown-selected span");
+
+            selected.textContent = this.textContent;
+
+            dropdown.querySelectorAll(".dropdown-item").forEach((option) => {
+              option.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            dropdown.querySelector(".dropdown-menu").classList.remove("active");
+          });
+        });
+
+      // close dropdown when clicking outside
+
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".filter-dropdown")) {
+          document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+            menu.classList.remove("active");
+          });
+        }
+      });
+    </script> -->
 
     <!-- JS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>

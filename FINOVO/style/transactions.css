@@ -1,0 +1,397 @@
+.transactions-page-sub-header,
+.transactions-page-btn-container,
+.filter-toolbar,
+.dateRangeBtnContainer,
+.customeDateRange,
+.transaction-filter-container div,
+.description,
+.actions,
+.actions button,
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.transactions-page-sub-header {
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.transactions-page-btn-container {
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.transaction-filter-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 50px;
+}
+
+.transaction-filter-container div {
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.transaction-filter-container input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-2);
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.search-box input::placeholder {
+  color: var(--text-muted);
+}
+
+.filter-btn {
+  width: 88px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.filter-btn:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.transactions-filter-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0 0 0 / 55%);
+  z-index: 9999;
+}
+
+.transactions-filter-overlay.active {
+  display: flex;
+}
+
+.transactioins-modal {
+  width: min(520px, 90%);
+  margin: 1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.transactions-overlay-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.transactions-overlay-heading h4 {
+  margin: 0.83em 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.transactions-field {
+  margin-bottom: 15px;
+}
+
+.dateRangeBtnContainer,
+.customeDateRange {
+  gap: 8px;
+  margin: 10px 0 20px;
+}
+
+.dateRangeBtnContainer {
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+#filterLast7Days,
+#filterLast30Days,
+#filterLast6Months,
+#filterThisMonth,
+#filterThisYear,
+#clearDateFilter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 25px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+:is(
+  #filterLast7Days,
+  #filterLast30Days,
+  #filterLast6Months,
+  #filterThisMonth,
+  #filterThisYear,
+  #clearDateFilter
+):hover {
+  background: var(--hover);
+}
+
+:is(
+  #filterLast7Days,
+  #filterLast30Days,
+  #filterLast6Months,
+  #filterThisMonth,
+  #filterThisYear,
+  #clearDateFilter
+):active {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.transactions {
+  margin-top: 24px;
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 35px;
+
+  background: var(--surface);
+}
+
+.table-header,
+.transaction-row {
+  display: grid;
+  grid-template-columns: 5fr 2fr 2fr 2fr 1fr;
+
+  gap: 16px;
+  align-items: center;
+
+  padding: 16px 24px;
+}
+
+.table-header {
+  background: var(--surface-2);
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: var(--text-muted);
+}
+
+.transaction-row {
+  border-bottom: 1px solid var(--border);
+
+  transition: background 0.25s ease;
+}
+
+.transaction-row:last-child {
+  border-bottom: 0;
+}
+
+.transaction-row:hover {
+  background: var(--hover);
+}
+
+.description {
+  gap: 14px;
+}
+
+.description h4 {
+  margin-bottom: 4px;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.description span,
+.account {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.icon {
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+}
+
+.icon svg,
+.actions svg {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-expense {
+  background: var(--hover);
+  color: #ef4444;
+}
+
+.icon-transfer {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.icon-income {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.amount {
+  text-align: right;
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.expense {
+  color: #ef4444;
+}
+
+.transfer {
+  color: var(--text-muted);
+}
+
+.income {
+  color: #22c55e;
+}
+
+.actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.actions button {
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--text-muted);
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.actions button:hover {
+  background: var(--hover);
+}
+
+.actions .delete {
+  color: #ef4444;
+}
+
+.actions .delete:hover {
+  background: #fee2e2;
+}
+
+.text-right {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-btn {
+    width: 44px;
+  }
+
+  .filter-btn span {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .transactions-page-btn-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .search-box {
+    min-width: 220px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .panel {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
