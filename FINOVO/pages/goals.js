@@ -44,12 +44,20 @@ function isPastDate(dateStr) {
 function resetForm() {
   const form = document.querySelector(".goal-form-grid");
   if (!form) return;
+
   form.reset();
-  setDefaultGoalDate();
+
+  requestAnimationFrame(() => {
+    setDefaultGoalDate();
+  });
 }
 
 function openPopup() {
   document.querySelector(".goal-modal-overlay")?.classList.add("show-pop-up");
+
+  requestAnimationFrame(() => {
+    setDefaultGoalDate();
+  });
 }
 
 function closePopup() {
@@ -62,12 +70,26 @@ function closePopup() {
 function getDefaultDate() {
   const d = new Date();
   d.setMonth(d.getMonth() + 6);
-  return d.toISOString().split("T")[0];
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function setDefaultGoalDate() {
-  const input = document.querySelector(".goal-input[type='date']");
-  if (input && !input.value) input.value = getDefaultDate();
+  const input = document.getElementById("goalDeadline");
+  if (!input) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const defaultDate = new Date(today);
+  defaultDate.setMonth(defaultDate.getMonth() + 6);
+
+  input.min = today.toISOString().split("T")[0];
+  input.valueAsDate = defaultDate;
 }
 
 const quotes = [
