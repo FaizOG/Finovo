@@ -370,46 +370,24 @@ function createRecentTransactionsSection() {
 
   const icons = {
     expense: `
-      <svg xmlns="http://www.w3.org/2000/svg"
-        width="16" height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="m7 7 10 10"></path>
-        <path d="M17 7v10H7"></path>
+      <svg viewBox="0 0 24 24">
+        <path d="M7 7L17 17M17 7V17H7" />
       </svg>
     `,
 
     income: `
-      <svg xmlns="http://www.w3.org/2000/svg"
-        width="16" height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M7 17 17 7"></path>
-        <path d="M7 7h10v10"></path>
+      <svg viewBox="0 0 24 24">
+        <path d="M7 17L17 7" />
+        <path d="M7 7h10v10" />
       </svg>
     `,
 
     transfer: `
-      <svg xmlns="http://www.w3.org/2000/svg"
-        width="16" height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M17 3l4 4-4 4"></path>
-        <path d="M3 7h18"></path>
-        <path d="M7 21l-4-4 4-4"></path>
-        <path d="M21 17H3"></path>
+      <svg viewBox="0 0 24 24">
+        <path d="M17 2l4 4-4 4" />
+        <path d="M3 10a4 4 0 014-4h14" />
+        <path d="M7 22l-4-4 4-4" />
+        <path d="M21 14a4 4 0 01-4 4H3" />
       </svg>
     `,
   };
@@ -421,7 +399,7 @@ function createRecentTransactionsSection() {
           const dateA = new Date(a.date || a.createdAt || a.id);
           const dateB = new Date(b.date || b.createdAt || b.id);
 
-          return dateB - dateA; // newest first
+          return dateB - dateA;
         })
         .slice(0, 5)
         .map((transaction) => {
@@ -429,69 +407,56 @@ function createRecentTransactionsSection() {
 
           const amount = Number(transaction.amount || 0);
 
-          const isIncome = type === "income";
+          let title =
+            transaction.description ||
+            transaction.note ||
+            type.charAt(0).toUpperCase() + type.slice(1);
+
+          let formattedAmount = `${currency}${amount.toFixed(2)}`;
+
+          if (type === "income") {
+            formattedAmount = `+${formattedAmount}`;
+          }
+
+          if (type === "expense") {
+            formattedAmount = `-${formattedAmount}`;
+          }
 
           return `
-            <div class="transaction-item">
+          <div class="recent-transaction-item">
 
-              <div class="
-                transaction-item__icon 
-                transaction-item__icon--${type}
-              ">
+            <div class="recent-transaction-left">
+
+              <div class="icon icon-${type}">
                 ${icons[type]}
               </div>
 
+              <div>
+                <h4>
+                  ${title}
+                </h4>
 
-              <div class="transaction-item__content">
-
-                <div class="transaction-item__name">
-                  ${
-                    type === "transfer"
-                      ? "Transfer"
-                      : transaction.category || transaction.name || type
-                  }
-                </div>
-
-
-                <div class="transaction-item__meta">
-
-                  ${
-                    type === "transfer"
-                      ? `${transaction.fromName || "From"} • ${transaction.toName || "To"}`
-                      : type === "income"
-                        ? `${transaction.source || transaction.category || "Income"}`
-                        : `${transaction.category || "Expense"}`
-                  }
-
-                  •
-
+                <span>
                   ${formatTransactionDate(transaction)}
-
-                </div>
-
-              </div>
-
-
-              <div class="
-                transaction-item__amount
-                ${isIncome ? "transaction-item__amount--income" : ""}
-              ">
-
-                ${type === "expense" ? "-" : "+"}
-
-                ${currency}${amount.toFixed(2)}
-
+                </span>
               </div>
 
             </div>
-          `;
+
+
+            <div class="amount ${type}">
+              ${formattedAmount}
+            </div>
+
+          </div>
+        `;
         })
         .join("")
     : `
-      <p class="empty-message">
-        No transactions yet.
-      </p>
-    `;
+    <p class="empty-message">
+      No transactions yet.
+    </p>
+  `;
 
   wrapper.innerHTML = `
     <div class="panel recent-transactions">
@@ -501,7 +466,6 @@ function createRecentTransactionsSection() {
         <h2 class="recent-transactions__title">
           Recent transactions
         </h2>
-
 
         <a href="#" class="recent-transactions__link">
           View all
