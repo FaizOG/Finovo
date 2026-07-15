@@ -21,23 +21,28 @@ function createDashboardHeader() {
   return section;
 }
 
-function createSummaryCard({ title, value, subtitle, icon, type = "" }) {
+function createSummaryCard({
+  title,
+  value,
+  subtitle,
+  icon,
+  type = "",
+  id = "",
+}) {
   const card = document.createElement("div");
 
   card.className = `summary-card ${type}`;
 
   card.innerHTML = `
     <div class="summary-card__header">
-      <span class="summary-card__title">
-        ${title}
-      </span>
+      <span class="summary-card__title">${title}</span>
 
       <div class="summary-card__icon__container">
         ${icon}
       </div>
     </div>
 
-    <h3 class="summary-card__value">
+    <h3 class="summary-card__value" ${id ? `id="${id}"` : ""}>
       ${value}
     </h3>
 
@@ -49,6 +54,14 @@ function createSummaryCard({ title, value, subtitle, icon, type = "" }) {
   return card;
 }
 
+function refreshDashboardBalance() {
+  const el = document.getElementById("dashboard-total-balance");
+
+  if (!el) return;
+
+  el.textContent = `${changedSymbol()} ${getTotalBalance().toLocaleString()}`;
+}
+
 function createNumbersOverview() {
   const section = document.createElement("section");
 
@@ -57,6 +70,7 @@ function createNumbersOverview() {
   section.append(
     createSummaryCard({
       title: "Total Balance",
+      id: "dashboard-total-balance",
       value: `${changedSymbol()} ${getTotalBalance().toLocaleString()}`,
       subtitle: `
         <span>
@@ -336,8 +350,6 @@ function createCashFlowBudgetGrid() {
 
   return section;
 }
-
-// import { getData, changedSymbol } from "../js/core/store.js";
 
 function createRecentTransactionsSection() {
   const wrapper = document.createElement("div");
@@ -686,13 +698,9 @@ export default {
     dashboardContainer = container;
 
     renderDashboard();
-
-    window.addEventListener("dataUpdated", () => {
-      const dashboardPage = document.querySelector(".dashboard-page");
-
-      if (dashboardPage) {
-        renderDashboard();
-      }
+    window.addEventListener("appDataUpdated", refreshDashboardBalance);
+    window.addEventListener("appDataUpdated", () => {
+      renderDashboard();
     });
   },
 };

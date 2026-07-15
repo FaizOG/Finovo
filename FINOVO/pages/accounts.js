@@ -597,6 +597,6 @@ export default {
 
     updateTransferButtonState();
 
-    window.addEventListener("dataUpdated", refreshAccountsUI);
+    window.addEventListener("appDataUpdated", refreshAccountsUI);
   },
 };

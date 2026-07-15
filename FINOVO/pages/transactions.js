@@ -250,7 +250,7 @@ function updateTransaction(updatedTransaction) {
     transaction: updatedTransactions,
     accounts,
   });
-
+  window.notify?.success("Transaction updated successfully.");
   window.dispatchEvent(new Event("appDataUpdated"));
 }
 
@@ -319,6 +319,8 @@ function formatTransactionDate(date) {
 }
 
 function deleteTransaction(id) {
+  // console.log("Delete called", id);
+
   const data = getData();
 
   const transactions = data.transaction || [];
@@ -358,10 +360,19 @@ function deleteTransaction(id) {
 
   const updatedTransactions = transactions.filter((item) => item.id !== id);
 
+  // console.log("Before updateData");
+
   updateData({
     transaction: updatedTransactions,
     accounts,
   });
+
+  // console.log("After updateData");
+  // console.log(window.notify);
+
+  window.notify?.success("Transaction deleted successfully.");
+
+  // console.log("After notify");
 
   window.dispatchEvent(new Event("appDataUpdated"));
 }

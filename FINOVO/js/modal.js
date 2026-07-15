@@ -81,10 +81,10 @@ function validateTransaction(type) {
   return true;
 }
 
-function updateTransactionBalance(oldTransaction, newTransaction) {
-  reverseTransaction(oldTransaction);
+function updateTransactionBalance(oldTransaction, newTransaction, accounts) {
+  reverseTransaction(oldTransaction, accounts);
 
-  applyTransactionBalance(newTransaction);
+  applyTransactionBalance(newTransaction, accounts);
 }
 
 function saveTransaction(type) {
@@ -162,7 +162,7 @@ function saveTransaction(type) {
       transaction: data.transaction,
     });
 
-    window.dispatchEvent(new Event("dataUpdated"));
+    window.dispatchEvent(new Event("appDataUpdated"));
 
     return updatedTransaction;
   }
@@ -171,13 +171,14 @@ function saveTransaction(type) {
   // CREATE MODE
   // ==========================
 
-  applyTransactionBalance({
-    type,
-
-    amount,
-
-    accountId,
-  });
+  applyTransactionBalance(
+    {
+      type,
+      amount,
+      accountId,
+    },
+    data.accounts,
+  );
 
   const transaction = {
     id: Date.now(),
@@ -209,15 +210,13 @@ function saveTransaction(type) {
     transaction: transactions,
   });
 
-  window.dispatchEvent(new Event("dataUpdated"));
+  window.dispatchEvent(new Event("appDataUpdated"));
 
   return transaction;
 }
 
-function applyTransactionBalance(transaction) {
-  const data = getData();
-
-  const account = data.accounts.find((acc) => acc.id === transaction.accountId);
+function applyTransactionBalance(transaction, accounts) {
+  const account = accounts.find((acc) => acc.id === transaction.accountId);
 
   if (!account) return;
 
@@ -230,10 +229,8 @@ function applyTransactionBalance(transaction) {
   }
 }
 
-function reverseTransaction(transaction) {
-  const data = getData();
-
-  const account = data.accounts.find((acc) => acc.id === transaction.accountId);
+function reverseTransaction(transaction, accounts) {
+  const account = accounts.find((acc) => acc.id === transaction.accountId);
 
   if (!account) return;
 
