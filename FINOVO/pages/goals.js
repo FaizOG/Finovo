@@ -92,6 +92,38 @@ function setDefaultGoalDate() {
   input.valueAsDate = defaultDate;
 }
 
+function createEmptyState() {
+  const empty = document.createElement("section");
+  empty.className = "goals-empty-state";
+
+  empty.innerHTML = `
+    <div class="goals-empty-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target size-4" aria-hidden="true" style="transform-origin: 50% 50%;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="6"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                  </svg>
+    </div>
+
+    <h2>No goals yet</h2>
+
+    <p>
+      Every big achievement starts with a single goal.
+      Create your first savings goal and begin building your future.
+    </p>
+
+    <button class="goals-page-new-goal-btn goals-empty-btn">
+      + Create your first goal
+    </button>
+  `;
+
+  empty
+    .querySelector(".goals-page-new-goal-btn")
+    .addEventListener("click", openPopup);
+
+  return empty;
+}
+
 const quotes = [
   "Small steps every day lead to big results.",
   "Discipline beats motivation every time.",
@@ -719,12 +751,23 @@ function updateCounter() {
 function buildGoals() {
   const goals = safeGetGoals();
 
+  const page = goalsContainer.parentElement;
+
+  page.querySelector(".goals-empty-state")?.remove();
+
   goalsContainer.innerHTML = "";
 
   if (!goals.length) {
-    goalsContainer.innerHTML = `<p style="width:100%; text-align:center; opacity:.6;">No goals yet</p>`;
+    goalsContainer.style.display = "none";
+
+    page.appendChild(createEmptyState());
+
+    updateCounter();
+
     return;
   }
+
+  goalsContainer.style.display = "grid";
 
   goals.forEach((g) => goalsContainer.appendChild(createGoalCard(g)));
 
