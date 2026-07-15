@@ -223,7 +223,7 @@ function createCashFlowSection() {
 
   const incomeColor = styles.getPropertyValue("--primary").trim();
   const expenseColor = styles.getPropertyValue("--text-muted").trim();
-  new Chart(canvas, {
+  cashFlowChart = new Chart(canvas, {
     type: "bar",
 
     data: {
@@ -680,6 +680,7 @@ function createActivityGrid() {
 
 let dashboardContainer;
 let isDashboardActive = false;
+let cashFlowChart = null;
 
 function renderDashboard() {
   if (!dashboardContainer || !isDashboardActive) return;
@@ -727,6 +728,19 @@ function refreshDashboard() {
   }
 }
 
+function refreshCashFlowChart() {
+  if (!cashFlowChart) return;
+
+  const { labels, income, expense } = getCashFlowData();
+
+  cashFlowChart.data.labels = labels;
+
+  cashFlowChart.data.datasets[0].data = income;
+  cashFlowChart.data.datasets[1].data = expense;
+
+  cashFlowChart.update();
+}
+
 export default {
   mount(container) {
     dashboardContainer = container;
@@ -737,6 +751,7 @@ export default {
     dashboardUpdateHandler = () => {
       if (isDashboardActive) {
         refreshDashboard();
+        refreshCashFlowChart();
       }
     };
 
@@ -748,6 +763,11 @@ export default {
 
     if (dashboardUpdateHandler) {
       window.removeEventListener("appDataUpdated", dashboardUpdateHandler);
+    }
+
+    if (cashFlowChart) {
+      cashFlowChart.destroy();
+      cashFlowChart = null;
     }
 
     dashboardContainer = null;
