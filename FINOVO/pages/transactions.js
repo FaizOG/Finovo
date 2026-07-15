@@ -10,12 +10,9 @@ const transactionFilters = {
 
 function setupTransactionSearch(container) {
   const input = container.querySelector(".search-box input");
-
   const list = container.querySelector(".transaction-list");
-
   input.addEventListener("input", () => {
     const value = input.value.toLowerCase();
-
     const filtered = getFilteredTransactions().filter((transaction) => {
       const description = (
         transaction.description ||
@@ -23,9 +20,7 @@ function setupTransactionSearch(container) {
         transaction.type ||
         ""
       ).toLowerCase();
-
       const category = (transaction.category || "").toLowerCase();
-
       return description.includes(value) || category.includes(value);
     });
 
@@ -35,60 +30,43 @@ function setupTransactionSearch(container) {
 
 function setupFilterDropdowns() {
   const filterOverlay = document.querySelector(".transactions-filter-overlay");
-
   if (!filterOverlay) return;
-
   filterOverlay.querySelectorAll(".filter-dropdown").forEach((dropdown) => {
     const selected = dropdown.querySelector(".dropdown-selected");
-
     const menu = dropdown.querySelector(".dropdown-menu");
-
     selected.addEventListener("click", (e) => {
       e.stopPropagation();
-
       filterOverlay.querySelectorAll(".dropdown-menu").forEach((m) => {
         if (m !== menu) {
           m.classList.remove("active");
         }
       });
-
       menu.classList.toggle("active");
     });
-
     dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
       item.addEventListener("click", () => {
         selected.querySelector("span").textContent = item.textContent.trim();
-
-        // Only remove active from this filter dropdown
         dropdown.querySelectorAll(".dropdown-item").forEach((i) => {
           i.classList.remove("active");
         });
-
         item.classList.add("active");
-
         if (dropdown.id === "transactionType") {
           transactionFilters.type = item.dataset.value;
         }
-
         if (dropdown.id === "transactionCategory") {
           transactionFilters.category = item.dataset.value;
         }
-
         if (dropdown.id === "transactionAccount") {
           transactionFilters.account = item.dataset.value;
         }
-
         if (dropdown.id === "sortBy") {
           transactionFilters.sort = item.dataset.value;
         }
-
-        // close dropdown after selection
         menu.classList.remove("active");
       });
     });
   });
 
-  // ONLY close filter dropdowns
   filterOverlay.addEventListener("click", (e) => {
     if (!e.target.closest(".filter-dropdown")) {
       filterOverlay.querySelectorAll(".dropdown-menu").forEach((menu) => {
@@ -100,13 +78,10 @@ function setupFilterDropdowns() {
 
 function createTransactionsHeader() {
   const section = document.createElement("section");
-
   section.className = "transactions-page-btn-container";
-
   const count = Array.isArray(getData()?.transaction)
     ? getData().transaction.length
     : 0;
-
   section.innerHTML = `
     <div>
       <h2 class="setting-tab-title">
@@ -131,21 +106,18 @@ function getTransactions() {
   const transactions = Array.isArray(getData()?.transaction)
     ? getData().transaction
     : [];
-
   return transactions;
 }
 
 function getFilteredTransactions() {
   let transactions = [...getTransactions()];
 
-  // TYPE
   if (transactionFilters.type) {
     transactions = transactions.filter(
       (t) => t.type === transactionFilters.type,
     );
   }
 
-  // CATEGORY
   if (transactionFilters.category) {
     transactions = transactions.filter(
       (t) =>
@@ -153,101 +125,133 @@ function getFilteredTransactions() {
     );
   }
 
-  // ACCOUNT
   if (transactionFilters.account) {
     transactions = transactions.filter((t) => {
+      const account = transactionFilters.account.toLowerCase();
+
       if (t.type === "transfer") {
         return (
-          t.fromName?.toLowerCase() === transactionFilters.account ||
-          t.toName?.toLowerCase() === transactionFilters.account
+          t.fromName?.toLowerCase() === account ||
+          t.toName?.toLowerCase() === account
         );
       }
 
-      return t.accountName?.toLowerCase() === transactionFilters.account;
+      return t.accountName?.toLowerCase() === account;
     });
   }
 
-  // SORT
+  if (transactionFilters.startDate || transactionFilters.endDate) {
+    transactions = transactions.filter((t) => {
+      const transactionDate = new Date(t.date || t.createdAt);
+
+      transactionDate.setHours(0, 0, 0, 0);
+
+      if (transactionFilters.startDate) {
+        const startDate = new Date(transactionFilters.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        if (transactionDate < startDate) {
+          return false;
+        }
+      }
+
+      if (transactionFilters.endDate) {
+        const endDate = new Date(transactionFilters.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        if (transactionDate > endDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
 
   if (transactionFilters.sort === "newest") {
-    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    transactions.sort(
+      (a, b) =>
+        new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt),
+    );
   }
 
   if (transactionFilters.sort === "oldest") {
-    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+    transactions.sort(
+      (a, b) =>
+        new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt),
+    );
   }
 
   if (transactionFilters.sort === "highest") {
-    transactions.sort((a, b) => Number(b.amount) - Number(a.amount));
+    transactions.sort((a, b) => Number(b.amount || 0) - Number(a.amount || 0));
   }
 
   if (transactionFilters.sort === "lowest") {
-    transactions.sort((a, b) => Number(a.amount) - Number(b.amount));
+    transactions.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
   }
 
   return transactions;
 }
 
-function deleteTransaction(id) {
+function updateTransaction(updatedTransaction) {
   const data = getData();
 
   const transactions = data.transaction || [];
   const accounts = data.accounts || [];
 
-  const transaction = transactions.find((item) => item.id === id);
+  const oldTransaction = transactions.find(
+    (t) => t.id === updatedTransaction.id,
+  );
 
-  if (!transaction) return;
+  if (!oldTransaction) return;
 
-  const amount = Number(transaction.amount || 0);
+  const oldAmount = Number(oldTransaction.amount || 0);
+  const newAmount = Number(updatedTransaction.amount || 0);
 
-  // -------------------------
-  // UNDO EXPENSE
-  // -------------------------
-  if (transaction.type === "expense") {
-    const account = accounts.find((acc) => acc.id === transaction.accountId);
-
-    if (account) {
-      account.currentBalance += amount;
-    }
-  }
-
-  // -------------------------
-  // UNDO INCOME
-  // -------------------------
-  if (transaction.type === "income") {
-    const account = accounts.find((acc) => acc.id === transaction.accountId);
+  if (oldTransaction.type === "expense") {
+    const account = accounts.find((acc) => acc.id === oldTransaction.accountId);
 
     if (account) {
-      account.currentBalance -= amount;
+      account.currentBalance += oldAmount;
     }
   }
 
-  // -------------------------
-  // UNDO TRANSFER
-  // -------------------------
-  if (transaction.type === "transfer") {
-    const fromAccount = accounts.find((acc) => acc.id === transaction.from);
+  if (oldTransaction.type === "income") {
+    const account = accounts.find((acc) => acc.id === oldTransaction.accountId);
 
-    const toAccount = accounts.find((acc) => acc.id === transaction.to);
-
-    if (fromAccount) {
-      fromAccount.currentBalance += amount;
-    }
-
-    if (toAccount) {
-      toAccount.currentBalance -= amount;
+    if (account) {
+      account.currentBalance -= oldAmount;
     }
   }
 
-  // remove transaction
-  const updatedTransactions = transactions.filter((item) => item.id !== id);
+  if (updatedTransaction.type === "expense") {
+    const account = accounts.find(
+      (acc) => acc.id === updatedTransaction.accountId,
+    );
+
+    if (account) {
+      account.currentBalance -= newAmount;
+    }
+  }
+
+  if (updatedTransaction.type === "income") {
+    const account = accounts.find(
+      (acc) => acc.id === updatedTransaction.accountId,
+    );
+
+    if (account) {
+      account.currentBalance += newAmount;
+    }
+  }
+
+  const updatedTransactions = transactions.map((t) =>
+    t.id === updatedTransaction.id ? updatedTransaction : t,
+  );
 
   updateData({
     transaction: updatedTransactions,
     accounts,
   });
 
-  window.dispatchEvent(new Event("dataUpdated"));
+  window.dispatchEvent(new Event("appDataUpdated"));
 }
 
 function createTransactionFilterToolbar() {
@@ -312,6 +316,54 @@ function formatTransactionDate(date) {
   const transactionDate = new Date(date);
 
   return transactionDate.toISOString().split("T")[0];
+}
+
+function deleteTransaction(id) {
+  const data = getData();
+
+  const transactions = data.transaction || [];
+  const accounts = data.accounts || [];
+
+  const transaction = transactions.find((item) => item.id === id);
+
+  if (!transaction) return;
+
+  const amount = Number(transaction.amount || 0);
+
+  if (transaction.type === "expense") {
+    const account = accounts.find((acc) => acc.id === transaction.accountId);
+    if (account) {
+      account.currentBalance += amount;
+    }
+  }
+
+  if (transaction.type === "income") {
+    const account = accounts.find((acc) => acc.id === transaction.accountId);
+    if (account) {
+      account.currentBalance -= amount;
+    }
+  }
+
+  if (transaction.type === "transfer") {
+    const fromAccount = accounts.find((acc) => acc.id === transaction.from);
+    const toAccount = accounts.find((acc) => acc.id === transaction.to);
+    if (fromAccount) {
+      fromAccount.currentBalance += amount;
+    }
+
+    if (toAccount) {
+      toAccount.currentBalance -= amount;
+    }
+  }
+
+  const updatedTransactions = transactions.filter((item) => item.id !== id);
+
+  updateData({
+    transaction: updatedTransactions,
+    accounts,
+  });
+
+  window.dispatchEvent(new Event("appDataUpdated"));
 }
 
 function createTransactionRow({
@@ -400,7 +452,6 @@ function createTransactionRow({
 
 function createTransactionsTable() {
   const section = document.createElement("section");
-
   const transactions = document.createElement("div");
 
   transactions.className = "transactions";
@@ -436,9 +487,7 @@ function createTransactionsTable() {
   `;
 
   const list = transactions.querySelector(".transaction-list");
-
   renderTransactions(list);
-
   section.appendChild(transactions);
 
   return section;
@@ -449,9 +498,41 @@ function renderTransactions(container, filtered = null) {
 
   const transactions = filtered || getTransactions();
 
+  if (!transactions.length) {
+    container.innerHTML = `
+      <div class="empty-transactions">
+        <div class="empty-icon">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="48" 
+            height="48" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="1.5"
+          >
+            <path d="M3 3h18v18H3z"/>
+            <path d="M8 12h8"/>
+            <path d="M12 8v8"/>
+          </svg>
+        </div>
+
+        <h3>No transactions found</h3>
+        <p>
+          ${
+            filtered
+              ? "Try changing your filters or search terms."
+              : "Start adding transactions to see them here."
+          }
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
   transactions.forEach((transaction) => {
     const amount = Number(transaction.amount || 0);
-
     let formattedAmount = `${changedSymbol()}${amount.toFixed(2)}`;
 
     if (transaction.type === "income") {
@@ -480,17 +561,11 @@ function renderTransactions(container, filtered = null) {
     container.appendChild(
       createTransactionRow({
         id: transaction.id,
-
         type: transaction.type,
-
         title,
-
         date: formatTransactionDate(transaction.date || transaction.createdAt),
-
         category: transaction.category || "Other",
-
         account,
-
         amount: formattedAmount,
       }),
     );
@@ -499,33 +574,26 @@ function renderTransactions(container, filtered = null) {
 
 function setupTransactionFilterPopup() {
   const overlay = document.querySelector(".transactions-filter-overlay");
-
   const openBtn = document.querySelector(".filter-btn");
-
   const closeBtn = document.querySelector(".transactions-overlay-close-btn");
-
   const modal = document.querySelector(".transactioins-modal");
 
   if (!overlay || !openBtn || !closeBtn || !modal) return;
 
-  // Open popup
   openBtn.addEventListener("click", () => {
     overlay.classList.add("active");
   });
 
-  // Close using X button
   closeBtn.addEventListener("click", () => {
     overlay.classList.remove("active");
   });
 
-  // Close outside modal click
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) {
       overlay.classList.remove("active");
     }
   });
 
-  // Prevent modal click from closing popup
   modal.addEventListener("click", (e) => {
     e.stopPropagation();
   });
@@ -533,25 +601,23 @@ function setupTransactionFilterPopup() {
 
 function setupFilterForm() {
   const form = document.querySelector(".transaction-filter-form");
-
   const overlay = document.querySelector(".transactions-filter-overlay");
-
   if (!form) return;
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const list = document.querySelector(".transaction-list");
-
-    renderTransactions(list, getFilteredTransactions());
-
+    renderTransactions(
+      document.querySelector(".transaction-list"),
+      getFilteredTransactions(),
+    );
     overlay.classList.remove("active");
   });
 }
 
 function setupFilterReset() {
   const overlay = document.querySelector(".transactions-filter-overlay");
-
   const form = overlay?.querySelector(".transaction-filter-form");
 
   if (!form || !overlay) return;
@@ -565,12 +631,10 @@ function setupFilterReset() {
     transactionFilters.endDate = "";
 
     setTimeout(() => {
-      // only reset filter popup dropdown items
       overlay.querySelectorAll(".dropdown-item").forEach((item) => {
         item.classList.remove("active");
       });
 
-      // activate first item of every filter dropdown
       overlay.querySelectorAll(".custom-dropdown").forEach((dropdown) => {
         const firstItem = dropdown.querySelector(".dropdown-item");
 
@@ -579,7 +643,6 @@ function setupFilterReset() {
         }
       });
 
-      // reset selected text only inside filter popup
       overlay.querySelectorAll(".dropdown-selected span").forEach((span) => {
         const firstItem = span
           .closest(".custom-dropdown")
@@ -589,45 +652,144 @@ function setupFilterReset() {
           span.textContent = firstItem.textContent.trim();
         }
       });
+
+      overlay
+        .querySelectorAll(".dateRangeBtnContainer button")
+        .forEach((btn) => {
+          btn.classList.remove("active");
+        });
     }, 0);
+  });
+}
+
+function setupQuickDateFilters() {
+  const overlay = document.querySelector(".transactions-filter-overlay");
+
+  if (!overlay) return;
+  const buttons = overlay.querySelectorAll(".dateRangeBtnContainer button");
+  const startInput = overlay.querySelector("#startDate");
+  const endInput = overlay.querySelector("#endDate");
+
+  if (!buttons.length || !startInput || !endInput) return;
+  let activeButton = null;
+
+  function formatDate(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0",
+    )}-${String(date.getDate()).padStart(2, "0")}`;
+  }
+
+  function setTodayEndDate() {
+    const today = new Date();
+    const formatted = formatDate(today);
+    endInput.value = formatted;
+    transactionFilters.endDate = formatted;
+  }
+
+  function clearActiveButton() {
+    buttons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    activeButton = null;
+  }
+
+  function setStartDate(days) {
+    const today = new Date();
+    const start = new Date();
+    start.setDate(today.getDate() - days);
+    const formattedStart = formatDate(start);
+    startInput.value = formattedStart;
+    transactionFilters.startDate = formattedStart;
+    setTodayEndDate();
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.id === "clearDateFilter") {
+        startInput.value = "";
+        endInput.value = "";
+        transactionFilters.startDate = "";
+        transactionFilters.endDate = "";
+        clearActiveButton();
+        return;
+      }
+
+      if (activeButton === button) {
+        startInput.value = "";
+        endInput.value = "";
+        transactionFilters.startDate = "";
+        transactionFilters.endDate = "";
+        clearActiveButton();
+        return;
+      }
+
+      clearActiveButton();
+      button.classList.add("active");
+      activeButton = button;
+
+      if (button.id === "filterLast7Days") {
+        setStartDate(7);
+      }
+
+      if (button.id === "filterLast30Days") {
+        setStartDate(30);
+      }
+
+      if (button.id === "filterLast6Months") {
+        const today = new Date();
+        const start = new Date();
+        start.setMonth(today.getMonth() - 6);
+        startInput.value = formatDate(start);
+        transactionFilters.startDate = formatDate(start);
+        setTodayEndDate();
+      }
+
+      if (button.id === "filterThisMonth") {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        startInput.value = formatDate(start);
+        transactionFilters.startDate = formatDate(start);
+        setTodayEndDate();
+      }
+
+      if (button.id === "filterThisYear") {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), 0, 1);
+        startInput.value = formatDate(start);
+        transactionFilters.startDate = formatDate(start);
+        setTodayEndDate();
+      }
+    });
   });
 }
 
 export default {
   mount(container) {
     const transactionsPage = document.createElement("div");
-
     transactionsPage.className = "transactions-page";
 
     transactionsPage.append(
       createTransactionsHeader(),
-
       createTransactionFilterToolbar(),
-
       createTransactionsTable(),
     );
 
     container.appendChild(transactionsPage);
-
     setupTransactionSearch(transactionsPage);
-
     setupFilterDropdowns();
-
     setupTransactionFilterPopup();
-
     setupFilterForm();
-
     setupFilterReset();
+    setupQuickDateFilters();
 
     window.addEventListener("appDataUpdated", () => {
       const list = transactionsPage.querySelector(".transaction-list");
 
       renderTransactions(list);
-
       const count = getTransactions().length;
-
       transactionsPage.querySelector(".ActiveGoals").textContent = count;
-
       transactionsPage.querySelector(
         ".ActiveGoals",
       ).parentElement.lastChild.textContent = ` of ${count} entries`;
