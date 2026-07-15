@@ -1,4 +1,12 @@
 import { getData, updateData, changedSymbol } from "../js/core/store.js";
+const transactionFilters = {
+  type: "",
+  category: "",
+  account: "",
+  sort: "newest",
+  startDate: "",
+  endDate: "",
+};
 
 function setupTransactionSearch(container) {
   const input = container.querySelector(".search-box input");
@@ -8,7 +16,7 @@ function setupTransactionSearch(container) {
   input.addEventListener("input", () => {
     const value = input.value.toLowerCase();
 
-    const filtered = getTransactions().filter((transaction) => {
+    const filtered = getFilteredTransactions().filter((transaction) => {
       const description = (
         transaction.description ||
         transaction.note ||
@@ -25,76 +33,67 @@ function setupTransactionSearch(container) {
   });
 }
 
-function setupFilterDropdowns(container) {
-  container.querySelectorAll(".dropdown-selected").forEach((selected) => {
-    selected.addEventListener("click", (event) => {
-      event.stopPropagation();
+function setupFilterDropdowns() {
+  const filterOverlay = document.querySelector(".transactions-filter-overlay");
 
-      const menu = selected.nextElementSibling;
+  if (!filterOverlay) return;
 
-      container.querySelectorAll(".dropdown-menu").forEach((item) => {
-        if (item !== menu) {
-          item.classList.remove("active");
+  filterOverlay.querySelectorAll(".filter-dropdown").forEach((dropdown) => {
+    const selected = dropdown.querySelector(".dropdown-selected");
+
+    const menu = dropdown.querySelector(".dropdown-menu");
+
+    selected.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      filterOverlay.querySelectorAll(".dropdown-menu").forEach((m) => {
+        if (m !== menu) {
+          m.classList.remove("active");
         }
       });
 
       menu.classList.toggle("active");
     });
-  });
 
-  container.querySelectorAll(".dropdown-item").forEach((item) => {
-    item.addEventListener("click", function () {
-      const dropdown = this.closest(".filter-dropdown");
+    dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        selected.querySelector("span").textContent = item.textContent.trim();
 
-      dropdown.querySelector(".dropdown-selected span").textContent =
-        this.textContent;
+        // Only remove active from this filter dropdown
+        dropdown.querySelectorAll(".dropdown-item").forEach((i) => {
+          i.classList.remove("active");
+        });
 
-      dropdown.querySelectorAll(".dropdown-item").forEach((option) => {
-        option.classList.remove("active");
-      });
+        item.classList.add("active");
 
-      this.classList.add("active");
+        if (dropdown.id === "transactionType") {
+          transactionFilters.type = item.dataset.value;
+        }
 
-      dropdown.querySelector(".dropdown-menu").classList.remove("active");
-    });
-  });
+        if (dropdown.id === "transactionCategory") {
+          transactionFilters.category = item.dataset.value;
+        }
 
-  // close only transaction filter dropdowns
-  container.addEventListener("click", (e) => {
-    container.querySelectorAll(".dropdown-menu").forEach((menu) => {
-      const dropdown = menu.closest(".filter-dropdown");
+        if (dropdown.id === "transactionAccount") {
+          transactionFilters.account = item.dataset.value;
+        }
 
-      if (dropdown && !dropdown.contains(e.target)) {
+        if (dropdown.id === "sortBy") {
+          transactionFilters.sort = item.dataset.value;
+        }
+
+        // close dropdown after selection
         menu.classList.remove("active");
-      }
+      });
     });
   });
-}
 
-function setupTransactionFilterModal(container) {
-  const filterBtn = container.querySelector(".filter-btn");
-
-  const modal = container.querySelector(".transactions-filter-overlay");
-
-  const closeBtn = document.querySelector(".transactions-overlay-close-btn");
-
-  if (!filterBtn || !modal || !closeBtn) return;
-
-  filterBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    modal.classList.add("active");
-  });
-
-  closeBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    modal.classList.remove("active");
-  });
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.classList.remove("active");
+  // ONLY close filter dropdowns
+  filterOverlay.addEventListener("click", (e) => {
+    if (!e.target.closest(".filter-dropdown")) {
+      filterOverlay.querySelectorAll(".dropdown-menu").forEach((menu) => {
+        menu.classList.remove("active");
+      });
     }
   });
 }
@@ -132,6 +131,59 @@ function getTransactions() {
   const transactions = Array.isArray(getData()?.transaction)
     ? getData().transaction
     : [];
+
+  return transactions;
+}
+
+function getFilteredTransactions() {
+  let transactions = [...getTransactions()];
+
+  // TYPE
+  if (transactionFilters.type) {
+    transactions = transactions.filter(
+      (t) => t.type === transactionFilters.type,
+    );
+  }
+
+  // CATEGORY
+  if (transactionFilters.category) {
+    transactions = transactions.filter(
+      (t) =>
+        t.category?.toLowerCase() === transactionFilters.category.toLowerCase(),
+    );
+  }
+
+  // ACCOUNT
+  if (transactionFilters.account) {
+    transactions = transactions.filter((t) => {
+      if (t.type === "transfer") {
+        return (
+          t.fromName?.toLowerCase() === transactionFilters.account ||
+          t.toName?.toLowerCase() === transactionFilters.account
+        );
+      }
+
+      return t.accountName?.toLowerCase() === transactionFilters.account;
+    });
+  }
+
+  // SORT
+
+  if (transactionFilters.sort === "newest") {
+    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  if (transactionFilters.sort === "oldest") {
+    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+
+  if (transactionFilters.sort === "highest") {
+    transactions.sort((a, b) => Number(b.amount) - Number(a.amount));
+  }
+
+  if (transactionFilters.sort === "lowest") {
+    transactions.sort((a, b) => Number(a.amount) - Number(b.amount));
+  }
 
   return transactions;
 }
@@ -445,43 +497,100 @@ function renderTransactions(container, filtered = null) {
   });
 }
 
-function createFilterField(label, items) {
-  return `
-    <div class="transactions-field">
-      <label>
-        ${label}
-      </label>
-      <div class="custom-dropdown filter-dropdown">
-        <div class="dropdown-selected">
-          <span>
-            ${items[0]}
-          </span>
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path
-              d="m6 9 6 6 6-6"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            />
-          </svg>
-        </div>
-        <div class="dropdown-menu">
-          ${items
-            .map(
-              (item, index) => `
-              <div 
-                class="dropdown-item ${index === 0 ? "active" : ""}"
-                data-value="${item.toLowerCase()}"
-              >
-                ${item}
-              </div>
-            `,
-            )
-            .join("")}
-        </div>
-      </div>
-    </div>
-  `;
+function setupTransactionFilterPopup() {
+  const overlay = document.querySelector(".transactions-filter-overlay");
+
+  const openBtn = document.querySelector(".filter-btn");
+
+  const closeBtn = document.querySelector(".transactions-overlay-close-btn");
+
+  const modal = document.querySelector(".transactioins-modal");
+
+  if (!overlay || !openBtn || !closeBtn || !modal) return;
+
+  // Open popup
+  openBtn.addEventListener("click", () => {
+    overlay.classList.add("active");
+  });
+
+  // Close using X button
+  closeBtn.addEventListener("click", () => {
+    overlay.classList.remove("active");
+  });
+
+  // Close outside modal click
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove("active");
+    }
+  });
+
+  // Prevent modal click from closing popup
+  modal.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+}
+
+function setupFilterForm() {
+  const form = document.querySelector(".transaction-filter-form");
+
+  const overlay = document.querySelector(".transactions-filter-overlay");
+
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const list = document.querySelector(".transaction-list");
+
+    renderTransactions(list, getFilteredTransactions());
+
+    overlay.classList.remove("active");
+  });
+}
+
+function setupFilterReset() {
+  const overlay = document.querySelector(".transactions-filter-overlay");
+
+  const form = overlay?.querySelector(".transaction-filter-form");
+
+  if (!form || !overlay) return;
+
+  form.addEventListener("reset", () => {
+    transactionFilters.type = "";
+    transactionFilters.category = "";
+    transactionFilters.account = "";
+    transactionFilters.sort = "newest";
+    transactionFilters.startDate = "";
+    transactionFilters.endDate = "";
+
+    setTimeout(() => {
+      // only reset filter popup dropdown items
+      overlay.querySelectorAll(".dropdown-item").forEach((item) => {
+        item.classList.remove("active");
+      });
+
+      // activate first item of every filter dropdown
+      overlay.querySelectorAll(".custom-dropdown").forEach((dropdown) => {
+        const firstItem = dropdown.querySelector(".dropdown-item");
+
+        if (firstItem) {
+          firstItem.classList.add("active");
+        }
+      });
+
+      // reset selected text only inside filter popup
+      overlay.querySelectorAll(".dropdown-selected span").forEach((span) => {
+        const firstItem = span
+          .closest(".custom-dropdown")
+          .querySelector(".dropdown-item");
+
+        if (firstItem) {
+          span.textContent = firstItem.textContent.trim();
+        }
+      });
+    }, 0);
+  });
 }
 
 export default {
@@ -502,9 +611,13 @@ export default {
 
     setupTransactionSearch(transactionsPage);
 
-    setupFilterDropdowns(transactionsPage);
+    setupFilterDropdowns();
 
-    setupTransactionFilterModal(transactionsPage);
+    setupTransactionFilterPopup();
+
+    setupFilterForm();
+
+    setupFilterReset();
 
     window.addEventListener("appDataUpdated", () => {
       const list = transactionsPage.querySelector(".transaction-list");

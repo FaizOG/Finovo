@@ -593,7 +593,9 @@ initCategoryDropdown();
 // ACCOUNT DROPDOWN
 
 function toggleAccountDropdown() {
-  document.querySelector("#accountMenu").classList.toggle("active");
+  const menu = modal.querySelector("#accountMenu");
+
+  menu.classList.toggle("active");
 }
 
 function selectAccount(dets) {

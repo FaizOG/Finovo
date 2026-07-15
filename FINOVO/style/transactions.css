@@ -95,6 +95,7 @@
 }
 
 .transactions-filter-overlay {
+  height: 100%;
   position: fixed;
   inset: 0;
   display: none;
@@ -394,4 +395,21 @@
   .panel {
     grid-template-columns: repeat(6, 1fr);
   }
+}
+
+/* .transactioins-modal {
+  width: min(520px, calc(100% - 2rem));
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+} */
+
+.transaction-filter-form {
+  width: 100%;
+  min-width: 0;
+}
+
+.transactions-field {
+  width: 100%;
+  min-width: 0;
 }
