@@ -28,6 +28,7 @@ function createSummaryCard({
   icon,
   type = "",
   id = "",
+  valueId = "",
 }) {
   const card = document.createElement("div");
 
@@ -42,7 +43,9 @@ function createSummaryCard({
       </div>
     </div>
 
-    <h3 class="summary-card__value" ${id ? `id="${id}"` : ""}>
+    <h3 class="summary-card__value" 
+    ${id ? `id="${id}"` : ""}
+    ${valueId ? `data-value-id="${valueId}"` : ""}>
       ${value}
     </h3>
 
@@ -86,6 +89,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Income (this month)",
+      valueId: "dashboard-income",
       value: `${changedSymbol()} ${getMonthlyIncome().toLocaleString()}`,
       subtitle: "+ deposits & salary",
       icon: `
@@ -95,6 +99,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Expenses (this month)",
+      valueId: "dashboard-expense",
       value: `${changedSymbol()} ${getMonthlyExpenses().toLocaleString()}`,
       subtitle: "− spending",
       icon: `
@@ -104,6 +109,7 @@ function createNumbersOverview() {
 
     createSummaryCard({
       title: "Savings (goals)",
+      valueId: "dashboard-saving",
       value: `${changedSymbol()} ${getSavingsAmount().toLocaleString()}`,
       subtitle: "across all goals",
       icon: `
@@ -673,9 +679,10 @@ function createActivityGrid() {
 }
 
 let dashboardContainer;
+let isDashboardActive = false;
 
 function renderDashboard() {
-  if (!dashboardContainer) return;
+  if (!dashboardContainer || !isDashboardActive) return;
 
   dashboardContainer.innerHTML = "";
 
@@ -693,14 +700,56 @@ function renderDashboard() {
   dashboardContainer.appendChild(dashboard);
 }
 
+let dashboardUpdateHandler;
+function refreshDashboard() {
+  const balance = document.getElementById("dashboard-total-balance");
+
+  const income = document.querySelector('[data-value-id="dashboard-income"]');
+
+  const expense = document.querySelector('[data-value-id="dashboard-expense"]');
+
+  const saving = document.querySelector('[data-value-id="dashboard-saving"]');
+
+  if (balance) {
+    balance.textContent = `${changedSymbol()} ${getTotalBalance().toLocaleString()}`;
+  }
+
+  if (income) {
+    income.textContent = `${changedSymbol()} ${getMonthlyIncome().toLocaleString()}`;
+  }
+
+  if (expense) {
+    expense.textContent = `${changedSymbol()} ${getMonthlyExpenses().toLocaleString()}`;
+  }
+
+  if (saving) {
+    saving.textContent = `${changedSymbol()} ${getSavingsAmount().toLocaleString()}`;
+  }
+}
+
 export default {
   mount(container) {
     dashboardContainer = container;
+    isDashboardActive = true;
 
     renderDashboard();
-    window.addEventListener("appDataUpdated", refreshDashboardBalance);
-    window.addEventListener("appDataUpdated", () => {
-      renderDashboard();
-    });
+
+    dashboardUpdateHandler = () => {
+      if (isDashboardActive) {
+        refreshDashboard();
+      }
+    };
+
+    window.addEventListener("appDataUpdated", dashboardUpdateHandler);
+  },
+
+  unmount() {
+    isDashboardActive = false;
+
+    if (dashboardUpdateHandler) {
+      window.removeEventListener("appDataUpdated", dashboardUpdateHandler);
+    }
+
+    dashboardContainer = null;
   },
 };

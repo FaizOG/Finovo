@@ -104,8 +104,13 @@ function createTransactionsHeader() {
 
 function getTransactions() {
   const transactions = Array.isArray(getData()?.transaction)
-    ? getData().transaction
+    ? [...getData().transaction]
     : [];
+
+  transactions.sort(
+    (a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt),
+  );
+
   return transactions;
 }
 
@@ -251,7 +256,7 @@ function updateTransaction(updatedTransaction) {
     accounts,
   });
   window.notify?.success("Transaction updated successfully.");
-  window.dispatchEvent(new Event("appDataUpdated"));
+  window.dispatchEvent(new Event("transactionUpdated"));
 }
 
 function createTransactionFilterToolbar() {
@@ -374,7 +379,7 @@ function deleteTransaction(id) {
 
   // console.log("After notify");
 
-  window.dispatchEvent(new Event("appDataUpdated"));
+  window.dispatchEvent(new Event("transactionUpdated"));
 }
 
 function createTransactionRow({
@@ -795,7 +800,7 @@ export default {
     setupFilterReset();
     setupQuickDateFilters();
 
-    window.addEventListener("appDataUpdated", () => {
+    window.addEventListener("transactionUpdated", () => {
       const list = transactionsPage.querySelector(".transaction-list");
 
       renderTransactions(list);

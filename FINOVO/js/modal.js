@@ -4,6 +4,7 @@ import { getData, updateData } from "./core/store.js";
 // MODAL (open / close / date)
 
 let editingTransactionId = null;
+let currentTransactionType = null;
 const modal = document.querySelector("#modalOverlay");
 
 function refreshAccountDropdown() {
@@ -124,11 +125,15 @@ function saveTransaction(type) {
       return false;
     }
 
-    updateTransactionBalance(oldTransaction, {
-      type,
-      amount,
-      accountId,
-    });
+    updateTransactionBalance(
+      oldTransaction,
+      {
+        type,
+        amount,
+        accountId,
+      },
+      data.accounts,
+    );
 
     const updatedTransaction = {
       ...oldTransaction,
@@ -210,7 +215,7 @@ function saveTransaction(type) {
     transaction: transactions,
   });
 
-  window.dispatchEvent(new Event("appDataUpdated"));
+  window.dispatchEvent(new Event("transactionUpdated"));
 
   return transaction;
 }
@@ -540,7 +545,7 @@ function resetModal() {
     }
   }
 
-  changeTransactionType("expense");
+  // changeTransactionType("expense");
 
   // reset date
   const dateInput = document.querySelector("#dateInput");
@@ -688,6 +693,18 @@ function changeTransactionType(type) {
   const toField = document.querySelector("#transferToField");
   const categoryLabel = document.querySelector("#field1Label");
 
+  if (currentTransactionType !== type) {
+    if (type === "expense") {
+      loadExpenseCategories();
+    }
+
+    if (type === "income") {
+      loadIncomeCategories();
+    }
+
+    currentTransactionType = type;
+  }
+
   if (type === "expense") {
     categoryLabel.textContent = "Category";
 
@@ -696,8 +713,6 @@ function changeTransactionType(type) {
 
     fromField.classList.add("hidden");
     toField.classList.add("hidden");
-
-    loadExpenseCategories();
   }
 
   if (type === "income") {
@@ -708,8 +723,6 @@ function changeTransactionType(type) {
 
     fromField.classList.add("hidden");
     toField.classList.add("hidden");
-
-    loadIncomeCategories();
   }
 
   if (type === "transfer") {
@@ -728,7 +741,7 @@ function initTransactionTabs() {
 
   if (!container || !buttons.length || !pill) return;
 
-  let activeBtn = document.querySelector(".txn-btn.active");
+  let activeBtn = null;
 
   // -----------------------------
   // MOVE PILL FUNCTION (ANIMATION)
@@ -770,14 +783,18 @@ function initTransactionTabs() {
   // -----------------------------
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (btn === activeBtn) return;
+      const currentActive = document.querySelector(".txn-btn.active");
+
+      if (btn === currentActive) return;
 
       buttons.forEach((b) => b.classList.remove("active"));
+
       btn.classList.add("active");
 
       activeBtn = btn;
 
       movePill(btn, true);
+
       changeTransactionType(btn.dataset.type);
     });
   });
@@ -786,7 +803,9 @@ function initTransactionTabs() {
   // RESIZE FIX
   // -----------------------------
   window.addEventListener("resize", () => {
-    movePill(activeBtn, false);
+    const currentActive = document.querySelector(".txn-btn.active");
+
+    movePill(currentActive, false);
   });
 }
 
@@ -812,7 +831,7 @@ function showSelectedAccountBalance() {
 
 initTransactionTabs();
 
-changeTransactionType("expense");
+// changeTransactionType("expense");
 
 window.openModal = openModal;
 window.closeModal = closeModal;
