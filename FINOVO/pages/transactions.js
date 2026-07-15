@@ -255,8 +255,10 @@ function updateTransaction(updatedTransaction) {
     transaction: updatedTransactions,
     accounts,
   });
-  window.notify?.success("Transaction updated successfully.");
-  window.dispatchEvent(new Event("transactionUpdated"));
+  setTimeout(() => {
+    window.notify?.success("Transaction updated successfully.");
+    window.dispatchEvent(new Event("transactionUpdated"));
+  }, 0);
 }
 
 function createTransactionFilterToolbar() {
@@ -803,9 +805,12 @@ export default {
     window.addEventListener("transactionUpdated", () => {
       const list = transactionsPage.querySelector(".transaction-list");
 
-      renderTransactions(list);
+      renderTransactions(list, getFilteredTransactions());
+
       const count = getTransactions().length;
+
       transactionsPage.querySelector(".ActiveGoals").textContent = count;
+
       transactionsPage.querySelector(
         ".ActiveGoals",
       ).parentElement.lastChild.textContent = ` of ${count} entries`;

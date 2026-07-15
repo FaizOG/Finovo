@@ -163,11 +163,11 @@ function saveTransaction(type) {
 
     updateData({
       accounts: data.accounts,
-
       transaction: data.transaction,
     });
 
     window.dispatchEvent(new Event("appDataUpdated"));
+    window.dispatchEvent(new Event("transactionUpdated"));
 
     return updatedTransaction;
   }
