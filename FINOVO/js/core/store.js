@@ -3,6 +3,7 @@ const STORAGE_KEY = "appData";
 const defaultData = {
   accounts: [],
   transaction: [],
+  budgets: [],
   goals: [],
   goalTransactions: [],
   settings: {
