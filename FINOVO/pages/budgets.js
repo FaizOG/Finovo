@@ -25,31 +25,7 @@ function createBudgetOverview() {
   );
 
   if (!overallBudget) {
-    const section = document.createElement("section");
-
-    section.innerHTML = `
-      <div class="budget-overview-card">
-
-        <div class="budget-overview-header">
-
-          <div class="budget-overview-main">
-
-            <div class="budget-overview-label">
-              Overall Monthly Cap
-            </div>
-
-            <div class="budget-overview-amount">
-              No budget set
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-
-    return section;
+    return document.createElement("section");
   }
 
   const overallSpent = getOverallSpent();
@@ -65,9 +41,6 @@ function createBudgetOverview() {
   const overallOverspentAmount = overallSpent - overallBudget.limit;
 
   const section = document.createElement("section");
-  if (isOverallOverspent) {
-    section.classList.add("budget-over-limit");
-  }
 
   section.innerHTML = `
       <div class="budget-overview-card">
@@ -77,21 +50,21 @@ function createBudgetOverview() {
           <div class="budget-overview-main">
 
             <div class="budget-overview-label">
-  Overall Monthly Cap
+              Overall Monthly Cap
 
-  ${
-    isOverallOverspent
-      ? `
-      <span class="budget-warning">
-        • Budget exceeded by
-        <span>
-          ${changedSymbol()}${overallOverspentAmount.toFixed(2)}
-        </span>
-      </span>
-      `
-      : ""
-  }
-</div>
+              ${
+                isOverallOverspent
+                  ? `
+                  <span class="budget-warning">
+                    • Overall Budget exceeded by
+                    <span>
+                      ${changedSymbol()}${overallOverspentAmount.toFixed(2)}
+                    </span>
+                  </span>
+                  `
+                  : ""
+              }
+            </div>
 
             <div class="budget-overview-amount">
               ${changedSymbol()}${getOverallSpent().toFixed(2)}
@@ -147,7 +120,6 @@ function createBudgetOverview() {
       </div>
     `;
 
-  // Add the event listener here
   section
     .querySelector(".budget-overview-edit")
     .addEventListener("click", () => {
@@ -157,19 +129,20 @@ function createBudgetOverview() {
   section
     .querySelector(".budget-overview-delete")
     .addEventListener("click", () => {
-      const confirmDelete = confirm("Delete Overall Monthly Cap?");
+      showDeletePopover(
+        "Are you sure you want to delete Overall Monthly Cap?",
+        () => {
+          const budgets = getBudgets().filter(
+            (item) => item.category !== "Overall",
+          );
 
-      if (!confirmDelete) return;
+          updateData({
+            budgets,
+          });
 
-      const budgets = getBudgets().filter(
-        (item) => item.category !== "Overall",
+          refreshBudgetsUI();
+        },
       );
-
-      updateData({
-        budgets,
-      });
-
-      refreshBudgetsUI();
     });
 
   return section;
@@ -252,15 +225,10 @@ function createCategoryBudgetCard({ id, category, limit }) {
   card.className = "category-budget-card";
 
   const spent = getBudgetSpent(category);
-
   const rawPercent = limit > 0 ? (spent / limit) * 100 : 0;
-
   const percent = Math.min(rawPercent, 100);
-
   const progressColor = getBudgetProgressColor(percent);
-
   const isOverspent = spent > limit;
-
   const overspentAmount = spent - limit;
 
   card.dataset.id = id;
@@ -357,17 +325,18 @@ function createCategoryBudgetCard({ id, category, limit }) {
   card
     .querySelector(".category-budget-delete")
     .addEventListener("click", () => {
-      const confirmDelete = confirm(`Delete ${category} budget?`);
+      showDeletePopover(
+        `Are you sure you want to delete ${category} budget?`,
+        () => {
+          const budgets = getBudgets().filter((item) => item.id !== id);
 
-      if (!confirmDelete) return;
+          updateData({
+            budgets,
+          });
 
-      const budgets = getBudgets().filter((item) => item.id !== id);
-
-      updateData({
-        budgets,
-      });
-
-      refreshBudgetsUI();
+          refreshBudgetsUI();
+        },
+      );
     });
 
   return card;
@@ -414,30 +383,23 @@ function createBudgetForm() {
         </span>
       </h2>
 
-
       <div class="budget-field">
 
         <label class="budget-label">
           Category
         </label>
-
         <div class="budget-dropdown-container"></div>
-
       </div>
 
-
       <div class="budget-field">
-
         <label class="budget-label">
           Monthly Amount
         </label>
-
         <input
           class="budget-input"
           type="number"
           placeholder="0.00"
         />
-
       </div>
 
 
@@ -484,7 +446,6 @@ function saveBudget(section) {
     .textContent.trim();
 
   const input = section.querySelector(".budget-input");
-
   const amount = Number(input.value);
 
   if (!amount || amount <= 0) return;
@@ -510,11 +471,8 @@ function saveBudget(section) {
 
     budgets.push({
       id: Date.now(),
-
       category,
-
       limit: amount,
-
       spent: 0,
     });
   }
@@ -614,15 +572,12 @@ function getBudgetCategories() {
   ];
 
   const usedCategories = getBudgets().map((budget) => budget.category);
-
   return allCategories.filter((category) => !usedCategories.includes(category));
 }
 
 function createBudgetCategoryDropdown() {
   const categories = getBudgetCategories();
-
   const selectedCategory = categories[0] || "No categories";
-
   const wrapper = document.createElement("div");
 
   wrapper.className = "budget-category-dropdown";
@@ -686,11 +641,8 @@ function buildBudgetCategoryOptions() {
 
 function initBudgetCategoryDropdown(dropdown) {
   const button = dropdown.querySelector(".budget-category-select");
-
   const menu = dropdown.querySelector(".budget-category-menu");
-
   const selected = dropdown.querySelector(".budget-category-selected");
-
   const items = dropdown.querySelectorAll(".budget-category-item");
 
   button.addEventListener("click", (e) => {
@@ -720,15 +672,51 @@ function initBudgetCategoryDropdown(dropdown) {
   });
 }
 
+function showDeletePopover(message, onConfirm) {
+  const overlay = document.createElement("div");
+
+  overlay.className = "delete-overlay";
+
+  overlay.innerHTML = `
+    <div class="popover">
+
+      <div class="popover-header">
+        <h2>Delete Budget</h2>
+        <p>${message}</p>
+      </div>
+
+      <div class="field-group">
+
+        <div class="field">
+          <button class="delete-cancel">
+            Cancel
+          </button>
+
+          <button class="delete-confirm">
+            Delete
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector(".delete-cancel").addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  overlay.querySelector(".delete-confirm").addEventListener("click", () => {
+    onConfirm();
+
+    overlay.remove();
+  });
+}
+
 function getBudgetProgressColor(percent) {
   const value = Math.min(Math.max(percent, 0), 100);
-
-  // 0% = blue primary
-  // 30% = cyan
-  // 50% = green
-  // 70% = yellow
-  // 85% = orange
-  // 100% = red
 
   const stops = [
     { percent: 0, hue: 210 },
